@@ -75,8 +75,11 @@ def send_booking_notification(booking):
 
 
 def create_app() -> Flask:
-    app = Flask(__name__)
+    app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(Config)
+
+    # Ensure instance directory exists for SQLite database
+    Path(app.instance_path).mkdir(parents=True, exist_ok=True)
 
     uploads_path = os.path.join(os.path.dirname(__file__), "static", "uploads")
     os.makedirs(uploads_path, exist_ok=True)
@@ -93,6 +96,50 @@ def create_app() -> Flask:
             return User.query.get(int(user_id))
         except Exception:
             return None
+
+    # Initialize database and seed data if needed
+    with app.app_context():
+        db.create_all()
+        
+        # Seed admin user and sample locations if database is empty
+        if not User.query.filter_by(email="admin@squalo.local").first():
+            admin = User(
+                name="Admin", 
+                email="admin@squalo.local", 
+                password_hash=generate_password_hash("devpassword"), 
+                role="admin"
+            )
+            db.session.add(admin)
+            
+        if not User.query.filter_by(email="user@squalo.local").first():
+            user = User(
+                name="Max Mustermann", 
+                email="user@squalo.local", 
+                password_hash=generate_password_hash("password"), 
+                role="user"
+            )
+            db.session.add(user)
+            
+        if not Location.query.first():
+            sample = [
+                ("Stadtbad Tiergarten", "Schwimmbad", "Mitte", "open", "verified", "25°C", "low", "https://maps.google.com"),
+                ("Sommerbad Neukölln", "Sommerbad", "Neukölln", "open", "not_verified", "22°C", "medium", "https://maps.google.com"),
+                ("Strandbad Plötzensee", "Strandbad", "Reinickendorf", "closed", "verified", "18°C", "high", "https://maps.google.com"),
+            ]
+            for name, ltype, district, status, verified, temp, crowd, maps in sample:
+                loc = Location(
+                    name=name, 
+                    location_type=ltype, 
+                    district=district, 
+                    official_status=status, 
+                    verified_status=verified, 
+                    water_temperature=temp, 
+                    crowd_level=crowd, 
+                    maps_url=maps
+                )
+                db.session.add(loc)
+                
+        db.session.commit()
 
     @app.route("/")
     def index():
@@ -324,12 +371,25 @@ def create_app() -> Flask:
     @app.cli.command("seed")
     def seed_command():
         db.create_all()
+        # Seed admin user and sample locations if database is empty
         if not User.query.filter_by(email="admin@squalo.local").first():
-            admin = User(name="Admin", email="admin@squalo.local", password_hash=generate_password_hash("devpassword"), role="admin")
+            admin = User(
+                name="Admin", 
+                email="admin@squalo.local", 
+                password_hash=generate_password_hash("devpassword"), 
+                role="admin"
+            )
             db.session.add(admin)
+            
         if not User.query.filter_by(email="user@squalo.local").first():
-            user = User(name="Max Mustermann", email="user@squalo.local", password_hash=generate_password_hash("password"), role="user")
+            user = User(
+                name="Max Mustermann", 
+                email="user@squalo.local", 
+                password_hash=generate_password_hash("password"), 
+                role="user"
+            )
             db.session.add(user)
+            
         if not Location.query.first():
             sample = [
                 ("Stadtbad Tiergarten", "Schwimmbad", "Mitte", "open", "verified", "25°C", "low", "https://maps.google.com"),
@@ -337,8 +397,18 @@ def create_app() -> Flask:
                 ("Strandbad Plötzensee", "Strandbad", "Reinickendorf", "closed", "verified", "18°C", "high", "https://maps.google.com"),
             ]
             for name, ltype, district, status, verified, temp, crowd, maps in sample:
-                loc = Location(name=name, location_type=ltype, district=district, official_status=status, verified_status=verified, water_temperature=temp, crowd_level=crowd, maps_url=maps)
+                loc = Location(
+                    name=name, 
+                    location_type=ltype, 
+                    district=district, 
+                    official_status=status, 
+                    verified_status=verified, 
+                    water_temperature=temp, 
+                    crowd_level=crowd, 
+                    maps_url=maps
+                )
                 db.session.add(loc)
+                
         db.session.commit()
         print("Seeded DB")
 
