@@ -11,6 +11,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, sen
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from pathlib import Path
 
 from config import Config
 from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting
