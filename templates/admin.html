@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="dashboard-header">
+    <h2>Coach Panel 🔐</h2>
+    <div class="cta-buttons">
+      <a href="{{ url_for('admin_week') }}" class="btn btn-primary">📅 Wochenplan</a>
+      <a href="{{ url_for('admin_settings') }}" class="btn btn-secondary">⚙️ Einstellungen</a>
+    </div>
+  </div>
+
+  <section class="admin-section">
+    <h3>Alle Buchungsanfragen</h3>
+    {% if bookings %}
+      <div class="bookings-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Nutzer</th>
+              <th>E-Mail</th>
+              <th>Zeitoptionen</th>
+              <th>Prio</th>
+              <th>Wunschorte</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in bookings %}
+              <tr class="booking-row booking-status-{{ b.status|replace('ä', 'ae')|replace('ö', 'oe')|lower }}">
+                <td>
+                  <span class="status-badge">
+                    {% if b.status == 'bestaetigt' %}✅ BESTÄTIGT
+                    {% elif b.status == 'abgelehnt' %}❌ ABGELEHNT
+                    {% else %}⏳ {{ b.status|upper }}
+                    {% endif %}
+                  </span>
+                </td>
+                <td>{{ b.user.name }}</td>
+                <td>{{ b.user.email }}</td>
+                <td class="locations-cell">
+                  <ul style="margin:0;padding-left:16px;font-size:13px;">
+                    {% if b.date_option_1 %}
+                      <li>{{ b.date_option_1.strftime('%d.%m.%Y') }} {% if b.time_option_1 %}{{ b.time_option_1.strftime('%H:%M') }}{% endif %}</li>
+                    {% elif b.requested_start %}
+                      <li>{{ b.requested_start.strftime('%d.%m.%Y %H:%M') }}</li>
+                    {% endif %}
+                    {% if b.date_option_2 %}
+                      <li>{{ b.date_option_2.strftime('%d.%m.%Y') }} {% if b.time_option_2 %}{{ b.time_option_2.strftime('%H:%M') }}{% endif %}</li>
+                    {% endif %}
+                    {% if b.date_option_3 %}
+                      <li>{{ b.date_option_3.strftime('%d.%m.%Y') }} {% if b.time_option_3 %}{{ b.time_option_3.strftime('%H:%M') }}{% endif %}</li>
+                    {% endif %}
+                  </ul>
+                </td>
+                <td>{% if b.priority_type == 'time' %}⏰ Zeit{% elif b.priority_type == 'location' %}📍 Ort{% else %}⚖️ Beides{% endif %}</td>
+                <td class="locations-cell">
+                  <ul style="margin:0;padding-left:16px;font-size:13px;">
+                    {% if b.preferred_location_1 %}<li>{{ b.preferred_location_1.name }}</li>{% endif %}
+                    {% if b.preferred_location_2 %}<li>{{ b.preferred_location_2.name }}</li>{% endif %}
+                    {% if b.preferred_location_3 %}<li>{{ b.preferred_location_3.name }}</li>{% endif %}
+                  </ul>
+                </td>
+                <td>
+                  {% if b.status == 'angefragt' %}
+                  <div class="admin-actions">
+                    <form method="POST" action="{{ url_for('admin_confirm_booking', booking_id=b.id) }}" class="inline-form">
+                      <select name="confirmed_location" class="location-select">
+                        <option value="">-- Ort --</option>
+                        {% if b.preferred_location_1 %}<option value="{{ b.preferred_location_1.id }}">{{ b.preferred_location_1.name }}</option>{% endif %}
+                        {% if b.preferred_location_2 %}<option value="{{ b.preferred_location_2.id }}">{{ b.preferred_location_2.name }}</option>{% endif %}
+                        {% if b.preferred_location_3 %}<option value="{{ b.preferred_location_3.id }}">{{ b.preferred_location_3.name }}</option>{% endif %}
+                      </select>
+                      <input type="date" name="confirmed_date" class="note-input" title="Bestätigtes Datum">
+                      <input type="time" name="confirmed_time" class="note-input" title="Bestätigte Uhrzeit">
+                      <input type="text" name="admin_note" placeholder="Coach-Notiz..." class="note-input">
+                      <button type="submit" class="btn-small btn-success">✓ Bestätigen</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin_reject_booking', booking_id=b.id) }}" class="inline-form">
+                      <input type="text" name="admin_note" placeholder="Grund..." class="note-input">
+                      <button type="submit" class="btn-small btn-danger">✗ Ablehnen</button>
+                    </form>
+                  </div>
+                  {% else %}
+                    <em style="font-size:12px;color:#888;">
+                      {% if b.confirmed_date %}📅 {{ b.confirmed_date.strftime('%d.%m.%Y') }}{% endif %}
+                      {% if b.confirmed_time %} {{ b.confirmed_time.strftime('%H:%M') }}{% endif %}
+                      {% if b.confirmed_location %} — {{ b.confirmed_location.name }}{% endif %}
+                    </em>
+                  {% endif %}
+                </td>
+              </tr>
+              <tr class="booking-details">
+                <td colspan="7">
+                  {% if b.training_goal %}<strong>Trainingsziel:</strong> {{ b.training_goal }}<br>{% endif %}
+                  {% if b.user_note %}<strong>Nutzer-Notiz:</strong> {{ b.user_note }}<br>{% endif %}
+                  {% if b.admin_note %}<strong>Coach-Notiz:</strong> {{ b.admin_note }}<br>{% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p>Keine Terminwünsche vorhanden.</p>
+    {% endif %}
+  </section>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="dashboard-header">
+    <h2>⚙️ Coach-Einstellungen</h2>
+    <a href="{{ url_for('admin') }}" class="btn btn-secondary">← Zurück zum Coach</a>
+  </div>
+
+  <section class="admin-section" style="max-width:600px;">
+    <h3>Buchungsbenachrichtigungen</h3>
+    <p>An diese E-Mail-Adresse wird eine simulierte Benachrichtigung gesendet, wenn ein Nutzer eine neue Buchungsanfrage stellt.</p>
+    
+    <form method="post" class="booking-form">
+      <div class="form-group">
+        <label for="booking_notification_email">📬 Benachrichtigungs-E-Mail</label>
+        <input type="email" id="booking_notification_email" name="booking_notification_email"
+               value="{{ current_email }}" required
+               placeholder="z.B. info@squalo.local">
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Speichern</button>
+      </div>
+    </form>
+
+    <div style="margin-top:24px;padding:16px;background:#f0f8ff;border-radius:8px;border-left:4px solid var(--turquoise);">
+      <p style="margin:0;font-size:14px;">
+        <strong>Hinweis:</strong> Aktuell werden Benachrichtigungen nur simuliert (Konsole-Ausgabe). 
+        Echte E-Mail-Zustellung wird später eingerichtet.
+      </p>
+    </div>
+  </section>
+{% endblock %}

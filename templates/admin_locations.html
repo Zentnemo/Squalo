@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Standorte verwalten</h2>
+  <form method="post">
+    <label>Name</label>
+    <input name="name" required>
+    <label>Typ</label>
+    <input name="location_type">
+    <label>Adresse</label>
+    <input name="address">
+    <label>Bezirk</label>
+    <input name="district">
+    <button type="submit">Anlegen</button>
+  </form>
+  <h3>Existierende Standorte</h3>
+  <ul>
+    {% for l in locations %}
+      <li>{{ l.name }} — {{ l.location_type }} — {{ l.district }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

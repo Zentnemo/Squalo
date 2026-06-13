@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="dashboard-header">
+    <h2>📅 Wochenplan</h2>
+    <div class="cta-buttons">
+      <a href="{{ url_for('admin') }}" class="btn btn-secondary">← Zurück zum Coach</a>
+    </div>
+  </div>
+
+  <section class="admin-section">
+    {% if bookings %}
+      <div class="bookings-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Kunde</th>
+              <th>E-Mail</th>
+              <th>Datum</th>
+              <th>Uhrzeit</th>
+              <th>Ort</th>
+              <th>Prio</th>
+              <th>Trainingsziel</th>
+              <th>Notiz</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in bookings %}
+              {# Show confirmed bookings with confirmed date, or all pending #}
+              <tr class="booking-row booking-status-{{ b.status|replace('ä', 'ae')|replace('ö', 'oe')|lower }}">
+                <td>
+                  <span class="status-badge">
+                    {% if b.status == 'bestaetigt' %}✅
+                    {% elif b.status == 'abgelehnt' %}❌
+                    {% else %}⏳
+                    {% endif %}
+                  </span>
+                </td>
+                <td>{{ b.user.name }}</td>
+                <td style="font-size:12px;">{{ b.user.email }}</td>
+                <td>
+                  {% if b.confirmed_date %}
+                    {{ b.confirmed_date.strftime('%a %d.%m.%Y') }}
+                  {% elif b.date_option_1 %}
+                    {{ b.date_option_1.strftime('%a %d.%m.%Y') }} (Wunsch)
+                  {% elif b.requested_start %}
+                    {{ b.requested_start.strftime('%a %d.%m.%Y') }}
+                  {% else %}
+                    –
+                  {% endif %}
+                </td>
+                <td>
+                  {% if b.confirmed_time %}
+                    {{ b.confirmed_time.strftime('%H:%M') }}
+                  {% elif b.time_option_1 %}
+                    {{ b.time_option_1.strftime('%H:%M') }} (Wunsch)
+                  {% elif b.requested_start %}
+                    {{ b.requested_start.strftime('%H:%M') }}
+                  {% else %}
+                    –
+                  {% endif %}
+                </td>
+                <td>
+                  {% if b.confirmed_location %}
+                    {{ b.confirmed_location.name }}
+                  {% elif b.preferred_location_1 %}
+                    {{ b.preferred_location_1.name }} (Wunsch)
+                  {% else %}
+                    –
+                  {% endif %}
+                </td>
+                <td>
+                  {% if b.priority_type == 'time' %}⏰
+                  {% elif b.priority_type == 'location' %}📍
+                  {% else %}⚖️
+                  {% endif %}
+                </td>
+                <td style="font-size:12px;">{{ b.training_goal or '–' }}</td>
+                <td style="font-size:12px;">{{ b.user_note or '–' }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p>Keine offenen oder bestätigten Termine vorhanden.</p>
+    {% endif %}
+  </section>
+{% endblock %}

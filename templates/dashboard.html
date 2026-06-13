@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="dashboard-header">
+    <h2>Willkommen, {{ current_user.name }}! 👋</h2>
+    <a href="{{ url_for('booking') }}" class="btn btn-primary">+ Neuen Termin anfragen</a>
+  </div>
+
+  <section class="dashboard-section">
+    <h3>Deine Terminwünsche</h3>
+    
+    {% if bookings %}
+      <div class="bookings-list">
+        {% for b in bookings %}
+          <div class="booking-card">
+            <div class="booking-status status-{{ b.status|replace('ä', 'ae')|replace('ö', 'oe')|replace('ü', 'ue')|lower }}">
+              {% if b.status == 'bestaetigt' %}✅ BESTÄTIGT
+              {% elif b.status == 'abgelehnt' %}❌ ABGELEHNT
+              {% elif b.status == 'angefragt' %}⏳ ANGEFRAGT
+              {% else %}{{ b.status|upper }}
+              {% endif %}
+            </div>
+            <div class="booking-content">
+
+              {# ── Time options ── #}
+              <p><strong>Zeitoptionen:</strong></p>
+              <ul>
+                {% if b.date_option_1 %}
+                  <li>📅 {{ b.date_option_1.strftime('%d.%m.%Y') }} {% if b.time_option_1 %}{{ b.time_option_1.strftime('%H:%M') }} Uhr{% endif %}</li>
+                {% elif b.requested_start %}
+                  <li>📅 {{ b.requested_start.strftime('%d.%m.%Y %H:%M') }} Uhr</li>
+                {% endif %}
+                {% if b.date_option_2 %}
+                  <li>📅 {{ b.date_option_2.strftime('%d.%m.%Y') }} {% if b.time_option_2 %}{{ b.time_option_2.strftime('%H:%M') }} Uhr{% endif %}</li>
+                {% endif %}
+                {% if b.date_option_3 %}
+                  <li>📅 {{ b.date_option_3.strftime('%d.%m.%Y') }} {% if b.time_option_3 %}{{ b.time_option_3.strftime('%H:%M') }} Uhr{% endif %}</li>
+                {% endif %}
+              </ul>
+
+              {# ── Priority ── #}
+              {% if b.priority_type %}
+                <p><strong> Priorität:</strong>
+                  {% if b.priority_type == 'time' %} Zeit wichtiger
+                  {% elif b.priority_type == 'location' %} Ort wichtiger
+                  {% else %} Beides gleich wichtig
+                  {% endif %}
+                </p>
+              {% endif %}
+
+              {# ── Location wishes ── #}
+              <div class="booking-locations">
+                <p><strong>Wunschorte:</strong></p>
+                <ul>
+                  {% if b.preferred_location_1 %}
+                    <li>1. {{ b.preferred_location_1.name }}</li>
+                  {% endif %}
+                  {% if b.preferred_location_2 %}
+                    <li>2. {{ b.preferred_location_2.name }}</li>
+                  {% endif %}
+                  {% if b.preferred_location_3 %}
+                    <li>3. {{ b.preferred_location_3.name }}</li>
+                  {% endif %}
+                </ul>
+              </div>
+
+              {# ── Confirmed details ── #}
+              {% if b.confirmed_date or b.confirmed_location %}
+                <div class="confirmed-location">
+                  <strong>✅ Bestätigt:</strong>
+                  {% if b.confirmed_date %}
+                    📅 {{ b.confirmed_date.strftime('%d.%m.%Y') }}
+                    {% if b.confirmed_time %} {{ b.confirmed_time.strftime('%H:%M') }} Uhr{% endif %}
+                  {% endif %}
+                  {% if b.confirmed_location %}
+                    — {{ b.confirmed_location.name }}
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              {% if b.training_goal %}
+                <p><strong>Trainingsziel:</strong> {{ b.training_goal }}</p>
+              {% endif %}
+              {% if b.user_note %}
+                <p><strong>Notiz:</strong> {{ b.user_note }}</p>
+              {% endif %}
+              {% if b.admin_note %}
+                <p class="admin-note"><strong>Notiz von Moritz:</strong> {{ b.admin_note }}</p>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <p>Du hast noch keine Schwimmstunde angefragt.</p>
+        <a href="{{ url_for('booking') }}" class="btn btn-secondary">Jetzt Termin anfragen</a>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

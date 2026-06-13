@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Trainingsnotiz für {{ user.name }}</h2>
+  <form method="post">
+    <label>Titel</label>
+    <input name="title">
+    <label>Inhalt</label>
+    <textarea name="content"></textarea>
+    <button type="submit">Speichern</button>
+  </form>
+{% endblock %}

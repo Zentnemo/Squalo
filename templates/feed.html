@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Community Feed</h2>
+  <form method="post" enctype="multipart/form-data">
+    <textarea name="text" placeholder="Teile etwas..."></textarea>
+    <input type="file" name="image">
+    <button type="submit">Posten</button>
+  </form>
+  <div class="posts">
+    {% for p in posts %}
+      <div class="post">
+        <strong>{{ p.user_id }}</strong> - {{ p.created_at }}
+        <p>{{ p.text }}</p>
+        {% if p.image_path %}
+          <img src="{{ url_for('static', filename=p.image_path) }}" alt="image" style="max-width:200px">
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

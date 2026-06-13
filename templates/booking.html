@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="booking-form-container">
+    <h2>Termin anfragen</h2>
+    <p>Gib deine Wünsche an – Moritz bestätigt deinen Termin.</p>
+    
+    <form method="post" class="booking-form">
+
+      <div class="form-group">
+        <label>⚡ Was ist dir wichtiger?</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="priority_type" value="time"> Zeit ist wichtiger
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="priority_type" value="location"> Ort ist wichtiger
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="priority_type" value="balanced" checked> Beides gleich wichtig
+          </label>
+        </div>
+      </div>
+
+      <fieldset class="form-fieldset">
+        <legend>🕐 Zeitwünsche</legend>
+
+        <div class="form-group">
+          <label for="date_option_1">Option 1 (Pflicht) *</label>
+          <div class="time-row">
+            <input type="date" id="date_option_1" name="date_option_1" required>
+            <input type="time" id="time_option_1" name="time_option_1" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="date_option_2">Option 2 (optional)</label>
+          <div class="time-row">
+            <input type="date" id="date_option_2" name="date_option_2">
+            <input type="time" id="time_option_2" name="time_option_2">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="date_option_3">Option 3 (optional)</label>
+          <div class="time-row">
+            <input type="date" id="date_option_3" name="date_option_3">
+            <input type="time" id="time_option_3" name="time_option_3">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-fieldset">
+        <legend>🏊 Wunsch-Schwimmorte</legend>
+
+        <div class="form-group">
+          <label for="preferred_location_1">Ort 1 (Pflicht) *</label>
+          <select id="preferred_location_1" name="preferred_location_1" required>
+            <option value="">-- Bitte wählen --</option>
+            {% for loc in locations %}
+              <option value="{{ loc.id }}">{{ loc.name }} ({{ loc.district }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="preferred_location_2">Ort 2 (optional)</label>
+          <select id="preferred_location_2" name="preferred_location_2">
+            <option value="">-- Optional --</option>
+            {% for loc in locations %}
+              <option value="{{ loc.id }}">{{ loc.name }} ({{ loc.district }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="preferred_location_3">Ort 3 (optional)</label>
+          <select id="preferred_location_3" name="preferred_location_3">
+            <option value="">-- Optional --</option>
+            {% for loc in locations %}
+              <option value="{{ loc.id }}">{{ loc.name }} ({{ loc.district }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      </fieldset>
+
+      <div class="form-group">
+        <label for="training_goal">🎯 Trainingsziel</label>
+        <select id="training_goal" name="training_goal">
+          <option value="">-- Kein Ziel angegeben --</option>
+          <option value="Technik verbessern">Technik verbessern</option>
+          <option value="Kraul lernen">Kraul lernen</option>
+          <option value="Ausdauer">Ausdauer</option>
+          <option value="Anfängertraining">Anfängertraining</option>
+          <option value="Triathlon/Fitness">Triathlon/Fitness</option>
+          <option value="Kind/Jugendlicher">Kind/Jugendlicher</option>
+          <option value="Sonstiges">Sonstiges</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="user_note">📝 Was soll Moritz wissen?</label>
+        <textarea id="user_note" name="user_note" rows="4" placeholder="Besonderheiten, Einschränkungen, Wünsche..."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Anfrage senden</button>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Abbrechen</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
