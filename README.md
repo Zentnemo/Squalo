@@ -341,4 +341,161 @@ IP-Adresse finden: `ipconfig` (Windows) oder `ifconfig` (Mac/Linux)
 
 ---
 
-**Viel Erfolg mit Squalo! 🏊**
+## 🏊 Squalo Swim Locations Database
+
+### Location Seed Data
+
+The Squalo webapp now includes a comprehensive database of **30+ Berlin swimming locations** for the MVP launch:
+
+#### Core Berlin Locations (23 locations)
+- Stadtbad Tiergarten
+- Kombibad Seestraße
+- Schwimm- und Sprunghalle im Europasportpark
+- Sommerbad Neukölln
+- Prinzenbad
+- Stadtbad Charlottenburg – Alte Halle
+- Strandbad Plötzensee
+- Flughafensee
+- Strandbad Wannsee
+- Stadtbad Schöneberg
+- Stadtbad Wilmersdorf I
+- Stadtbad Wilmersdorf II
+- Kombibad Gropiusstadt – Halle
+- Kombibad Gropiusstadt – Sommerbad
+- Sommerbad Kreuzberg
+- Sommerbad Olympiastadion
+- Kombibad Spandau Süd
+- Stadtbad Lankwitz
+- Tegeler See
+- Stadtbad Fischerinsel
+- Müggelsee
+- Strandbad Friedrichshagen
+- James Simon Stadtbad
+
+#### Additional Berlin Locations (8+ locations)
+- Arena Badeschiff
+- Schlachtensee
+- Krumme Lanke
+- Sommerbad Humboldthain
+- Strandbad Weißensee
+- Freibad Jungfernheide / Strandbad Jungfernheide
+- Strandbad Orankesee
+- Sommerbad Pankow
+- Sommerbad Mariendorf
+- Strandbad Grünau
+- Strandbad Müggelsee / Rahnsdorf-Bereich
+- Sacrower See / Potsdam-nah
+- Heiliger See / Potsdam
+- Stadtbad Neukölln
+- Paracelsus-Bad
+- Schwimmhalle Finckensteinallee
+- Kombibad Mariendorf
+- Schwimmhalle Anton-Saefkow-Platz
+
+### Database Features
+
+- **Idempotent Seeding**: Locations are only created if they don't already exist
+- **Data Updates**: Existing locations are updated if data is missing
+- **Comprehensive Coverage**: All locations include coordinates, addresses, and detailed information
+- **Map Integration**: All locations are available for the interactive map
+
+### Location Data Structure
+
+Each location includes:
+- `name` – Location name
+- `location_type` – Schwimmbad, Sommerbad, Strandbad, See, etc.
+- `district` – Berlin district
+- `address` – Full address
+- `latitude` – GPS coordinates
+- `longitude` – GPS coordinates
+- `official_status` – offen, geschlossen, unbekannt
+- `verified_status` – verifiziert, nicht verifiziert
+- `water_temperature` – Typical water temperature
+- `crowd_level` – niedrig, mittel, hoch
+- `maps_url` – Google Maps link
+
+### Map Features
+
+The interactive map displays all locations with:
+- Custom markers for each location type
+- Popup information with name, type, district, and address
+- Google Maps links for navigation
+- Responsive design for mobile devices
+
+### Database Management
+
+#### Local Development
+```bash
+# Initialize database with seed data
+python -m flask --app app seed
+```
+
+#### Render Deployment
+The database is automatically initialized on Render startup:
+- Instance directory is created automatically
+- Database tables are created if missing
+- All locations are seeded if not present
+- Existing locations are updated with missing data
+
+#### Environment Variables
+For production deployment, set these environment variables in Render:
+
+| Variable | Description |
+|----------|-------------|
+| `SECRET_KEY` | Flask secret key (generate random string) |
+| `DATABASE_URL` | Database URL (leave empty for SQLite auto-setup) |
+| `FLASK_ENV` | Flask environment (production) |
+| `BOOKING_NOTIFICATION_EMAIL` | Email for booking notifications |
+
+### Location Categories
+
+**Indoor Pools:**
+- Stadtbad Tiergarten
+- Stadtbad Charlottenburg – Alte Halle
+- Stadtbad Schöneberg
+- Stadtbad Wilmersdorf I & II
+- Paracelsus-Bad
+- Schwimmhalle Finckensteinallee
+- Schwimmhalle Anton-Saefkow-Platz
+
+**Summer Pools:**
+- Sommerbad Neukölln
+- Prinzenbad
+- Sommerbad Kreuzberg
+- Sommerbad Olympiastadion
+- Sommerbad Humboldthain
+- Sommerbad Pankow
+- Sommerbad Mariendorf
+
+**Combination Pools:**
+- Kombibad Seestraße
+- Schwimm- und Sprunghalle im Europasportpark
+- Kombibad Gropiusstadt – Halle & Sommerbad
+- Kombibad Spandau Süd
+- Kombibad Mariendorf
+
+**Natural Waters:**
+- Strandbad Plötzensee
+- Flughafensee
+- Strandbad Wannsee
+- Tegeler See
+- Schlachtensee
+- Krumme Lanke
+- Strandbad Weißensee
+- Strandbad Orankesee
+- Strandbad Grünau
+- Strandbad Müggelsee / Rahnsdorf-Bereich
+- Sacrower See
+- Heiliger See
+- Müggelsee
+- Strandbad Friedrichshagen
+
+**Special Locations:**
+- Arena Badeschiff
+- James Simon Stadtbad
+- Stadtbad Neukölln
+- Stadtbad Lankwitz
+- Stadtbad Fischerinsel
+- Kombibad Gropiusstadt – Halle
+- Kombibad Spandau Süd
+- Kombibad Mariendorf

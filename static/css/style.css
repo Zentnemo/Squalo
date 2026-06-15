@@ -1405,3 +1405,57 @@ main {
   margin-bottom: 1rem;
 }
 
+/* Footer */
+.site-footer {
+  margin-top: 4rem;
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.85;
+  background-color: var(--dark-blue);
+  color: var(--white);
+}
+
+.site-footer a {
+  color: var(--light-turquoise);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.site-footer a:hover {
+  color: var(--orange);
+}
+
+/* Legal page */
+.legal-page {
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 0 1.25rem;
+  line-height: 1.65;
+}
+
+.legal-page h1,
+.legal-page h2 {
+  margin-top: 1.5rem;
+  color: var(--dark-blue);
+}
+
+.legal-page p {
+  margin-bottom: 1rem;
+}
+
+.legal-page ul {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.legal-page li {
+  margin-bottom: 0.5rem;
+}
+
+.highlight {
+  font-weight: 600;
+  color: var(--dark-blue);
+}
+

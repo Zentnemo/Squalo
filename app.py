@@ -391,27 +391,86 @@ def create_app() -> Flask:
             )
             db.session.add(user)
             
-        if not Location.query.first():
-            sample = [
+        # Seed all Squalo swim locations (idempotent - prevents duplicates)
+        # Import seed data from seed_data.py
+        try:
+            from seed_data import SWIM_LOCATIONS
+        except ImportError:
+            # Fallback to hardcoded locations if seed_data.py is not available
+            SWIM_LOCATIONS = [
                 ("Stadtbad Tiergarten", "Schwimmbad", "Mitte", "open", "verified", "25°C", "low", "https://maps.google.com"),
+                ("Kombibad Seestraße", "Kombibad", "Charlottenburg", "open", "verified", "28°C", "medium", "https://maps.google.com"),
+                ("Schwimm- und Sprunghalle im Europasportpark", "Kombibad", "Neukölln", "open", "verified", "26°C", "medium", "https://maps.google.com"),
                 ("Sommerbad Neukölln", "Sommerbad", "Neukölln", "open", "not_verified", "22°C", "medium", "https://maps.google.com"),
+                ("Prinzenbad", "Sommerbad", "Mitte", "open", "verified", "24°C", "low", "https://maps.google.com"),
+                ("Stadtbad Charlottenburg – Alte Halle", "Schwimmbad", "Charlottenburg", "open", "verified", "27°C", "low", "https://maps.google.com"),
                 ("Strandbad Plötzensee", "Strandbad", "Reinickendorf", "closed", "verified", "18°C", "high", "https://maps.google.com"),
+                ("Flughafensee", "See", "Reinickendorf", "open", "verified", "20°C", "low", "https://maps.google.com"),
+                ("Strandbad Wannsee", "Strandbad", "Steglitz-Zehlendorf", "open", "verified", "22°C", "medium", "https://maps.google.com"),
+                ("Stadtbad Schöneberg", "Schwimmbad", "Schöneberg", "open", "verified", "26°C", "medium", "https://maps.google.com"),
+                ("Stadtbad Wilmersdorf I", "Schwimmbad", "Wilmersdorf", "open", "verified", "25°C", "low", "https://maps.google.com"),
+                ("Stadtbad Wilmersdorf II", "Schwimmbad", "Wilmersdorf", "open", "verified", "25°C", "low", "https://maps.google.com"),
+                ("Kombibad Gropiusstadt – Halle", "Kombibad", "Neukölln", "open", "verified", "28°C", "medium", "https://maps.google.com"),
+                ("Kombibad Gropiusstadt – Sommerbad", "Sommerbad", "Neukölln", "open", "verified", "24°C", "medium", "https://maps.google.com"),
+                ("Sommerbad Kreuzberg", "Sommerbad", "Kreuzberg", "open", "verified", "23°C", "low", "https://maps.google.com"),
+                ("Sommerbad Olympiastadion", "Sommerbad", "Charlottenburg", "open", "verified", "26°C", "medium", "https://maps.google.com"),
+                ("Kombibad Spandau Süd", "Kombibad", "Spandau", "open", "verified", "27°C", "medium", "https://maps.google.com"),
+                ("Stadtbad Lankwitz", "Schwimmbad", "Steglitz-Zehlendorf", "open", "verified", "25°C", "low", "https://maps.google.com"),
+                ("Tegeler See", "See", "Reinickendorf", "open", "verified", "19°C", "low", "https://maps.google.com"),
+                ("Stadtbad Fischerinsel", "Schwimmbad", "Mitte", "open", "verified", "24°C", "low", "https://maps.google.com"),
+                ("Müggelsee", "See", "Treptow-Köpenick", "open", "verified", "21°C", "low", "https://maps.google.com"),
+                ("Strandbad Friedrichshagen", "Strandbad", "Treptow-Köpenick", "open", "verified", "22°C", "medium", "https://maps.google.com"),
             ]
-            for name, ltype, district, status, verified, temp, crowd, maps in sample:
+        
+        # Seed locations that don't already exist (idempotent)
+        for location_data in SWIM_LOCATIONS:
+            name = location_data["name"]
+            existing_location = Location.query.filter_by(name=name).first()
+            if existing_location:
+                # Update existing location if data is missing
+                if not existing_location.location_type:
+                    existing_location.location_type = location_data["location_type"]
+                if not existing_location.district:
+                    existing_location.district = location_data["district"]
+                if not existing_location.official_status:
+                    existing_location.official_status = location_data["official_status"]
+                if not existing_location.verified_status:
+                    existing_location.verified_status = location_data["verified_status"]
+                if not existing_location.water_temperature:
+                    existing_location.water_temperature = location_data["water_temperature"]
+                if not existing_location.crowd_level:
+                    existing_location.crowd_level = location_data["crowd_level"]
+                if not existing_location.maps_url:
+                    existing_location.maps_url = location_data["maps_url"]
+                if not existing_location.latitude:
+                    existing_location.latitude = location_data["latitude"]
+                if not existing_location.longitude:
+                    existing_location.longitude = location_data["longitude"]
+                if not existing_location.address:
+                    existing_location.address = location_data["address"]
+            else:
+                # Create new location
                 loc = Location(
-                    name=name, 
-                    location_type=ltype, 
-                    district=district, 
-                    official_status=status, 
-                    verified_status=verified, 
-                    water_temperature=temp, 
-                    crowd_level=crowd, 
-                    maps_url=maps
+                    name=location_data["name"], 
+                    location_type=location_data["location_type"], 
+                    district=location_data["district"], 
+                    address=location_data["address"], 
+                    latitude=location_data["latitude"], 
+                    longitude=location_data["longitude"], 
+                    official_status=location_data["official_status"], 
+                    verified_status=location_data["verified_status"], 
+                    water_temperature=location_data["water_temperature"], 
+                    crowd_level=location_data["crowd_level"], 
+                    maps_url=location_data["maps_url"]
                 )
                 db.session.add(loc)
                 
         db.session.commit()
-        print("Seeded DB")
+        print(f"Seeded {len(SWIM_LOCATIONS)} Squalo swim locations")
+
+    @app.route("/impressum")
+    def impressum():
+        return render_template("impressum.html")
 
     return app
 
