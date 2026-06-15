@@ -384,42 +384,45 @@ SWIM_LOCATIONS = [
         "crowd_level": "medium",
         "maps_url": "https://maps.google.com/?q=Sommerbad+Humboldthain+Berlin"
     },
+    # ── 28 ──
     {
-        "name": "Strandbad WeiÃŸensee",
+        "name": "Strandbad Weißensee",
         "location_type": "Strandbad",
-        "district": "WeiÃŸensee",
-        "address": "Am WeiÃŸensee, 13086 Berlin",
-        "latitude": 52.5333,
-        "longitude": 13.4000,
+        "district": "Weißensee",
+        "address": "Am Weißensee, 13086 Berlin",
+        "latitude": 52.5520,
+        "longitude": 13.4700,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "23Â°C",
+        "water_temperature": "23°C",
         "crowd_level": "medium",
-        "maps_url": "https://maps.google.com/?q=Strandbad+WeiÃŸensee+Berlin"
+        "maps_url": "https://maps.google.com/?q=Strandbad+Wei%C3%9Fensee+Berlin"
     },
+    # ── 29 ──
     {
         "name": "Freibad Jungfernheide / Strandbad Jungfernheide",
-        "location_type": "Outdoor",
-        "district": "Charlottenburg",
-        "address": "JÃ¤gerallee 55, 10785 Berlin",
-        "latitude": 52.5167,
-        "longitude": 13.3167,
+        "location_type": "Strandbad",
+        "district": "Charlottenburg-Wilmersdorf",
+        "address": "Jägerallee 55, 10785 Berlin",
+        "latitude": 52.5270,
+        "longitude": 13.2830,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "24Â°C",
+        "water_temperature": "24°C",
         "crowd_level": "medium",
         "maps_url": "https://maps.google.com/?q=Freibad+Jungfernheide+Berlin"
     },
+    # ── 30 ──
     {
         "name": "Strandbad Orankesee",
         "location_type": "Strandbad",
-        "district": "MÃ¼ggelheim",
+        "district": "Lichtenberg",
         "address": "Am Orankesee, 12587 Berlin",
-        "latitude": 52.4333,
-        "longitude": 13.5667,
+        "latitude": 52.5480,
+        "longitude": 13.5290,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "20Â°C",
+        "water_temperature": "20°C",
         "crowd_level": "low",
         "maps_url": "https://maps.google.com/?q=Strandbad+Orankesee+Berlin"
     },
