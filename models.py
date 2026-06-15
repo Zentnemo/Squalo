@@ -73,6 +73,10 @@ class Booking(db.Model):
     training_goal = db.Column(db.String(128))
     user_note = db.Column(db.Text)
     admin_note = db.Column(db.Text)
+    # Duration & pricing
+    duration_minutes = db.Column(db.Integer, default=60)
+    duration_slots = db.Column(db.Integer, default=2)
+    estimated_price = db.Column(db.Float, default=50.0)
     status = db.Column(db.String(32), default='angefragt')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

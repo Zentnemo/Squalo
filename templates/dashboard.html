@@ -21,6 +21,28 @@
             </div>
             <div class="booking-content">
 
+              {# ── Duration & Pricing ── #}
+              {% if b.duration_minutes %}
+                <p><strong>⏱️ Dauer:</strong>
+                  {% if b.duration_minutes == 30 %}30 Minuten
+                  {% elif b.duration_minutes == 60 %}1 Stunde
+                  {% elif b.duration_minutes == 90 %}1,5 Stunden
+                  {% elif b.duration_minutes == 120 %}2 Stunden
+                  {% elif b.duration_minutes == 180 %}3 Stunden
+                  {% elif b.duration_minutes == 240 %}4 Stunden
+                  {% elif b.duration_minutes == 300 %}5 Stunden ✨
+                  {% else %}{{ b.duration_minutes }} Minuten
+                  {% endif %}
+                </p>
+              {% endif %}
+              {% if b.estimated_price %}
+                <p><strong>💰 Geschätzter Preis:</strong> {{ b.estimated_price|int }} €
+                  {% if b.duration_minutes == 300 %}
+                    <span style="font-size:13px;color:#e65c00;">(5-Stunden-Paket – eine Stunde geschenkt!)</span>
+                  {% endif %}
+                </p>
+              {% endif %}
+
               {# ── Time options ── #}
               <p><strong>Zeitoptionen:</strong></p>
               <ul>

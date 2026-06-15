@@ -371,6 +371,15 @@ main {
   font-weight: 700;
 }
 
+.map-section h2.baywatch-title {
+  color: var(--squalo-neon-orange);
+  font-family: 'Righteous', cursive;
+  font-size: 32px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  filter: drop-shadow(0 0 12px rgba(255, 159, 0, 0.25));
+}
+
 .map-section > p {
   margin: 0 0 12px 0;
   color: var(--text-light);

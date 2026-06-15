@@ -104,6 +104,22 @@ def create_app() -> Flask:
     with app.app_context():
         db.create_all()
         
+        # ── Migration: Neue Spalten für Booking (duration, pricing) ──
+        try:
+            with db.engine.connect() as conn:
+                # Check if column exists – if not, add it
+                import sqlalchemy as sa
+                inspector = sa.inspect(db.engine)
+                columns = [c['name'] for c in inspector.get_columns('booking')]
+                if 'duration_minutes' not in columns:
+                    conn.execute(sa.text("ALTER TABLE booking ADD COLUMN duration_minutes INTEGER DEFAULT 60"))
+                    conn.execute(sa.text("ALTER TABLE booking ADD COLUMN duration_slots INTEGER DEFAULT 2"))
+                    conn.execute(sa.text("ALTER TABLE booking ADD COLUMN estimated_price FLOAT DEFAULT 50.0"))
+                    conn.commit()
+                    print("[MIGRATION] Spalten duration_minutes, duration_slots, estimated_price hinzugefügt")
+        except Exception as e:
+            print(f"[MIGRATION] Fehler beim Hinzufügen der Spalten (ignoriert): {e}")
+        
         # ── Admin-User ──────────────────────────────────────────────
         # Admin-E-Mail (fest, kann später über ENV geändert werden)
         admin_email = os.environ.get("ADMIN_EMAIL", "zentner.moritz@gmail.com")
@@ -324,6 +340,26 @@ def create_app() -> Flask:
         if request.method == "POST":
             priority_type = request.form.get("priority_type", "balanced")
 
+            # Parse duration
+            duration_raw = request.form.get("duration_minutes", "60")
+            try:
+                duration_minutes = int(duration_raw)
+            except (ValueError, TypeError):
+                duration_minutes = 60
+            # Valid durations
+            valid_durations = [30, 60, 90, 120, 180, 240, 300]
+            if duration_minutes not in valid_durations:
+                duration_minutes = 60
+
+            duration_slots = duration_minutes // 30
+
+            # Price calculation
+            if duration_minutes == 300:
+                # 5h package: 200 € instead of 250 €
+                estimated_price = 200.0
+            else:
+                estimated_price = duration_slots * 25.0
+
             # Parse up to 3 time options
             def parse_date_time(idx):
                 d = request.form.get(f"date_option_{idx}")
@@ -349,6 +385,11 @@ def create_app() -> Flask:
             training_goal = request.form.get("training_goal")
             user_note = request.form.get("user_note")
 
+            # Validate
+            if not d1 or not t1:
+                flash("Bitte mindestens einen Zeitwunsch (Datum + Uhrzeit) angeben.", "danger")
+                return render_template("booking.html", locations=locations)
+
             # Build legacy requested_start from option 1
             requested_start = None
             if d1 and t1:
@@ -358,6 +399,9 @@ def create_app() -> Flask:
             b = Booking(
                 user_id=current_user.id,
                 priority_type=priority_type,
+                duration_minutes=duration_minutes,
+                duration_slots=duration_slots,
+                estimated_price=estimated_price,
                 date_option_1=d1, time_option_1=t1,
                 date_option_2=d2, time_option_2=t2,
                 date_option_3=d3, time_option_3=t3,
@@ -375,7 +419,7 @@ def create_app() -> Flask:
             # Simulated notification
             send_booking_notification(b)
 
-            flash("Booking requested", "success")
+            flash("Deine Terminanfrage wurde gesendet! Ich prüfe deine Wunschzeiten und melde mich bei dir.", "success")
             return redirect(url_for("dashboard"))
         return render_template("booking.html", locations=locations)
 

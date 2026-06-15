@@ -18,6 +18,8 @@
               <th>Status</th>
               <th>Nutzer</th>
               <th>E-Mail</th>
+              <th>Dauer</th>
+              <th>Preis</th>
               <th>Zeitoptionen</th>
               <th>Prio</th>
               <th>Wunschorte</th>
@@ -37,6 +39,25 @@
                 </td>
                 <td>{{ b.user.name }}</td>
                 <td>{{ b.user.email }}</td>
+                <td style="white-space:nowrap;">
+                  {% if b.duration_minutes %}
+                    {% if b.duration_minutes == 30 %}30 Min
+                    {% elif b.duration_minutes == 60 %}1 Std
+                    {% elif b.duration_minutes == 90 %}1,5 Std
+                    {% elif b.duration_minutes == 120 %}2 Std
+                    {% elif b.duration_minutes == 180 %}3 Std
+                    {% elif b.duration_minutes == 240 %}4 Std
+                    {% elif b.duration_minutes == 300 %}5 Std ✨
+                    {% else %}{{ b.duration_minutes }} Min
+                    {% endif %}
+                  {% else %}–{% endif %}
+                </td>
+                <td>
+                  {% if b.estimated_price %}
+                    <strong>{{ b.estimated_price|int }} €</strong>
+                    {% if b.duration_minutes == 300 %}<br><span style="font-size:11px;color:#e65c00;">🎉 Paket</span>{% endif %}
+                  {% else %}–{% endif %}
+                </td>
                 <td class="locations-cell">
                   <ul style="margin:0;padding-left:16px;font-size:13px;">
                     {% if b.date_option_1 %}
@@ -90,7 +111,7 @@
                 </td>
               </tr>
               <tr class="booking-details">
-                <td colspan="7">
+                <td colspan="9">
                   {% if b.training_goal %}<strong>Trainingsziel:</strong> {{ b.training_goal }}<br>{% endif %}
                   {% if b.user_note %}<strong>Nutzer-Notiz:</strong> {{ b.user_note }}<br>{% endif %}
                   {% if b.admin_note %}<strong>Coach-Notiz:</strong> {{ b.admin_note }}<br>{% endif %}
