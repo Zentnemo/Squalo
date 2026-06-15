@@ -91,6 +91,7 @@ class FeedPost(db.Model):
     image_path = db.Column(db.String(512))
     is_pinned = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user = db.relationship('User', backref='feed_posts')
 
 
 class TrainingNote(db.Model):

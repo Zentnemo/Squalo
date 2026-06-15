@@ -228,7 +228,27 @@ def create_app() -> Flask:
                 })
         print(f"[DEBUG] Index: {len(locations_for_map)} locations an Leaflet übergeben")
         
-        return render_template("index.html", locations=locations_with_status, locations_for_map=locations_for_map)
+        # ── Community Feed Posts ──
+        feed_posts = FeedPost.query.order_by(FeedPost.created_at.desc()).limit(20).all()
+        
+        return render_template("index.html", locations=locations_with_status,
+                               locations_for_map=locations_for_map,
+                               feed_posts=feed_posts)
+
+    @app.route("/feed/post", methods=["POST"])
+    @login_required
+    def feed_post():
+        text = request.form.get("text", "").strip()
+        if not text:
+            flash("Bitte gib einen Text ein.", "danger")
+            return redirect(url_for("index"))
+        
+        post = FeedPost(user_id=current_user.id, text=text)
+        db.session.add(post)
+        db.session.commit()
+        
+        flash("Dein Update wurde veröffentlicht!", "success")
+        return redirect(url_for("index"))
 
     @app.route("/register", methods=["GET", "POST"])
     def register():

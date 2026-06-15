@@ -26,32 +26,28 @@
     <aside class="community-feed">
       <h3>🏊 Community</h3>
       {% if current_user.is_authenticated %}
-        <div class="feed-input">
-          <textarea class="feed-textarea" placeholder="Wie ist die Lage an deinem Schwimmort?" rows="3"></textarea>
-          <button class="btn btn-small btn-primary" onclick="alert('TODO: Community-Update posten (Datenbank-Modell folgt in Kürze)')">Update posten</button>
-        </div>
+        <form method="POST" action="{{ url_for('feed_post') }}" class="feed-input">
+          <textarea name="text" class="feed-textarea" placeholder="Wie ist die Lage an deinem Schwimmort?" rows="3" required></textarea>
+          <button type="submit" class="btn btn-small btn-primary">Update posten</button>
+        </form>
       {% else %}
         <p class="feed-login-hint">Logge dich ein, um Updates aus der Community zu posten.</p>
       {% endif %}
       <div class="feed-items">
-        <div class="feed-item">
-          <span class="feed-author">Lisa</span>
-          <span class="feed-text">Heute ruhig am Flughafensee 🌊</span>
-        </div>
-        <div class="feed-item">
-          <span class="feed-author">Moritz</span>
-          <span class="feed-text">Plötzensee gut besucht – Wasser klar ✅</span>
-        </div>
-        <div class="feed-item">
-          <span class="feed-author">Anna</span>
-          <span class="feed-text">Schlachtensee: wenig los, perfekt zum Bahnenziehen 🏊</span>
-        </div>
-        <div class="feed-item">
-          <span class="feed-author">Tom</span>
-          <span class="feed-text">Sommerbad Neukölln angenehm – 26°C 🌡️</span>
-        </div>
+        {% if feed_posts %}
+          {% for post in feed_posts %}
+            <div class="feed-item">
+              <span class="feed-author">{{ post.user.name }}</span>
+              <span class="feed-text">{{ post.text }}</span>
+              <span class="feed-time">{{ post.created_at.strftime('%d.%m. %H:%M') }}</span>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="feed-empty">
+            Noch keine Community-Updates. Sei die/der Erste! 🏊
+          </div>
+        {% endif %}
       </div>
-      <p class="feed-todo-note">⚠️ Community-Feed bald live – dein Update erscheint dann sofort.</p>
     </aside>
 
     <section class="map-section">
@@ -67,9 +63,15 @@
       <div class="promo-shimmer"></div>
       <div class="promo-content">
         <div class="promo-icon">🦈</div>
-        <h3>Squalo Premium</h3>
+        <h3><span class="promo-squalo">Squalo</span> <span class="promo-premium">Premium</span></h3>
         <p>Bald verfügbar: Trainingspläne, Produkte &amp; exklusive Badesee-Updates.</p>
+        <div class="promo-fishes">
+          <span class="small-fish">🐟</span>
+          <span class="small-fish">🐠</span>
+        </div>
         <div class="promo-bubbles">
+          <span class="bubble"></span>
+          <span class="bubble"></span>
           <span class="bubble"></span>
           <span class="bubble"></span>
           <span class="bubble"></span>

@@ -472,22 +472,31 @@ main {
   line-height: 1.4;
 }
 
-.feed-todo-note {
+.feed-time {
   font-size: 11px;
   color: var(--text-light);
-  margin: 12px 0 0 0;
+  margin-top: 2px;
+  opacity: 0.7;
+}
+
+.feed-empty {
+  font-size: 13px;
+  color: var(--text-light);
+  padding: 20px 12px;
   text-align: center;
+  background: #f8f9fa;
+  border-radius: 8px;
   font-style: italic;
-  opacity: 0.75;
+  line-height: 1.5;
 }
 
 /* ── Promo Panel (right) ── */
 .promo-panel {
   position: relative;
   border-radius: 16px;
-  padding: 28px 18px;
+  padding: 24px 18px 28px;
   overflow: hidden;
-  min-height: 360px;
+  min-height: 480px;
   display: flex;
   align-items: flex-end;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
@@ -535,27 +544,42 @@ main {
 }
 
 .promo-icon {
-  font-size: 40px;
+  font-size: 42px;
   line-height: 1;
-  margin-bottom: 8px;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2));
-  animation: promoShark 4s ease-in-out infinite;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
+  animation: promoShark 7s ease-in-out infinite;
+  display: inline-block;
 }
 
 @keyframes promoShark {
-  0%, 100% { transform: translateX(0) scaleX(1); }
-  25%      { transform: translateX(6px) scaleX(1); }
-  50%      { transform: translateX(0) scaleX(-1); }
-  75%      { transform: translateX(-6px) scaleX(-1); }
+  0%      { transform: translate(0, 0) scaleX(1); }
+  15%     { transform: translate(8px, -4px) scaleX(1); }
+  30%     { transform: translate(3px, -6px) scaleX(1); }
+  50%     { transform: translate(-8px, -2px) scaleX(-1); }
+  70%     { transform: translate(-4px, 2px) scaleX(-1); }
+  85%     { transform: translate(2px, 4px) scaleX(-1); }
+  100%    { transform: translate(0, 0) scaleX(1); }
 }
 
 .promo-content h3 {
-  margin: 0 0 8px 0;
-  font-size: 20px;
+  margin: 0 0 6px 0;
+  font-size: 22px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   color: #fff;
+  line-height: 1.2;
+}
+
+.promo-squalo {
+  color: var(--squalo-neon-orange);
+  filter: drop-shadow(0 0 12px rgba(255, 159, 0, 0.4));
+}
+
+.promo-premium {
+  color: #ffffff;
+  font-weight: 700;
 }
 
 .promo-content p {
@@ -563,6 +587,46 @@ main {
   font-size: 13px;
   line-height: 1.6;
   opacity: 0.95;
+}
+
+/* ── Small fishes ── */
+.promo-fishes {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.small-fish {
+  position: absolute;
+  font-size: 16px;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.15));
+  animation: fishSwim 12s ease-in-out infinite;
+}
+
+.small-fish:nth-child(1) {
+  top: 15%;
+  left: -20px;
+  animation-duration: 14s;
+  animation-delay: 0s;
+}
+
+.small-fish:nth-child(2) {
+  top: 30%;
+  left: -30px;
+  animation-duration: 18s;
+  animation-delay: 3s;
+}
+
+@keyframes fishSwim {
+  0%   { transform: translateX(0) scaleX(1); opacity: 0; }
+  5%   { opacity: 0.7; }
+  40%  { transform: translateX(300px) scaleX(1); opacity: 0.8; }
+  45%  { transform: translateX(320px) scaleX(-1); opacity: 0.6; }
+  80%  { transform: translateX(20px) scaleX(-1); opacity: 0.7; }
+  85%  { transform: translateX(0) scaleX(1); opacity: 0.5; }
+  100% { transform: translateX(-10px) scaleX(1); opacity: 0; }
 }
 
 /* ── Bubbles decoration ── */
@@ -584,10 +648,12 @@ main {
   animation: bubbleUp 6s ease-in-out infinite;
 }
 
-.bubble:nth-child(1)  { left: 15%;  width: 10px; height: 10px; animation-delay: 0s;   animation-duration: 5.5s; }
-.bubble:nth-child(2)  { left: 35%;  width: 6px;  height: 6px;  animation-delay: 1.2s; animation-duration: 6.2s; }
-.bubble:nth-child(3)  { left: 55%;  width: 12px; height: 12px; animation-delay: 2.5s; animation-duration: 7.0s; }
-.bubble:nth-child(4)  { left: 78%;  width: 7px;  height: 7px;  animation-delay: 0.8s; animation-duration: 5.0s; }
+.bubble:nth-child(1)  { left: 10%;  width: 10px; height: 10px; animation-delay: 0s;   animation-duration: 5.5s; }
+.bubble:nth-child(2)  { left: 28%;  width: 5px;  height: 5px;  animation-delay: 1.0s; animation-duration: 4.8s; }
+.bubble:nth-child(3)  { left: 45%;  width: 14px; height: 14px; animation-delay: 2.2s; animation-duration: 7.5s; }
+.bubble:nth-child(4)  { left: 60%;  width: 7px;  height: 7px;  animation-delay: 0.6s; animation-duration: 5.2s; }
+.bubble:nth-child(5)  { left: 74%;  width: 11px; height: 11px; animation-delay: 3.0s; animation-duration: 6.8s; }
+.bubble:nth-child(6)  { left: 88%;  width: 6px;  height: 6px;  animation-delay: 1.8s; animation-duration: 4.5s; }
 
 @keyframes bubbleUp {
   0%   { transform: translateY(0)   scale(0.8); opacity: 0;   }
