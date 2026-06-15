@@ -135,31 +135,79 @@ def create_app() -> Flask:
             )
             db.session.add(user)
             
-        if not Location.query.first():
-            sample = [
-                ("Stadtbad Tiergarten", "Schwimmbad", "Mitte", "open", "verified", "25°C", "low", "https://maps.google.com"),
-                ("Sommerbad Neukölln", "Sommerbad", "Neukölln", "open", "not_verified", "22°C", "medium", "https://maps.google.com"),
-                ("Strandbad Plötzensee", "Strandbad", "Reinickendorf", "closed", "verified", "18°C", "high", "https://maps.google.com"),
-            ]
-            for name, ltype, district, status, verified, temp, crowd, maps in sample:
+        # ── Standorte seeden (idempotent: vorhandene werden aktualisiert) ──
+        try:
+            from seed_data import SWIM_LOCATIONS as SEED_LOCATIONS
+        except ImportError:
+            SEED_LOCATIONS = []
+            print("[WARN] seed_data.py nicht gefunden – keine Locations geseedet")
+        
+        seed_count_new = 0
+        seed_count_upd = 0
+        for data in SEED_LOCATIONS:
+            existing = Location.query.filter_by(name=data["name"]).first()
+            if existing:
+                # Update existing location
+                changed = False
+                for field in ["location_type", "district", "address", "latitude", "longitude",
+                              "official_status", "verified_status", "water_temperature", "crowd_level", "maps_url"]:
+                    val = data.get(field)
+                    if val is not None and getattr(existing, field) != val:
+                        setattr(existing, field, val)
+                        changed = True
+                if changed:
+                    seed_count_upd += 1
+            else:
                 loc = Location(
-                    name=name, 
-                    location_type=ltype, 
-                    district=district, 
-                    official_status=status, 
-                    verified_status=verified, 
-                    water_temperature=temp, 
-                    crowd_level=crowd, 
-                    maps_url=maps
+                    name=data["name"],
+                    location_type=data["location_type"],
+                    district=data["district"],
+                    address=data.get("address", ""),
+                    latitude=data.get("latitude"),
+                    longitude=data.get("longitude"),
+                    official_status=data["official_status"],
+                    verified_status=data["verified_status"],
+                    water_temperature=data["water_temperature"],
+                    crowd_level=data["crowd_level"],
+                    maps_url=data["maps_url"]
                 )
                 db.session.add(loc)
+                seed_count_new += 1
+        
+        if seed_count_new or seed_count_upd:
+            print(f"[OK] Standorte: {seed_count_new} neu, {seed_count_upd} aktualisiert")
+        else:
+            print(f"[OK] Alle {len(SEED_LOCATIONS)} Standorte bereits aktuell")
                 
         db.session.commit()
 
     @app.route("/")
     def index():
         locations = Location.query.order_by(Location.name.asc()).all()
-        return render_template("index.html", locations=locations)
+        print(f"[DEBUG] Index: {len(locations)} locations aus DB geladen")
+        
+        # Für Leaflet: nur Locations mit Koordinaten als JSON
+        locations_for_map = []
+        for loc in locations:
+            if loc.latitude is not None and loc.longitude is not None:
+                locations_for_map.append({
+                    "id": loc.id,
+                    "name": loc.name,
+                    "location_type": loc.location_type,
+                    "district": loc.district,
+                    "address": loc.address,
+                    "latitude": float(loc.latitude),
+                    "longitude": float(loc.longitude),
+                    "official_status": loc.official_status,
+                    "verified_status": loc.verified_status,
+                    "water_temperature": loc.water_temperature,
+                    "crowd_level": loc.crowd_level,
+                    "maps_url": loc.maps_url,
+                    "booking_url": url_for("booking") + "?location_id=" + str(loc.id)
+                })
+        print(f"[DEBUG] Index: {len(locations_for_map)} locations an Leaflet übergeben")
+        
+        return render_template("index.html", locations=locations, locations_for_map=locations_for_map)
 
     @app.route("/register", methods=["GET", "POST"])
     def register():

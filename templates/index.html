@@ -23,7 +23,7 @@
 
   <div class="container">
   <section class="map-section">
-    <h2>🗺️ Interaktive Karte Berliner Schwimmorte</h2>
+    <h2>Interaktive Karte Berliner Schwimmorte</h2>
     <p>Klicke auf die Marker, um Infos zu jedem Ort anzuzeigen</p>
     <div id="map"></div>
     <p style="font-size: 13px; color: var(--text-light); margin-top: 12px;">
@@ -32,7 +32,7 @@
   </section>
 
   <section class="info-section">
-    <h2>ℹ️ Wie funktioniert Squalo?</h2>
+    <h2>Wie funktioniert Squalo?</h2>
     <div class="info-cards">
       <div class="info-card">
         <h3>1️⃣ Registrieren</h3>
@@ -54,7 +54,7 @@
   </section>
 
   <section class="locations-section">
-    <h2>📍 Alle Berliner Schwimmorte</h2>
+    <h2>Alle Berliner Schwimmorte</h2>
     <p>Übersicht aller verfügbaren Trainings-Locations</p>
     
     {% if locations %}
@@ -79,9 +79,13 @@
                   {{ loc.crowd_level }}
                 </span>
               </p>
+              {% if loc.verified_status %}
+              <p><strong>Verifiziert:</strong> {{ loc.verified_status }}</p>
+              {% endif %}
             </div>
             <div class="location-footer">
               <a href="{{ loc.maps_url }}" target="_blank" class="btn-small">Route in Google Maps</a>
+              <a href="{{ url_for('booking') }}?location_id={{ loc.id }}" class="btn-small btn-primary">Termin hier anfragen</a>
             </div>
           </div>
         {% endfor %}
@@ -147,57 +151,26 @@
       .catch(err => console.warn('District GeoJSON failed to load:', err));
 
     // ── Swimming Locations ──
-    const locations = [
-      {% for loc in locations %}
-        {
-          name: "{{ loc.name }}",
-          type: "{{ loc.location_type }}",
-          district: "{{ loc.district }}",
-          status: "{{ loc.official_status }}",
-          temp: "{{ loc.water_temperature or '–' }}",
-          crowd: "{{ loc.crowd_level }}",
-          maps_url: "{{ loc.maps_url }}",
-          lat: {{ loc.latitude or 'null' }},
-          lng: {{ loc.longitude or 'null' }}
-        }{{ "," if not loop.last }}
-      {% endfor %}
-    ];
+    const locations = {{ locations_for_map|tojson }};
+    console.log("Squalo locations geladen:", locations.length, locations);
 
-    // ── Marker icons by location type ──
-    // Hellblau/Poolblau = Schwimmbad (Hallenbäder)
-    // Türkis/Teal = Strandbad (Freibäder am Wasser)
-    // Dunkelblau = See (Naturenergie)
-    // Mittelblau = Sommerbad (Outdoor-Becken)
-    function getMarkerIcon(type) {
-      const t = (type || '').toLowerCase();
-      let color = '#0077b6';
-      let glow = 'rgba(0, 119, 182, 0.4)';
-      let label = '';
+    // ── Marker icons by location type (CSS-Klassen) ──
+    function getMarkerClass(locationType) {
+      const t = (locationType || '').toLowerCase();
+      if (t === 'see' || t === 'badestelle') return 'squalo-marker-lake';
+      if (t === 'strandbad') return 'squalo-marker-beach';
+      if (t === 'sommerbad' || t === 'outdoor') return 'squalo-marker-summer';
+      // Schwimmbad, Kombibad, Hallenbad, default
+      return 'squalo-marker-indoor';
+    }
 
-      if (t === 'schwimmbad' || t === 'kombibad') {
-        color = '#00b4d8';  // helles Poolblau
-        glow = 'rgba(0, 180, 216, 0.45)';
-        label = '🏊';
-      } else if (t === 'see') {
-        color = '#023e8a';  // tiefes Dunkelblau
-        glow = 'rgba(2, 62, 138, 0.5)';
-        label = '🌊';
-      } else if (t === 'strandbad') {
-        color = '#0891b2';  // türkis/cyan – klar abgegrenzt
-        glow = 'rgba(8, 145, 178, 0.45)';
-        label = '🏖️';
-      } else if (t === 'sommerbad') {
-        color = '#3b82f6';  // mittleres Blau
-        glow = 'rgba(59, 130, 246, 0.45)';
-        label = '☀️';
-      }
-
+    function getMarkerIcon(locationType) {
+      const cls = getMarkerClass(locationType);
       return L.divIcon({
-        className: 'custom-marker',
-        html: `<div class="marker-dot" style="background:${color};box-shadow:0 2px 8px ${glow}"><span class="marker-emoji">${label}</span></div>`,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14],
-        popupAnchor: [0, -16]
+        className: 'squalo-marker ' + cls,
+        iconSize: [22, 22],
+        iconAnchor: [11, 11],
+        popupAnchor: [0, -14]
       });
     }
 
@@ -220,28 +193,28 @@
 
     // Add markers for each location
     locations.forEach(function(loc) {
-      if (!loc.lat || !loc.lng) return;  // skip if no coordinates
+      if (!loc.latitude || !loc.longitude) return;  // skip if no coordinates
 
-      const marker = L.marker([loc.lat, loc.lng], { icon: getMarkerIcon(loc.type) }).addTo(map);
+      const marker = L.marker([loc.latitude, loc.longitude], { icon: getMarkerIcon(loc.location_type) }).addTo(map);
 
-      const crowd = crowdDisplay(loc.crowd, loc.status);
-      const cClass = crowdClass(loc.crowd);
+      const crowd = crowdDisplay(loc.crowd_level, loc.official_status);
+      const cClass = crowdClass(loc.crowd_level);
 
       const popup = `
         <div class="popup-card">
           <h4 class="popup-title">${loc.name}</h4>
           <div class="popup-meta">
-            <span class="popup-type">${loc.type}</span>
+            <span class="popup-type">${loc.location_type}</span>
             <span class="popup-district">${loc.district}</span>
           </div>
           <table class="popup-table">
             <tr>
               <td>Status</td>
-              <td><span class="status-badge status-${(loc.status || '').toLowerCase()}">${loc.status || 'unbekannt'}</span></td>
+              <td><span class="status-badge status-${(loc.official_status || '').toLowerCase()}">${loc.official_status || 'unbekannt'}</span></td>
             </tr>
             <tr>
               <td>Wassertemperatur</td>
-              <td>${loc.temp}</td>
+              <td>${loc.water_temperature || '–'}</td>
             </tr>
             <tr>
               <td>Auslastung</td>
@@ -256,7 +229,7 @@
               </svg>
               Route
             </a>
-            <a href="/booking" class="popup-book">
+            <a href="${loc.booking_url}" class="popup-book">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                 <line x1="16" y1="2" x2="16" y2="6"/>
@@ -277,10 +250,10 @@
       const div = L.DomUtil.create('div', 'map-legend');
       div.innerHTML = `
         <strong>Legende</strong>
-        <div><span class="legend-dot" style="background:#00b4d8"></span> 🏊 Schwimmbad / Kombibad</div>
-        <div><span class="legend-dot" style="background:#3b82f6"></span> ☀️ Sommerbad</div>
-        <div><span class="legend-dot" style="background:#0891b2"></span> 🏖️ Strandbad</div>
-        <div><span class="legend-dot" style="background:#023e8a"></span> 🌊 See</div>
+        <div><span class="legend-dot squalo-marker-indoor" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Schwimmbad / Kombibad</div>
+        <div><span class="legend-dot squalo-marker-summer" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Sommerbad / Freibad</div>
+        <div><span class="legend-dot squalo-marker-beach" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Strandbad</div>
+        <div><span class="legend-dot squalo-marker-lake" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> See / Badestelle</div>
       `;
       return div;
     };
