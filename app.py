@@ -102,16 +102,30 @@ def create_app() -> Flask:
     with app.app_context():
         db.create_all()
         
-        # Seed admin user and sample locations if database is empty
-        if not User.query.filter_by(email="admin@squalo.local").first():
-            admin = User(
-                name="Admin", 
-                email="admin@squalo.local", 
-                password_hash=generate_password_hash("devpassword"), 
+        # ── Admin-User ──────────────────────────────────────────────
+        # Admin-E-Mail (fest, kann später über ENV geändert werden)
+        admin_email = os.environ.get("ADMIN_EMAIL", "zentner.moritz@gmail.com")
+        # Admin-Passwort: via ENV (Render) oder lokaler Dev-Fallback
+        admin_password = os.environ.get("ADMIN_INITIAL_PASSWORD", "admin123")
+        
+        admin_user = User.query.filter_by(email=admin_email).first()
+        if admin_user:
+            # Existiert → Rolle und Passwort aktualisieren
+            admin_user.role = "admin"
+            admin_user.password_hash = generate_password_hash(admin_password)
+            print(f"[OK] Admin aktualisiert: {admin_email} (Rolle: admin)")
+        else:
+            # Neu anlegen
+            admin_user = User(
+                name="Admin",
+                email=admin_email,
+                password_hash=generate_password_hash(admin_password),
                 role="admin"
             )
-            db.session.add(admin)
+            db.session.add(admin_user)
+            print(f"[OK] Admin neu angelegt: {admin_email}")
             
+        # ── Demo-User ───────────────────────────────────────────────
         if not User.query.filter_by(email="user@squalo.local").first():
             user = User(
                 name="Max Mustermann", 
@@ -372,15 +386,25 @@ def create_app() -> Flask:
     @app.cli.command("seed")
     def seed_command():
         db.create_all()
-        # Seed admin user and sample locations if database is empty
-        if not User.query.filter_by(email="admin@squalo.local").first():
-            admin = User(
-                name="Admin", 
-                email="admin@squalo.local", 
-                password_hash=generate_password_hash("devpassword"), 
+        
+        # ── Admin-User (gleiche Logik wie create_app) ──────────────
+        admin_email = os.environ.get("ADMIN_EMAIL", "zentner.moritz@gmail.com")
+        admin_password = os.environ.get("ADMIN_INITIAL_PASSWORD", "admin123")
+        
+        admin_user = User.query.filter_by(email=admin_email).first()
+        if admin_user:
+            admin_user.role = "admin"
+            admin_user.password_hash = generate_password_hash(admin_password)
+            print(f"[OK] Admin aktualisiert: {admin_email}")
+        else:
+            admin_user = User(
+                name="Admin",
+                email=admin_email,
+                password_hash=generate_password_hash(admin_password),
                 role="admin"
             )
-            db.session.add(admin)
+            db.session.add(admin_user)
+            print(f"[OK] Admin neu angelegt: {admin_email}")
             
         if not User.query.filter_by(email="user@squalo.local").first():
             user = User(
