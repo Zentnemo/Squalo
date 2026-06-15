@@ -242,71 +242,75 @@ SWIM_LOCATIONS = [
         "verified_status": "verified",
         "water_temperature": "27°C",
         "crowd_level": "medium",
-        "maps_url": "https://maps.google.com/?q=Kombibad+Spandau+SÃ¼d+Berlin"
+        "maps_url": "https://maps.google.com/?q=Kombibad+Spandau+S%C3%BCd+Berlin"
     },
+    # ── 18 ──
     {
         "name": "Stadtbad Lankwitz",
         "location_type": "Schwimmbad",
         "district": "Steglitz-Zehlendorf",
-        "address": "Lankwitzer StraÃŸe 41, 12209 Berlin",
-        "latitude": 52.4167,
-        "longitude": 13.3000,
+        "address": "Lankwitzer Straße 41, 12209 Berlin",
+        "latitude": 52.4273,
+        "longitude": 13.3463,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "25Â°C",
+        "water_temperature": "25°C",
         "crowd_level": "low",
         "maps_url": "https://maps.google.com/?q=Stadtbad+Lankwitz+Berlin"
     },
-    # Step 5: Next 6 locations
+    # ── 19 ──
     {
         "name": "Tegeler See",
         "location_type": "See",
         "district": "Reinickendorf",
         "address": "Am Tegeler See, 13403 Berlin",
-        "latitude": 52.6333,
-        "longitude": 13.2833,
+        "latitude": 52.5822,
+        "longitude": 13.2900,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "19Â°C",
+        "water_temperature": "19°C",
         "crowd_level": "low",
         "maps_url": "https://maps.google.com/?q=Tegeler+See+Berlin"
     },
+    # ── 20 ──
     {
         "name": "Stadtbad Fischerinsel",
         "location_type": "Schwimmbad",
         "district": "Mitte",
         "address": "Fischerinsel 1, 10179 Berlin",
-        "latitude": 52.5167,
-        "longitude": 13.4000,
+        "latitude": 52.5112,
+        "longitude": 13.4055,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "24Â°C",
+        "water_temperature": "24°C",
         "crowd_level": "low",
         "maps_url": "https://maps.google.com/?q=Stadtbad+Fischerinsel+Berlin"
     },
+    # ── 21 ──
     {
-        "name": "MÃ¼ggelsee",
+        "name": "Müggelsee",
         "location_type": "See",
-        "district": "Treptow-KÃ¶penick",
-        "address": "Am MÃ¼ggelsee, 12587 Berlin",
-        "latitude": 52.4333,
-        "longitude": 13.5667,
+        "district": "Treptow-Köpenick",
+        "address": "Am Müggelsee, 12587 Berlin",
+        "latitude": 52.4350,
+        "longitude": 13.6483,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "21Â°C",
+        "water_temperature": "21°C",
         "crowd_level": "low",
-        "maps_url": "https://maps.google.com/?q=MÃ¼ggelsee+Berlin"
+        "maps_url": "https://maps.google.com/?q=M%C3%BCggelsee+Berlin"
     },
+    # ── 22 ──
     {
         "name": "Strandbad Friedrichshagen",
         "location_type": "Strandbad",
-        "district": "Treptow-KÃ¶penick",
-        "address": "Friedrichshagener StraÃŸe 221, 12527 Berlin",
-        "latitude": 52.4333,
-        "longitude": 13.5667,
+        "district": "Treptow-Köpenick",
+        "address": "Friedrichshagener Straße 221, 12527 Berlin",
+        "latitude": 52.4450,
+        "longitude": 13.6333,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "22Â°C",
+        "water_temperature": "22°C",
         "crowd_level": "medium",
         "maps_url": "https://maps.google.com/?q=Strandbad+Friedrichshagen+Berlin"
     },
