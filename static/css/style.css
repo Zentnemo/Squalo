@@ -1097,6 +1097,11 @@ main {
   color: #155724;
 }
 
+.status-open {
+  background-color: #d4edda;
+  color: #155724;
+}
+
 .status-geschlossen {
   background-color: #f8d7da;
   color: #721c24;
@@ -1123,6 +1128,12 @@ main {
 .crowd-hoch {
   background-color: #f8d7da;
   color: #721c24;
+}
+
+.crowd-geschlossen {
+  background-color: #e0e0e0;
+  color: #666666;
+  font-style: italic;
 }
 
 .location-footer {

@@ -7,6 +7,7 @@ Includes minimal auth (register/login), required pages and CLI helpers.
 import os
 import time as time_mod
 from datetime import datetime, date
+from zoneinfo import ZoneInfo
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -15,6 +16,7 @@ from pathlib import Path
 
 from config import Config
 from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting
+from location_status import compute_location_status
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
@@ -184,11 +186,26 @@ def create_app() -> Flask:
     @app.route("/")
     def index():
         locations = Location.query.order_by(Location.name.asc()).all()
-        print(f"[DEBUG] Index: {len(locations)} locations aus DB geladen")
+        now = datetime.now(ZoneInfo('Europe/Berlin'))
+        print(f"[DEBUG] Index: {len(locations)} locations (Berlin time: {now.strftime('%H:%M')})")
         
-        # Für Leaflet: nur Locations mit Koordinaten als JSON
-        locations_for_map = []
+        # Compute adaptive status for each location
+        locations_with_status = []
         for loc in locations:
+            status = compute_location_status(loc, now)
+            # Attach computed fields as dynamic attributes (not persisted)
+            loc._opening_status = status['opening_status']
+            loc._opening_status_short = status['opening_status_short']
+            loc._opening_class = status['opening_class']
+            loc._water_temperature_label = status['water_temperature_label']
+            loc._crowd_level_label = status['crowd_level_label']
+            loc._crowd_class = status['crowd_class']
+            loc._verified_label = status['verified_label']
+            locations_with_status.append(loc)
+        
+        # Für Leaflet: nur Locations mit Koordinaten als JSON + computed status
+        locations_for_map = []
+        for loc in locations_with_status:
             if loc.latitude is not None and loc.longitude is not None:
                 locations_for_map.append({
                     "id": loc.id,
@@ -198,16 +215,20 @@ def create_app() -> Flask:
                     "address": loc.address,
                     "latitude": float(loc.latitude),
                     "longitude": float(loc.longitude),
-                    "official_status": loc.official_status,
-                    "verified_status": loc.verified_status,
-                    "water_temperature": loc.water_temperature,
-                    "crowd_level": loc.crowd_level,
                     "maps_url": loc.maps_url,
-                    "booking_url": url_for("booking") + "?location_id=" + str(loc.id)
+                    "booking_url": url_for("booking") + "?location_id=" + str(loc.id),
+                    # Computed status
+                    "_opening_status": loc._opening_status,
+                    "_opening_status_short": loc._opening_status_short,
+                    "_opening_class": loc._opening_class,
+                    "_water_temperature_label": loc._water_temperature_label,
+                    "_crowd_level_label": loc._crowd_level_label,
+                    "_crowd_class": loc._crowd_class,
+                    "_verified_label": loc._verified_label,
                 })
         print(f"[DEBUG] Index: {len(locations_for_map)} locations an Leaflet übergeben")
         
-        return render_template("index.html", locations=locations, locations_for_map=locations_for_map)
+        return render_template("index.html", locations=locations_with_status, locations_for_map=locations_for_map)
 
     @app.route("/register", methods=["GET", "POST"])
     def register():

@@ -117,19 +117,17 @@
               <p><strong>Bezirk:</strong> {{ loc.district }}</p>
               <p><strong>Adresse:</strong> {{ loc.address or '–' }}</p>
               <p><strong>Status:</strong> 
-                <span class="status-badge status-{{ loc.official_status|lower }}">
-                  {{ loc.official_status }}
+                <span class="status-badge status-{{ loc._opening_class }}">
+                  {{ loc._opening_status }}
                 </span>
               </p>
-              <p><strong>Wassertemperatur:</strong> {{ loc.water_temperature or '–' }}</p>
+              <p><strong>Wassertemperatur:</strong> {{ loc._water_temperature_label }}</p>
               <p><strong>Auslastung:</strong> 
-                <span class="crowd-badge crowd-{{ loc.crowd_level|lower|replace(' ', '-')|replace('ä', 'ae')|replace('ö', 'oe') }}">
-                  {{ loc.crowd_level }}
+                <span class="crowd-badge crowd-{{ loc._crowd_class }}">
+                  {{ loc._crowd_level_label }}
                 </span>
               </p>
-              {% if loc.verified_status %}
-              <p><strong>Verifiziert:</strong> {{ loc.verified_status }}</p>
-              {% endif %}
+              <p><strong>Verifiziert:</strong> {{ loc._verified_label }}</p>
             </div>
             <div class="location-footer">
               <a href="{{ loc.maps_url }}" target="_blank" class="btn-small">Route in Google Maps</a>
@@ -222,14 +220,7 @@
       });
     }
 
-    // Helper: display crowd level respecting official status
-    function crowdDisplay(crowd, status) {
-      if (!status || status.toLowerCase() === 'geschlossen') return 'Geschlossen';
-      if (!crowd || crowd === '–') return 'Unbekannt';
-      return crowd;
-    }
-
-    // Helper: crowd color class
+    // Helper: crowd color class (fallback)
     function crowdClass(crowd) {
       if (!crowd) return '';
       const c = crowd.toLowerCase().trim();
@@ -245,8 +236,12 @@
 
       const marker = L.marker([loc.latitude, loc.longitude], { icon: getMarkerIcon(loc.location_type) }).addTo(map);
 
-      const crowd = crowdDisplay(loc.crowd_level, loc.official_status);
-      const cClass = crowdClass(loc.crowd_level);
+      // ── Use pre-computed status from the server ──
+      const openingStatus = loc._opening_status_short || loc._opening_status || 'unbekannt';
+      const openingClass  = loc._opening_class || 'open';
+      const waterTemp     = loc._water_temperature_label || '–';
+      const crowdLabel    = loc._crowd_level_label || 'unbekannt';
+      const crowdCss      = loc._crowd_class ? 'crowd-badge crowd-' + loc._crowd_class : '';
 
       const popup = `
         <div class="popup-card">
@@ -258,15 +253,15 @@
           <table class="popup-table">
             <tr>
               <td>Status</td>
-              <td><span class="status-badge status-${(loc.official_status || '').toLowerCase()}">${loc.official_status || 'unbekannt'}</span></td>
+              <td><span class="status-badge status-${openingClass}">${openingStatus}</span></td>
             </tr>
             <tr>
               <td>Wassertemperatur</td>
-              <td>${loc.water_temperature || '–'}</td>
+              <td>${waterTemp}</td>
             </tr>
             <tr>
               <td>Auslastung</td>
-              <td><span class="${cClass}">${crowd}</span></td>
+              <td><span class="${crowdCss}">${crowdLabel}</span></td>
             </tr>
           </table>
           <div class="popup-actions">
