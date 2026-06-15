@@ -22,14 +22,62 @@
   </section>
 
   <div class="container">
-  <section class="map-section">
-    <h2>Interaktive Karte</h2>
-    <p>Finde Schwimmbäder, Sommerbäder, Seen und Badestellen in Berlin.</p>
-    <div id="map"></div>
-    <p style="font-size: 13px; color: var(--text-light); margin-top: 12px;">
-      Powered by Leaflet & OpenStreetMap
-    </p>
-  </section>
+  <div class="map-area">
+    <aside class="community-feed">
+      <h3>🏊 Community</h3>
+      {% if current_user.is_authenticated %}
+        <div class="feed-input">
+          <textarea class="feed-textarea" placeholder="Wie ist die Lage an deinem Schwimmort?" rows="3"></textarea>
+          <button class="btn btn-small btn-primary" onclick="alert('TODO: Community-Update posten (Datenbank-Modell folgt in Kürze)')">Update posten</button>
+        </div>
+      {% else %}
+        <p class="feed-login-hint">Logge dich ein, um Updates aus der Community zu posten.</p>
+      {% endif %}
+      <div class="feed-items">
+        <div class="feed-item">
+          <span class="feed-author">Lisa</span>
+          <span class="feed-text">Heute ruhig am Flughafensee 🌊</span>
+        </div>
+        <div class="feed-item">
+          <span class="feed-author">Moritz</span>
+          <span class="feed-text">Plötzensee gut besucht – Wasser klar ✅</span>
+        </div>
+        <div class="feed-item">
+          <span class="feed-author">Anna</span>
+          <span class="feed-text">Schlachtensee: wenig los, perfekt zum Bahnenziehen 🏊</span>
+        </div>
+        <div class="feed-item">
+          <span class="feed-author">Tom</span>
+          <span class="feed-text">Sommerbad Neukölln angenehm – 26°C 🌡️</span>
+        </div>
+      </div>
+      <p class="feed-todo-note">⚠️ Community-Feed bald live – dein Update erscheint dann sofort.</p>
+    </aside>
+
+    <section class="map-section">
+      <h2>Interaktive Karte</h2>
+      <p>Finde Schwimmbäder, Sommerbäder, Seen und Badestellen in Berlin.</p>
+      <div id="map"></div>
+      <p style="font-size: 13px; color: var(--text-light); margin-top: 12px;">
+        Powered by Leaflet & OpenStreetMap
+      </p>
+    </section>
+
+    <aside class="promo-panel">
+      <div class="promo-shimmer"></div>
+      <div class="promo-content">
+        <div class="promo-icon">🦈</div>
+        <h3>Squalo Premium</h3>
+        <p>Bald verfügbar: Trainingspläne, Produkte &amp; exklusive Badesee-Updates.</p>
+        <div class="promo-bubbles">
+          <span class="bubble"></span>
+          <span class="bubble"></span>
+          <span class="bubble"></span>
+          <span class="bubble"></span>
+        </div>
+      </div>
+    </aside>
+  </div><!-- /.map-area -->
 
   <section class="info-section">
     <h2>Wie funktioniert Squalo?</h2>
