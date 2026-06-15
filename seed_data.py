@@ -6,72 +6,75 @@ This file contains the swimming locations for Berlin that should be available in
 # Initial Squalo swim locations (Step 1: 3 core locations)
 # This list includes the first 3 locations to start with
 SWIM_LOCATIONS = [
-    # Core Berlin locations (Step 1)
+    # ── 1 ──
     {
         "name": "Stadtbad Tiergarten",
         "location_type": "Schwimmbad",
         "district": "Mitte",
-        "address": "MoltkestraÃŸe 32, 10785 Berlin",
-        "latitude": 52.5040,
-        "longitude": 13.3429,
+        "address": "Moltkestraße 32, 10785 Berlin",
+        "latitude": 52.5043,
+        "longitude": 13.3428,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "25Â°C",
+        "water_temperature": "25°C",
         "crowd_level": "low",
         "maps_url": "https://maps.google.com/?q=Stadtbad+Tiergarten+Berlin"
     },
+    # ── 2 ──
     {
-        "name": "Sommerbad NeukÃ¶lln",
+        "name": "Sommerbad Neukölln",
         "location_type": "Sommerbad",
-        "district": "NeukÃ¶lln",
-        "address": "Richard-Hartmann-StraÃŸe 60, 12057 Berlin",
-        "latitude": 52.4560,
-        "longitude": 13.4280,
+        "district": "Neukölln",
+        "address": "Richard-Hartmann-Straße 60, 12057 Berlin",
+        "latitude": 52.4559,
+        "longitude": 13.4285,
         "official_status": "open",
-        "verified_status": "not_verified",
-        "water_temperature": "22Â°C",
+        "verified_status": "verified",
+        "water_temperature": "22°C",
         "crowd_level": "medium",
-        "maps_url": "https://maps.google.com/?q=Sommerbad+NeukÃ¶lln+Berlin"
+        "maps_url": "https://maps.google.com/?q=Sommerbad+Neukölln+Berlin"
     },
+    # ── 3 ──
     {
-        "name": "Strandbad PlÃ¶tzensee",
+        "name": "Strandbad Plötzensee",
         "location_type": "Strandbad",
         "district": "Reinickendorf",
-        "address": "Am Strandbad 1, 13187 Berlin",
-        "latitude": 52.6000,
-        "longitude": 13.2833,
-        "official_status": "closed",
-        "verified_status": "verified",
-        "water_temperature": "18Â°C",
-        "crowd_level": "high",
-        "maps_url": "https://maps.google.com/?q=Strandbad+PlÃ¶tzensee+Berlin"
-    },
-    # Step 2: Next 3 locations
-    {
-        "name": "Kombibad SeestraÃŸe",
-        "location_type": "Kombibad",
-        "district": "Charlottenburg",
-        "address": "SeestraÃŸe 28, 10555 Berlin",
-        "latitude": 52.5280,
-        "longitude": 13.3167,
+        "address": "Am Plötzensee 1, 13407 Berlin",
+        "latitude": 52.5435,
+        "longitude": 13.3270,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "28Â°C",
+        "water_temperature": "18°C",
         "crowd_level": "medium",
-        "maps_url": "https://maps.google.com/?q=Kombibad+SeestraÃŸe+Berlin"
+        "maps_url": "https://maps.google.com/?q=Strandbad+Plötzensee+Berlin"
     },
+    # ── 4 ──
+    {
+        "name": "Kombibad Seestraße",
+        "location_type": "Kombibad",
+        "district": "Mitte",
+        "address": "Seestraße 28, 13347 Berlin",
+        "latitude": 52.5458,
+        "longitude": 13.3478,
+        "official_status": "open",
+        "verified_status": "verified",
+        "water_temperature": "28°C",
+        "crowd_level": "medium",
+        "maps_url": "https://maps.google.com/?q=Kombibad+Seestraße+Berlin"
+    },
+    # ── 5 ──
     {
         "name": "Schwimm- und Sprunghalle im Europasportpark",
         "location_type": "Kombibad",
-        "district": "NeukÃ¶lln",
-        "address": "Olympiapromenade 2, 10829 Berlin",
-        "latitude": 52.4975,
-        "longitude": 13.3306,
+        "district": "Pankow",
+        "address": "Paul-Heyse-Straße 2a, 10407 Berlin",
+        "latitude": 52.5375,
+        "longitude": 13.4256,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "26Â°C",
+        "water_temperature": "26°C",
         "crowd_level": "medium",
-        "maps_url": "https://maps.google.com/?q=Sprunghalle+Europasportpark+Berlin"
+        "maps_url": "https://maps.google.com/?q=Europasportpark+Berlin+Schwimmhalle"
     },
     {
         "name": "Prinzenbad",
