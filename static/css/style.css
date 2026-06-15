@@ -42,7 +42,6 @@ html, body {
   top: 0;
   z-index: 100;
   color: var(--white);
-  padding: 20px 0;
   overflow: hidden;
 }
 
@@ -91,17 +90,83 @@ html, body {
   100% { background-position: 100% 0%; opacity: 0.5; }
 }
 
-/* Bottom glow line */
 .site-header .container {
   position: relative;
   z-index: 2;
 }
 
+/* ── Top Orange Accent Bar ── */
+.top-bar {
+  position: relative;
+  z-index: 3;
+  background: linear-gradient(135deg, var(--squalo-neon-orange) 0%, #ff7a00 100%);
+  padding: 3px 0;
+  box-shadow: 0 1px 6px rgba(255, 159, 0, 0.3);
+}
+
+.top-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.shark-icon {
+  font-size: 15px;
+  margin-right: auto;
+  opacity: 0.9;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+  transition: transform 0.3s ease;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.shark-icon:hover {
+  transform: scale(1.15) rotate(-5deg);
+}
+
+.top-bar-link {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+  transition: background 0.2s ease, color 0.2s ease;
+  position: relative;
+}
+
+.top-bar-link:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.top-bar-link.active {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.admin-top-link {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.admin-top-link:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* ── Header Main (water background area) ── */
+.header-main {
+  position: relative;
+  z-index: 2;
+  padding: 20px 0 16px;
+}
+
 .header-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  gap: 24px;
 }
 
 /* ── Logo section ── */
@@ -110,7 +175,6 @@ html, body {
   align-items: center;
   gap: 28px;
   position: relative;
-  margin-left: -8px;
 }
 
 .logo-img {
@@ -146,50 +210,120 @@ html, body {
   position: relative;
 }
 
-.main-nav {
+/* ── Lane Navigation ── */
+.lane-nav {
   display: flex;
-  gap: 20px;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 18px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.main-nav a {
+.lane-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 20px;
   color: var(--white);
   text-decoration: none;
   font-weight: 600;
-  transition: all 0.3s ease;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   position: relative;
-  padding: 8px 0;
+  transition: all 0.3s ease;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: -1px; /* collapse borders */
 }
 
-.main-nav a:hover {
-  color: var(--orange);
+.lane-item:first-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.main-nav a::after {
+.lane-item:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Lane rope glow on hover / active */
+.lane-item::before {
   content: '';
   position: absolute;
-  bottom: 0;
   left: 0;
-  width: 0;
+  right: 0;
+  top: -1px;
+  height: 1px;
+  background: transparent;
+  transition: all 0.4s ease;
+  z-index: 1;
+}
+
+.lane-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: transparent;
+  transition: all 0.4s ease;
+  z-index: 1;
+}
+
+.lane-item:hover::before,
+.lane-item:hover::after,
+.lane-item.active::before,
+.lane-item.active::after {
+  background: linear-gradient(90deg,
+    transparent 5%,
+    var(--squalo-neon-orange) 20%,
+    rgba(255, 159, 0, 0.5) 50%,
+    var(--squalo-neon-orange) 80%,
+    transparent 95%
+  );
   height: 2px;
-  background: var(--orange);
-  transition: width 0.3s ease;
 }
 
-.main-nav a:hover::after {
-  width: 100%;
+/* Subtle lane background on hover */
+.lane-item:hover {
+  background: rgba(255, 255, 255, 0.06);
 }
 
-.admin-link {
-  background: var(--danger);
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 14px;
+.lane-item.active {
+  background: rgba(255, 159, 0, 0.08);
 }
 
-.admin-link:hover::after {
-  display: none;
+/* Buoy markers on left/right of each lane */
+.lane-buoy-marker {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--squalo-neon-orange);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+}
+
+.lane-item:hover .lane-buoy-marker,
+.lane-item.active .lane-buoy-marker {
+  transform: scale(1.2);
+  box-shadow: 0 0 8px rgba(255, 159, 0, 0.5);
+}
+
+.lane-label {
+  flex: 1;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.lane-item:hover .lane-label,
+.lane-item.active .lane-label {
+  color: var(--squalo-neon-orange);
+  text-shadow: 0 0 20px rgba(255, 159, 0, 0.3);
 }
 
 /* ══════════════════════════════════════
@@ -1893,7 +2027,7 @@ main {
 
   /* ── Header ── */
   .site-header {
-    padding: 12px 0;
+    padding: 0;
   }
 
   .header-content {
@@ -1936,6 +2070,50 @@ main {
     padding: 10px 0;
     text-align: center;
     font-size: 15px;
+  }
+
+  /* Mobile: lane nav */
+  .lane-nav {
+    max-width: 100%;
+    margin-top: 14px;
+  }
+
+  .lane-item {
+    padding: 8px 16px;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+  }
+
+  .lane-buoy-marker {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Mobile: top bar */
+  .top-bar {
+    padding: 2px 0;
+  }
+
+  .top-bar-inner {
+    gap: 4px;
+  }
+
+  .shark-icon {
+    font-size: 13px;
+  }
+
+  .top-bar-link {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+
+  /* Mobile: header main */
+  .header-main {
+    padding: 14px 0 12px;
+  }
+
+  .header-content {
+    justify-content: center;
   }
 
   /* ── Hero ── */
@@ -2391,6 +2569,34 @@ main {
   .main-nav a {
     font-size: 14px;
     padding: 8px 0;
+  }
+
+  .lane-nav {
+    margin-top: 10px;
+  }
+
+  .lane-item {
+    padding: 6px 12px;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  .lane-buoy-marker {
+    width: 5px;
+    height: 5px;
+  }
+
+  .top-bar-link {
+    font-size: 10px;
+    padding: 1px 5px;
+  }
+
+  .shark-icon {
+    font-size: 11px;
+  }
+
+  .header-main {
+    padding: 10px 0 10px;
   }
 
   .map-section h2 {

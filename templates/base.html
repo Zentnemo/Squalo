@@ -11,26 +11,57 @@
 </head>
 <body>
     <header class="site-header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo-section">
-                    <img src="{{ url_for('static', filename='images/squalo-logo.png') }}" alt="Squalo Logo" class="logo-img">
-                    <h1 class="brand-title">SQUALO SCHWIMMCOACHING</h1>
-                </div>
-                <nav class="main-nav">
-                    <a href="{{ url_for('index') }}">Home</a>
-                    <a href="{{ url_for('coaches') }}">Coaches</a>
-                    <a href="{{ url_for('shop') }}">Shop</a>
+        {% set current_route = request.endpoint %}
+        {# ── Top Bar (Account / Login + Shark) ── #}
+        <div class="top-bar">
+            <div class="container">
+                <div class="top-bar-inner">
+                    <span class="shark-icon" aria-hidden="true">🦈</span>
                     {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('dashboard') }}" class="top-bar-link {% if current_route == 'dashboard' %}active{% endif %}">Dashboard</a>
                         {% if current_user.role == 'admin' %}
-                            <a href="{{ url_for('admin') }}" class="admin-link">Coach</a>
+                            <a href="{{ url_for('admin') }}" class="top-bar-link admin-top-link">Coach</a>
                         {% endif %}
-                        <a href="{{ url_for('logout') }}">Logout</a>
+                        <a href="{{ url_for('logout') }}" class="top-bar-link">Logout</a>
                     {% else %}
-                        <a href="{{ url_for('login') }}">Einloggen</a>
-                        <a href="{{ url_for('register') }}">Registrieren</a>
+                        <a href="{{ url_for('login') }}" class="top-bar-link {% if current_route == 'login' %}active{% endif %}">Login</a>
+                        <a href="{{ url_for('register') }}" class="top-bar-link {% if current_route == 'register' %}active{% endif %}">Registrieren</a>
                     {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# ── Brand + Lane Navigation ── #}
+        <div class="header-main">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo-section">
+                        <img src="{{ url_for('static', filename='images/squalo-logo.png') }}" alt="Squalo Logo" class="logo-img">
+                        <h1 class="brand-title">SQUALO SCHWIMMCOACHING</h1>
+                    </div>
+                </div>
+
+                <nav class="lane-nav" aria-label="Hauptnavigation">
+                    <a href="{{ url_for('index') }}" class="lane-item {% if current_route == 'index' %}active{% endif %}">
+                        <span class="lane-buoy-marker"></span>
+                        <span class="lane-label">Home</span>
+                        <span class="lane-buoy-marker"></span>
+                    </a>
+                    <a href="{{ url_for('coaches') }}" class="lane-item {% if current_route == 'coaches' %}active{% endif %}">
+                        <span class="lane-buoy-marker"></span>
+                        <span class="lane-label">Coaches</span>
+                        <span class="lane-buoy-marker"></span>
+                    </a>
+                    <a href="{{ url_for('shop') }}" class="lane-item {% if current_route == 'shop' %}active{% endif %}">
+                        <span class="lane-buoy-marker"></span>
+                        <span class="lane-label">Shop</span>
+                        <span class="lane-buoy-marker"></span>
+                    </a>
+                    <a href="{{ url_for('dashboard') }}" class="lane-item {% if current_route == 'dashboard' %}active{% endif %}">
+                        <span class="lane-buoy-marker"></span>
+                        <span class="lane-label">Dashboard</span>
+                        <span class="lane-buoy-marker"></span>
+                    </a>
                 </nav>
             </div>
         </div>
