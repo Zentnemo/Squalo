@@ -76,97 +76,103 @@ SWIM_LOCATIONS = [
         "crowd_level": "medium",
         "maps_url": "https://maps.google.com/?q=Europasportpark+Berlin+Schwimmhalle"
     },
+    # ── 6 ──
     {
         "name": "Prinzenbad",
         "location_type": "Sommerbad",
-        "district": "Mitte",
-        "address": "Friedrichsgracht 32, 10178 Berlin",
-        "latitude": 52.5040,
-        "longitude": 13.3429,
+        "district": "Friedrichshain-Kreuzberg",
+        "address": "Prinzenstraße 35, 10969 Berlin",
+        "latitude": 52.4963,
+        "longitude": 13.4105,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "24Â°C",
-        "crowd_level": "low",
-        "maps_url": "https://maps.google.com/?q=Prinzenbad+Berlin"
+        "water_temperature": "24°C",
+        "crowd_level": "medium",
+        "maps_url": "https://maps.google.com/?q=Prinzenbad+Kreuzberg+Berlin"
     },
-    # Step 3: Next 6 locations
+    # ── 7 ──
     {
-        "name": "Stadtbad Charlottenburg â€“ Alte Halle",
+        "name": "Stadtbad Charlottenburg – Alte Halle",
         "location_type": "Schwimmbad",
         "district": "Charlottenburg",
-        "address": "Oderberger StraÃŸe 57, 10119 Berlin",
-        "latitude": 52.5280,
-        "longitude": 13.3167,
+        "address": "Krumme Straße 2, 10585 Berlin",
+        "latitude": 52.5233,
+        "longitude": 13.3100,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "27Â°C",
+        "water_temperature": "27°C",
         "crowd_level": "low",
-        "maps_url": "https://maps.google.com/?q=Stadtbad+Charlottenburg+Berlin"
+        "maps_url": "https://maps.google.com/?q=Stadtbad+Charlottenburg+Alte+Halle+Berlin"
     },
+    # ── 8 ──
     {
         "name": "Flughafensee",
         "location_type": "See",
         "district": "Reinickendorf",
-        "address": "Am Flughafensee, 13187 Berlin",
-        "latitude": 52.6333,
-        "longitude": 13.2833,
+        "address": "Am Flughafensee, 13405 Berlin",
+        "latitude": 52.5607,
+        "longitude": 13.2898,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "20Â°C",
+        "water_temperature": "20°C",
         "crowd_level": "low",
         "maps_url": "https://maps.google.com/?q=Flughafensee+Berlin"
     },
+    # ── 9 ──
     {
         "name": "Strandbad Wannsee",
         "location_type": "Strandbad",
         "district": "Steglitz-Zehlendorf",
-        "address": "Am Wannsee 1, 14129 Berlin",
-        "latitude": 52.4333,
-        "longitude": 13.1667,
+        "address": "Wannseebadweg 25, 14129 Berlin",
+        "latitude": 52.4317,
+        "longitude": 13.1544,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "22Â°C",
-        "crowd_level": "medium",
+        "water_temperature": "22°C",
+        "crowd_level": "high",
         "maps_url": "https://maps.google.com/?q=Strandbad+Wannsee+Berlin"
     },
+    # ── 10 ──
     {
-        "name": "Stadtbad SchÃ¶neberg",
+        "name": "Stadtbad Schöneberg",
         "location_type": "Schwimmbad",
-        "district": "SchÃ¶neberg",
-        "address": "JohannestraÃŸe 2, 10629 Berlin",
-        "latitude": 52.4833,
-        "longitude": 13.3333,
+        "district": "Schöneberg",
+        "address": "Hauptstraße 60–62, 10827 Berlin",
+        "latitude": 52.4838,
+        "longitude": 13.3520,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "26Â°C",
+        "water_temperature": "26°C",
         "crowd_level": "medium",
-        "maps_url": "https://maps.google.com/?q=Stadtbad+SchÃ¶neberg+Berlin"
+        "maps_url": "https://maps.google.com/?q=Stadtbad+Schöneberg+Berlin"
     },
+    # ── 11 ──
     {
         "name": "Stadtbad Wilmersdorf I",
         "location_type": "Schwimmbad",
         "district": "Wilmersdorf",
-        "address": "KleiststraÃŸe 1, 10719 Berlin",
-        "latitude": 52.5167,
-        "longitude": 13.3167,
+        "address": "Kleiststraße 1, 10719 Berlin",
+        "latitude": 52.4908,
+        "longitude": 13.3233,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "25Â°C",
+        "water_temperature": "25°C",
         "crowd_level": "low",
-        "maps_url": "https://maps.google.com/?q=Stadtbad+Wilmersdorf+Berlin"
+        "maps_url": "https://maps.google.com/?q=Stadtbad+Wilmersdorf+I+Berlin"
     },
+    # ── 12 ──
     {
         "name": "Stadtbad Wilmersdorf II",
         "location_type": "Schwimmbad",
         "district": "Wilmersdorf",
-        "address": "KleiststraÃŸe 1, 10719 Berlin",
-        "latitude": 52.5167,
-        "longitude": 13.3167,
+        "address": "Kleiststraße 1, 10719 Berlin",
+        "latitude": 52.4913,
+        "longitude": 13.3245,
         "official_status": "open",
         "verified_status": "verified",
-        "water_temperature": "25Â°C",
+        "water_temperature": "25°C",
         "crowd_level": "low",
-        "maps_url": "https://maps.google.com/?q=Stadtbad+Wilmersdorf+Berlin"
+        "maps_url": "https://maps.google.com/?q=Stadtbad+Wilmersdorf+II+Berlin"
     },
     # Step 4: Next 6 locations
     {
