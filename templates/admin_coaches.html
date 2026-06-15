@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="dashboard-header">
+    <h2>🏊 Coach-Verwaltung</h2>
+    <div class="cta-buttons">
+      <a href="{{ url_for('admin') }}" class="btn btn-secondary">← Zurück zum Coach Panel</a>
+    </div>
+  </div>
+
+  {# ── Existing Coaches ── #}
+  <section class="admin-section">
+    <h3>Coaches</h3>
+    {% if coaches %}
+      <table class="bookings-table" style="width:100%;">
+        <thead>
+          <tr>
+            <th>Aktiv</th>
+            <th>Name</th>
+            <th>Titel</th>
+            <th>Bio</th>
+            <th>Status</th>
+            <th>Reviews</th>
+            <th>Aktionen</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for coach in coaches %}
+            <tr>
+              <td>{{ '✅' if coach.is_active else '❌' }}</td>
+              <td><strong>{{ coach.name }}</strong></td>
+              <td>{{ coach.title or '–' }}</td>
+              <td style="max-width:250px;font-size:13px;">{{ coach.bio|truncate(120) if coach.bio else '–' }}</td>
+              <td>
+                {% if coach.is_active %}
+                  <span class="status-badge" style="background:#e6f9e6;">Aktiv</span>
+                {% else %}
+                  <span class="status-badge" style="background:#ffe6e6;">Inaktiv</span>
+                {% endif %}
+              </td>
+              <td>{{ coach.reviews|length }}</td>
+              <td>
+                <form method="POST" action="{{ url_for('admin_coach_toggle', coach_id=coach.id) }}" style="display:inline;">
+                  <button type="submit" class="btn-small {{ 'btn-warning' if coach.is_active else 'btn-success' }}">
+                    {{ 'Deaktivieren' if coach.is_active else 'Aktivieren' }}
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>Keine Coaches vorhanden.</p>
+    {% endif %}
+  </section>
+
+  {# ── Create Coach ── #}
+  <section class="admin-section">
+    <h3>Neuen Coach anlegen</h3>
+    <form method="POST" class="booking-form" style="max-width:600px;">
+      <div class="form-group">
+        <label for="name">Name *</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div class="form-group">
+        <label for="title">Titel / Spezialisierung</label>
+        <input type="text" id="title" name="title" placeholder="z.B. Kraul-Coach">
+      </div>
+      <div class="form-group">
+        <label for="bio">Bio</label>
+        <textarea id="bio" name="bio" rows="4"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="strengths">Stärken (durch Zeilenumbruch getrennt)</label>
+        <textarea id="strengths" name="strengths" rows="3" placeholder="z.B. Techniktraining&#10;Kraul&#10;Ausdauer"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="swim_style">Trainingsansatz</label>
+        <textarea id="swim_style" name="swim_style" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="experience">Erfahrung</label>
+        <textarea id="experience" name="experience" rows="2" placeholder="z.B. 10 Jahre Erfahrung"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="image_url">Profilbild-URL</label>
+        <input type="url" id="image_url" name="image_url" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label for="external_profile_url">Externer Profil-Link (z.B. Superprof)</label>
+        <input type="url" id="external_profile_url" name="external_profile_url" placeholder="https://www.superprof.de/...">
+      </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" name="is_active" value="1" checked>
+          Aktiv (auf Coaches-Seite sichtbar)
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary">Coach anlegen</button>
+    </form>
+  </section>
+{% endblock %}

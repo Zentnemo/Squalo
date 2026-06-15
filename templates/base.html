@@ -19,6 +19,7 @@
                 </div>
                 <nav class="main-nav">
                     <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('coaches') }}">Coaches</a>
                     <a href="{{ url_for('shop') }}">Shop</a>
                     {% if current_user.is_authenticated %}
                         <a href="{{ url_for('dashboard') }}">Dashboard</a>

@@ -15,7 +15,7 @@ from werkzeug.utils import secure_filename
 from pathlib import Path
 
 from config import Config
-from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting
+from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview
 from location_status import compute_location_status
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
@@ -63,6 +63,7 @@ def send_booking_notification(booking):
             f"E-Mail: {user.email if user else 'unbekannt'}",
             f"Zeitoptionen: {', '.join(time_options) if time_options else 'keine'}",
             f"Wunschorte: {', '.join(locs) if locs else 'keine'}",
+            f"Coach-Präferenz: {booking.preferred_coach.name if booking.preferred_coach else 'keine'}",
             f"Trainingsziel: {booking.training_goal or 'keines'}",
             f"Notiz: {booking.user_note or 'keine'}",
             f"Admin-Link: /admin/booking/{booking.id}",
@@ -119,6 +120,19 @@ def create_app() -> Flask:
                     print("[MIGRATION] Spalten duration_minutes, duration_slots, estimated_price hinzugefügt")
         except Exception as e:
             print(f"[MIGRATION] Fehler beim Hinzufügen der Spalten (ignoriert): {e}")
+        
+        # ── Migration: Coach-Präferenz in Booking ───────────────────
+        try:
+            with db.engine.connect() as conn:
+                import sqlalchemy as sa
+                inspector = sa.inspect(db.engine)
+                columns = [c['name'] for c in inspector.get_columns('booking')]
+                if 'preferred_coach_id' not in columns:
+                    conn.execute(sa.text("ALTER TABLE booking ADD COLUMN preferred_coach_id INTEGER REFERENCES coach(id)"))
+                    conn.commit()
+                    print("[MIGRATION] Spalte preferred_coach_id hinzugefügt")
+        except Exception as e:
+            print(f"[MIGRATION] Fehler (ignoriert): {e}")
         
         # ── Admin-User ──────────────────────────────────────────────
         # Admin-E-Mail (fest, kann später über ENV geändert werden)
@@ -196,7 +210,147 @@ def create_app() -> Flask:
             print(f"[OK] Standorte: {seed_count_new} neu, {seed_count_upd} aktualisiert")
         else:
             print(f"[OK] Alle {len(SEED_LOCATIONS)} Standorte bereits aktuell")
-                
+        
+        # ── Coach seeden: Moritz Zentner ────────────────────────────
+        coach_slug = "moritz-zentner"
+        existing_coach = Coach.query.filter_by(slug=coach_slug).first()
+        if existing_coach:
+            # Update existing
+            existing_coach.name = "Moritz Zentner"
+            existing_coach.title = "Schwimmlehrer – 22 Jahre Erfahrung, Rettungsschwimmer"
+            existing_coach.bio = (
+                "Ich bin Moritz, 26 Jahre alt und studiere Humanoide Robotik. "
+                "Schwimmen ist meine große Leidenschaft – ich schwimme jeden Tag und "
+                "gebe die Technik, die ich in über 20 Jahren gesammelt habe, mit Freude "
+                "an dich weiter. Ich war Mitglied in 3 verschiedenen Schwimmvereinen und "
+                "konnte so viele Coaching-Stile aufnehmen, um genau den anzuwenden, der "
+                "zu dir passt. Egal ob Anfänger, Wiedereinsteiger oder Fortgeschrittener – "
+                "mit Geduld und einem geschulten Auge verbessern wir gemeinsam deine Technik."
+            )
+            existing_coach.strengths = (
+                "• 🏊 22 Jahre Schwimmerfahrung – aktiver Tages-Schwimmer\n"
+                "• 🏆 3 Schwimmvereine – breit gefächertes Coaching-Know-how\n"
+                "• 🧘 Ruhige, geduldige Anleitung – individuelles Tempo\n"
+                "• 🎯 Gezielte Technikverbesserung – Wasserlage, Atmung, Bewegungsökonomie\n"
+                "• 📍 Flexible Trainingsorte – jedes Bad & jeder See in Berlin\n"
+                "• 📋 Individuelle Trainingspläne – auch für außerhalb der Stunden"
+            )
+            existing_coach.swim_style = (
+                "Ich bin geduldig und aufmerksam und schaue mir deine Technik genau an, "
+                "um gezielt die Lagen zu verbessern, an denen du arbeiten möchtest. "
+                "Egal, ob du gerade erst anfängst zu schwimmen oder nur noch den letzten "
+                "Feinschliff brauchst – wir definieren ein Ziel und arbeiten Bahn für Bahn "
+                "darauf hin. Falls dir neben der Technik auch deine Fitness wichtig ist, "
+                "erstelle ich dir einen individuellen Trainingsplan, der dich auch außerhalb "
+                "unserer Stunden fit hält."
+            )
+            existing_coach.experience = (
+                "🏅 22 Jahre Schwimmerfahrung\n"
+                "🏅 Mitglied in 3 Schwimmvereinen\n"
+                "🏅 Rettungsschwimmer\n"
+                "🏅 49+ Schüler erfolgreich trainiert\n"
+                "🏅 5,0 ⭐ Bewertungen (8 Bewertungen)"
+            )
+            existing_coach.external_profile_url = "https://www.superprof.de/jahre-schwimmerfahrung-rettungschwimmer-und-viel-geduld-mit-mir-lernst-deinem-individuellen-tempo-deine-technik.html"
+            existing_coach.is_active = True
+            print(f"[OK] Coach aktualisiert: {existing_coach.name}")
+        else:
+            coach = Coach(
+                name="Moritz Zentner",
+                slug=coach_slug,
+                title="Schwimmlehrer – 22 Jahre Erfahrung, Rettungsschwimmer",
+                bio=(
+                    "Ich bin Moritz, 26 Jahre alt und studiere Humanoide Robotik. "
+                    "Schwimmen ist meine große Leidenschaft – ich schwimme jeden Tag und "
+                    "gebe die Technik, die ich in über 20 Jahren gesammelt habe, mit Freude "
+                    "an dich weiter. Ich war Mitglied in 3 verschiedenen Schwimmvereinen und "
+                    "konnte so viele Coaching-Stile aufnehmen, um genau den anzuwenden, der "
+                    "zu dir passt. Egal ob Anfänger, Wiedereinsteiger oder Fortgeschrittener – "
+                    "mit Geduld und einem geschulten Auge verbessern wir gemeinsam deine Technik."
+                ),
+                strengths=(
+                    "• 🏊 22 Jahre Schwimmerfahrung – aktiver Tages-Schwimmer\n"
+                    "• 🏆 3 Schwimmvereine – breit gefächertes Coaching-Know-how\n"
+                    "• 🧘 Ruhige, geduldige Anleitung – individuelles Tempo\n"
+                    "• 🎯 Gezielte Technikverbesserung – Wasserlage, Atmung, Bewegungsökonomie\n"
+                    "• 📍 Flexible Trainingsorte – jedes Bad & jeder See in Berlin\n"
+                    "• 📋 Individuelle Trainingspläne – auch für außerhalb der Stunden"
+                ),
+                swim_style=(
+                    "Ich bin geduldig und aufmerksam und schaue mir deine Technik genau an, "
+                    "um gezielt die Lagen zu verbessern, an denen du arbeiten möchtest. "
+                    "Egal, ob du gerade erst anfängst zu schwimmen oder nur noch den letzten "
+                    "Feinschliff brauchst – wir definieren ein Ziel und arbeiten Bahn für Bahn "
+                    "darauf hin. Falls dir neben der Technik auch deine Fitness wichtig ist, "
+                    "erstelle ich dir einen individuellen Trainingsplan, der dich auch außerhalb "
+                    "unserer Stunden fit hält."
+                ),
+                experience=(
+                    "🏅 22 Jahre Schwimmerfahrung\n"
+                    "🏅 Mitglied in 3 Schwimmvereinen\n"
+                    "🏅 Rettungsschwimmer\n"
+                    "🏅 49+ Schüler erfolgreich trainiert\n"
+                    "🏅 5,0 ⭐ Bewertungen (8 Bewertungen)"
+                ),
+                external_profile_url="https://www.superprof.de/jahre-schwimmerfahrung-rettungschwimmer-und-viel-geduld-mit-mir-lernst-deinem-individuellen-tempo-deine-technik.html",
+                is_active=True,
+            )
+            db.session.add(coach)
+            print(f"[OK] Coach neu angelegt: {coach.name}")
+        
+        db.session.commit()
+
+        # ── Bewertungen seeden (idempotent) ────────────────────────
+        coach_moritz = Coach.query.filter_by(slug=coach_slug).first()
+        if coach_moritz:
+            existing_review_texts = {r.text for r in coach_moritz.reviews if r.source == 'superprof'}
+            reviews_data = [
+                {
+                    "author_name": "David",
+                    "rating": 5,
+                    "text": "Perfekt! Ich habe es in kürzester Zeit von einem kompletten Anfänger zu einem fortgeschrittenen Schwimmer geschafft. Natürlich ist selbstständig Training ebenfalls wichtig, aber ohne Moritz hätte ich es nicht geschafft. Er ist sehr geduldig und ruhig beim Erklären und variiert die Unterrichtsstunden stark, je nachdem welcher Fokus noch nötig ist.",
+                },
+                {
+                    "author_name": "Maarten",
+                    "rating": 5,
+                    "text": "Perfekt! Moritz ist ein ausgesprochen angenehmer und ruhiger Schwimmlehrer. Er nimmt sich viel Zeit und zeigt große Geduld, besonders wenn man bestimmte Dinge nicht sofort umsetzen kann. Dabei gibt er wertvolle Tipps und konkrete Vorschläge – und betrachtet deine Schwimmtechnik mit einem geschulten Auge. Ich habe mich nie gehetzt gefühlt, sondern im Gegenteil: jede Übung hat Sinn gemacht und wurde mit Geduld vermittelt. Absolut empfehlenswert!",
+                },
+                {
+                    "author_name": "Arman",
+                    "rating": 5,
+                    "text": "Perfekt! Moritz ist ein sehr guter Schwimmlehrer. Er erklärt alles gut und verständlich, ist sehr geduldig und nett. Er weist genau auf Fehler hin und gibt direkt Lösungsansätze, wie man es besser machen kann. Das Training mit ihm war sehr angenehm und hat viel Spaß gemacht.",
+                },
+                {
+                    "author_name": "Tim",
+                    "rating": 5,
+                    "text": "Perfekt! Hat mir sehr gut gefallen! Sehr sympathisch und kompetent!",
+                },
+                {
+                    "author_name": "Anne",
+                    "rating": 5,
+                    "text": "Ich bin wirklich begeistert von meinem Moritz! Er ist äußerst kompetent und versteht es hervorragend, an meinen Ressourcen anzusetzen. Seine Anleitung ist super klar und motivierend, was mir immer richtig Spaß macht und mich voranbringt. Besonders schätze ich sein Verständnis und die Bereitschaft, auf meine Wünsche einzugehen. Außerdem ist er zeitlich sehr flexibel, was die Terminplanung erleichtert. Ich freue mich schon sehr auf die nächste Unterrichtsstunde und kann ihn nur wärmstens weiterempfehlen!",
+                },
+                {
+                    "author_name": "Zakariae",
+                    "rating": 5,
+                    "text": "Moritz ist einfach großartig! Mit viel Geduld, Fachwissen und einer freundlichen Art hat er das Schwimmenlernen zu einer tollen Erfahrung gemacht. Er erklärt die Techniken verständlich, gibt hilfreiche Tipps und schafft eine angenehme Atmosphäre im Wasser. Dank ihm fühle ich mich jetzt viel sicherer im Wasser. Absolut empfehlenswert!",
+                },
+            ]
+            for rd in reviews_data:
+                if rd["text"] not in existing_review_texts:
+                    review = CoachReview(
+                        coach_id=coach_moritz.id,
+                        user_id=None,
+                        rating=rd["rating"],
+                        text=rd["text"],
+                        source="superprof",
+                        author_name=rd["author_name"],
+                        is_approved=True,
+                    )
+                    db.session.add(review)
+            db.session.commit()
+            print(f"[OK] Bewertungen gesynct für {coach_moritz.name}")
+        
         db.session.commit()
 
     @app.route("/")
@@ -265,6 +419,34 @@ def create_app() -> Flask:
         
         flash("Dein Update wurde veröffentlicht!", "success")
         return redirect(url_for("index"))
+
+    @app.route("/coaches")
+    def coaches():
+        coach_list = Coach.query.filter_by(is_active=True).order_by(Coach.name.asc()).all()
+        return render_template("coaches.html", coaches=coach_list)
+
+    @app.route("/coaches/review/<int:coach_id>", methods=["POST"])
+    @login_required
+    def coaches_review(coach_id):
+        coach = Coach.query.get_or_404(coach_id)
+        rating = request.form.get("rating", type=int)
+        text = request.form.get("text", "").strip()
+        if not rating or rating < 1 or rating > 5:
+            flash("Bitte wähle eine Bewertung von 1–5 Sternen.", "danger")
+            return redirect(url_for("coaches"))
+        review = CoachReview(
+            coach_id=coach.id,
+            user_id=current_user.id,
+            rating=rating,
+            text=text,
+            source="squalo",
+            author_name=current_user.name,
+            is_approved=True,
+        )
+        db.session.add(review)
+        db.session.commit()
+        flash("Danke für deine Bewertung!", "success")
+        return redirect(url_for("coaches"))
 
     @app.route("/register", methods=["GET", "POST"])
     def register():
@@ -382,6 +564,9 @@ def create_app() -> Flask:
             p1 = request.form.get("preferred_location_1") or None
             p2 = request.form.get("preferred_location_2") or None
             p3 = request.form.get("preferred_location_3") or None
+            # Coach preference
+            preferred_coach_raw = request.form.get("preferred_coach_id") or None
+            preferred_coach_id = int(preferred_coach_raw) if preferred_coach_raw else None
             training_goal = request.form.get("training_goal")
             user_note = request.form.get("user_note")
 
@@ -409,6 +594,7 @@ def create_app() -> Flask:
                 preferred_location_1_id=int(p1) if p1 else None,
                 preferred_location_2_id=int(p2) if p2 else None,
                 preferred_location_3_id=int(p3) if p3 else None,
+                preferred_coach_id=preferred_coach_id,
                 training_goal=training_goal,
                 user_note=user_note,
                 status="angefragt",
@@ -421,7 +607,8 @@ def create_app() -> Flask:
 
             flash("Deine Terminanfrage wurde gesendet! Ich prüfe deine Wunschzeiten und melde mich bei dir.", "success")
             return redirect(url_for("dashboard"))
-        return render_template("booking.html", locations=locations)
+        coaches = Coach.query.filter_by(is_active=True).all()
+        return render_template("booking.html", locations=locations, coaches=coaches)
 
     @app.route("/shop")
     def shop():
@@ -435,7 +622,8 @@ def create_app() -> Flask:
             return redirect(url_for("index"))
         bookings = Booking.query.order_by(Booking.created_at.desc()).all()
         users = User.query.order_by(User.name.asc()).all()
-        return render_template("admin.html", bookings=bookings, users=users)
+        coaches = Coach.query.order_by(Coach.name.asc()).all()
+        return render_template("admin.html", bookings=bookings, users=users, coaches=coaches)
 
     @app.route("/admin/booking/<int:booking_id>/confirm", methods=["POST"])
     @login_required
@@ -506,6 +694,60 @@ def create_app() -> Flask:
             return redirect(url_for("admin_settings"))
         current_email = AppSetting.get("booking_notification_email", "info@squalo.local")
         return render_template("admin_settings.html", current_email=current_email)
+
+    @app.route("/admin/coaches", methods=["GET", "POST"])
+    @login_required
+    def admin_coaches():
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+        if request.method == "POST":
+            name = request.form.get("name", "").strip()
+            title = request.form.get("title", "").strip()
+            bio = request.form.get("bio", "").strip()
+            strengths = request.form.get("strengths", "").strip()
+            image_url = request.form.get("image_url", "").strip()
+            is_active = request.form.get("is_active") == "1"
+            coach_id = request.form.get("coach_id")
+            if not name:
+                flash("Bitte einen Namen angeben.", "danger")
+                return redirect(url_for("admin_coaches"))
+            slug = name.lower().replace(" ", "-").replace("ö", "oe").replace("ä", "ae").replace("ü", "ue")
+            if coach_id:
+                coach = Coach.query.get(int(coach_id))
+                if coach:
+                    coach.name = name
+                    coach.slug = slug
+                    coach.title = title
+                    coach.bio = bio
+                    coach.strengths = strengths
+                    coach.image_url = image_url
+                    coach.is_active = is_active
+                    flash(f"Coach {name} aktualisiert.", "success")
+            else:
+                if Coach.query.filter_by(slug=slug).first():
+                    flash("Ein Coach mit diesem Namen existiert bereits.", "danger")
+                    return redirect(url_for("admin_coaches"))
+                coach = Coach(name=name, slug=slug, title=title, bio=bio,
+                              strengths=strengths, image_url=image_url, is_active=is_active)
+                db.session.add(coach)
+                flash(f"Coach {name} angelegt.", "success")
+            db.session.commit()
+            return redirect(url_for("admin_coaches"))
+        coaches = Coach.query.order_by(Coach.name.asc()).all()
+        return render_template("admin_coaches.html", coaches=coaches)
+
+    @app.route("/admin/coaches/<int:coach_id>/toggle", methods=["POST"])
+    @login_required
+    def admin_coach_toggle(coach_id):
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+        coach = Coach.query.get_or_404(coach_id)
+        coach.is_active = not coach.is_active
+        db.session.commit()
+        flash(f"Coach {'aktiviert' if coach.is_active else 'deaktiviert'}.", "info")
+        return redirect(url_for("admin_coaches"))
 
     @app.route("/uploads/<path:filename>")
     def uploaded_file(filename):

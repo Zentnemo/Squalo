@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="coaches-page">
+  <section class="coaches-hero">
+    <div class="container">
+      <h1 class="coaches-hero-title">🏊 Squalo Coaches</h1>
+      <p class="coaches-hero-subtitle">
+        Lerne unsere Schwimmcoaches kennen und finde den passenden Trainer für dein persönliches Training in Berlin.
+      </p>
+    </div>
+  </section>
+
+  <div class="container">
+    {% for coach in coaches %}
+      <div class="coach-card">
+        <div class="coach-card-inner">
+          <div class="coach-image-wrap">
+            {% if coach.image_url %}
+              <img src="{{ coach.image_url }}" alt="{{ coach.name }}" class="coach-image">
+            {% else %}
+              <div class="coach-image-placeholder">
+                <span class="coach-placeholder-icon">🏊</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="coach-info">
+            <h2 class="coach-name">{{ coach.name }}</h2>
+            {% if coach.title %}
+              <p class="coach-title">{{ coach.title }}</p>
+            {% endif %}
+
+            {% if coach.bio %}
+              <p class="coach-bio">{{ coach.bio }}</p>
+            {% endif %}
+
+            {% if coach.strengths %}
+              <div class="coach-strengths">
+                <h3>Stärken</h3>
+                {{ coach.strengths|replace('\n', '<br>')|safe }}
+              </div>
+            {% endif %}
+
+            {% if coach.swim_style %}
+              <div class="coach-swim-style">
+                <h3>Trainingsansatz</h3>
+                <p>{{ coach.swim_style }}</p>
+              </div>
+            {% endif %}
+
+            {% if coach.experience %}
+              <div class="coach-experience">
+                <h3>Erfahrung &amp; Qualifikation</h3>
+                {{ coach.experience|replace('\n', '<br>')|safe }}
+              </div>
+            {% endif %}
+
+            {% if coach.external_profile_url %}
+              <p class="coach-external-link">
+                <a href="{{ coach.external_profile_url }}" target="_blank" rel="noopener" class="btn btn-small btn-secondary">
+                  ➔ Profil auf Superprof ansehen
+                </a>
+                <span class="coach-external-hint">Alle Bewertungen &amp; weitere Infos auf Superprof</span>
+              </p>
+            {% endif %}
+
+            <div class="coach-actions">
+              <a href="{{ url_for('booking') }}?coach_id={{ coach.id }}" class="btn btn-hero-primary">
+                ✅ Training mit {{ coach.name.split(' ')[0] }} anfragen
+              </a>
+              <p class="coach-price-hint">💰 50 € / Std · 5-er Paket: 250 € · 10-er Paket: 500 €</p>
+            </div>
+          </div>
+        </div>
+
+        {# ── Reviews ── #}
+        <div class="coach-reviews-section">
+          <h3>Bewertungen</h3>
+
+          {% set coach_reviews = coach.reviews %}
+          {% if coach_reviews %}
+            <div class="reviews-list">
+              {% for review in coach_reviews %}
+                {% if review.is_approved %}
+                  <div class="review-card">
+                    <div class="review-header">
+                      <span class="review-stars">
+                        {% for i in range(review.rating) %}⭐{% endfor %}
+                      </span>
+                      <span class="review-author">
+                        {% if review.author_name %}{{ review.author_name }}{% else %}Anonym{% endif %}
+                      </span>
+                      {% if review.source != 'squalo' %}
+                        <span class="review-source">{{ review.source }}</span>
+                      {% endif %}
+                    </div>
+                    {% if review.text %}
+                      <p class="review-text">{{ review.text }}</p>
+                    {% endif %}
+                    <span class="review-date">{{ review.created_at.strftime('%d.%m.%Y') }}</span>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="reviews-empty">
+              Noch keine Bewertungen. Sei die/der Erste!<br>
+              <span class="reviews-superprof-hint">
+                Besuche auch das <a href="{{ coach.external_profile_url }}" target="_blank" rel="noopener">Superprof-Profil</a> für externe Bewertungen.
+              </span>
+            </p>
+          {% endif %}
+
+          {# ── Review Form (logged in users) ── #}
+          {% if current_user.is_authenticated %}
+            <div class="review-form-wrap">
+              <h4>Moritz bewerten</h4>
+              <form method="POST" action="{{ url_for('coaches_review', coach_id=coach.id) }}" class="review-form">
+                <div class="form-group">
+                  <label>Deine Bewertung</label>
+                  <div class="star-rating">
+                    {% for i in range(5, 0, -1) %}
+                      <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" {% if i == 5 %}required{% endif %}>
+                      <label for="star{{ i }}" title="{{ i }} Stern{{ 'e' if i > 1 else '' }}">★</label>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="review_text">Dein Kommentar (optional)</label>
+                  <textarea id="review_text" name="text" rows="3" class="feed-textarea" placeholder="Was hat dir besonders gefallen?"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Bewertung absenden</button>
+              </form>
+            </div>
+          {% else %}
+            <p class="review-login-hint">🔒 <a href="{{ url_for('login') }}">Logge dich ein</a>, um Moritz zu bewerten.</p>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <div class="coaches-empty">
+        <p>Aktuell sind keine Coaches verfügbar.</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

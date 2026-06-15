@@ -2805,3 +2805,390 @@ main {
   border: 3px solid #ffffff;
 }
 
+/* ══════════════════════════════════════
+   COACHES PAGE STYLES
+   ══════════════════════════════════════ */
+
+.coaches-page {
+  padding-bottom: 60px;
+}
+
+.coaches-hero {
+  background: linear-gradient(135deg, var(--dark-blue), #006070);
+  padding: 48px 0 36px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.coaches-hero-title {
+  font-family: 'Righteous', cursive;
+  font-size: 42px;
+  color: var(--orange);
+  margin: 0 0 12px;
+}
+
+.coaches-hero-subtitle {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 18px;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.coach-card {
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-bottom: 36px;
+  transition: box-shadow 0.3s ease;
+}
+
+.coach-card:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+}
+
+.coach-card-inner {
+  display: flex;
+  gap: 32px;
+  padding: 28px;
+}
+
+.coach-image-wrap {
+  flex-shrink: 0;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid var(--orange);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.coach-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.coach-image-placeholder {
+  font-size: 64px;
+  opacity: 0.5;
+}
+
+.coach-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.coach-name {
+  font-family: 'Righteous', cursive;
+  font-size: 28px;
+  color: var(--dark-blue);
+  margin: 0 0 6px;
+}
+
+.coach-title {
+  font-size: 16px;
+  color: var(--turquoise);
+  font-weight: 600;
+  margin: 0 0 14px;
+}
+
+.coach-bio {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+}
+
+.coach-strengths,
+.coach-swim-style,
+.coach-experience {
+  margin-bottom: 14px;
+}
+
+.coach-strengths h3,
+.coach-swim-style h3,
+.coach-experience h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark-blue);
+  margin: 0 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.coach-strengths p,
+.coach-swim-style p,
+.coach-experience p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.coach-external-link {
+  margin: 16px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.coach-external-hint {
+  font-size: 12px;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.coach-actions {
+  margin-top: 20px;
+}
+
+.coach-price-hint {
+  font-size: 13px;
+  color: var(--text-light);
+  margin: 8px 0 0;
+  font-weight: 500;
+}
+
+/* ── Reviews Section ── */
+.coach-reviews-section {
+  padding: 20px 28px;
+  background: #f8fcff;
+  border-top: 2px solid var(--light-turquoise);
+}
+
+.coach-reviews-section h3 {
+  font-family: 'Righteous', cursive;
+  font-size: 22px;
+  color: var(--dark-blue);
+  margin: 0 0 16px;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.review-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-left: 4px solid var(--orange);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.review-stars {
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+.review-author {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dark-blue);
+}
+
+.review-source {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: #e0f7fa;
+  color: var(--dark-blue);
+  border-radius: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.review-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-dark);
+  margin: 4px 0;
+}
+
+.review-date {
+  font-size: 11px;
+  color: var(--text-light);
+}
+
+.reviews-empty {
+  text-align: center;
+  padding: 24px;
+  background: var(--white);
+  border-radius: 12px;
+  color: var(--text-light);
+  font-size: 15px;
+  margin-bottom: 24px;
+}
+
+.reviews-superprof-hint {
+  font-size: 13px;
+  display: block;
+  margin-top: 8px;
+}
+
+.reviews-superprof-hint a {
+  color: var(--turquoise);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.reviews-superprof-hint a:hover {
+  text-decoration: underline;
+}
+
+/* ── Review Form ── */
+.review-form-wrap {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.review-form-wrap h4 {
+  font-size: 18px;
+  color: var(--dark-blue);
+  margin: 0 0 16px;
+}
+
+.star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.star-rating input {
+  display: none;
+}
+
+.star-rating label {
+  font-size: 32px;
+  color: #ddd;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label {
+  color: #ffc107;
+}
+
+.review-login-hint {
+  text-align: center;
+  padding: 20px;
+  font-size: 15px;
+  color: var(--text-light);
+  background: var(--white);
+  border-radius: 12px;
+}
+
+.review-login-hint a {
+  color: var(--turquoise);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.review-login-hint a:hover {
+  text-decoration: underline;
+}
+
+.coaches-empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.coaches-empty p {
+  font-size: 18px;
+  color: var(--text-light);
+}
+
+/* ── Coaches Page Mobile ── */
+@media (max-width: 768px) {
+  .coaches-hero {
+    padding: 32px 0 24px;
+  }
+
+  .coaches-hero-title {
+    font-size: 28px;
+  }
+
+  .coaches-hero-subtitle {
+    font-size: 15px;
+    padding: 0 14px;
+  }
+
+  .coach-card-inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .coach-image-wrap {
+    width: 140px;
+    height: 140px;
+  }
+
+  .coach-name {
+    font-size: 24px;
+  }
+
+  .coach-actions {
+    text-align: center;
+  }
+
+  .coach-external-link {
+    justify-content: center;
+  }
+
+  .coach-reviews-section {
+    padding: 16px;
+  }
+
+  .review-form-wrap {
+    padding: 16px;
+  }
+
+  .star-rating label {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .coaches-hero-title {
+    font-size: 24px;
+  }
+
+  .coach-image-wrap {
+    width: 110px;
+    height: 110px;
+  }
+
+  .coach-name {
+    font-size: 20px;
+  }
+
+  .coach-card-inner {
+    padding: 16px;
+  }
+}
+

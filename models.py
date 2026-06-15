@@ -77,6 +77,8 @@ class Booking(db.Model):
     duration_minutes = db.Column(db.Integer, default=60)
     duration_slots = db.Column(db.Integer, default=2)
     estimated_price = db.Column(db.Float, default=50.0)
+    # Coach preference
+    preferred_coach_id = db.Column(db.Integer, db.ForeignKey('coach.id'), nullable=True)
     status = db.Column(db.String(32), default='angefragt')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -86,6 +88,36 @@ class Booking(db.Model):
     preferred_location_2 = db.relationship('Location', foreign_keys=[preferred_location_2_id])
     preferred_location_3 = db.relationship('Location', foreign_keys=[preferred_location_3_id])
     confirmed_location = db.relationship('Location', foreign_keys=[confirmed_location_id])
+    preferred_coach = db.relationship('Coach', foreign_keys=[preferred_coach_id])
+
+
+class Coach(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    slug = db.Column(db.String(160), unique=True, nullable=False)
+    title = db.Column(db.String(200))
+    bio = db.Column(db.Text)
+    strengths = db.Column(db.Text)
+    swim_style = db.Column(db.Text)
+    experience = db.Column(db.Text)
+    image_url = db.Column(db.String(500))
+    external_profile_url = db.Column(db.String(500))
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class CoachReview(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    coach_id = db.Column(db.Integer, db.ForeignKey('coach.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    rating = db.Column(db.Integer, nullable=False)
+    text = db.Column(db.Text)
+    source = db.Column(db.String(80), default='squalo')
+    author_name = db.Column(db.String(120))
+    is_approved = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    coach = db.relationship('Coach', backref='reviews')
+    user = db.relationship('User', backref='reviews')
 
 
 class FeedPost(db.Model):

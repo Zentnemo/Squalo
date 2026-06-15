@@ -103,6 +103,19 @@
         </div>
       </fieldset>
 
+      <fieldset class="form-fieldset">
+        <legend>🏋️ Coach-Präferenz (optional)</legend>
+        <div class="form-group">
+          <label for="preferred_coach_id">Bevorzugter Coach</label>
+          <select id="preferred_coach_id" name="preferred_coach_id">
+            <option value="">-- Egal --</option>
+            {% for coach in coaches %}
+              <option value="{{ coach.id }}" {% if request.args.get('coach_id')|string == coach.id|string %}selected{% endif %}>{{ coach.name }} – {{ coach.title or 'Schwimmcoach' }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </fieldset>
+
       <div class="form-group">
         <label for="training_goal">🎯 Trainingsziel</label>
         <select id="training_goal" name="training_goal">

@@ -102,6 +102,9 @@
               {% if b.training_goal %}
                 <p><strong>Trainingsziel:</strong> {{ b.training_goal }}</p>
               {% endif %}
+              {% if b.preferred_coach %}
+                <p><strong>Coach-Präferenz:</strong> {{ b.preferred_coach.name }}</p>
+              {% endif %}
               {% if b.user_note %}
                 <p><strong>Notiz:</strong> {{ b.user_note }}</p>
               {% endif %}
