@@ -35,16 +35,65 @@ html, body {
   padding: 0 20px;
 }
 
-/* Header */
+/* ── Header ── */
 .site-header {
-  background: linear-gradient(135deg, var(--squalo-pool-blue) 0%, var(--squalo-aqua) 100%);
-  color: var(--white);
-  padding: 24px 0;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 2px solid var(--squalo-orange);
+  color: var(--white);
+  padding: 20px 0;
+  overflow: hidden;
+}
+
+/* Water-shimmer background */
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 120% 60% at 30% 40%, rgba(102, 224, 255, 0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 50% at 70% 60%, rgba(127, 243, 255, 0.5) 0%, transparent 65%),
+    linear-gradient(165deg, #4dd8ff 0%, #66e0ff 25%, #7ff3ff 50%, #66e0ff 75%, #4dd8ff 100%);
+  background-size: 200% 200%;
+  animation: waterShimmer 8s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+@keyframes waterShimmer {
+  0%   { background-position: 0% 40%; }
+  50%  { background-position: 100% 60%; }
+  100% { background-position: 0% 40%; }
+}
+
+/* Caustic light pattern overlay */
+.site-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 20px 20px at 20% 30%, rgba(255,255,255,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 15px 15px at 50% 20%, rgba(255,255,255,0.2) 0%, transparent 70%),
+    radial-gradient(ellipse 25px 25px at 75% 40%, rgba(255,255,255,0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 18px 18px at 35% 70%, rgba(255,255,255,0.2) 0%, transparent 70%),
+    radial-gradient(ellipse 22px 22px at 65% 75%, rgba(255,255,255,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 12px 12px at 85% 25%, rgba(255,255,255,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 16px 16px at 10% 60%, rgba(255,255,255,0.2) 0%, transparent 70%);
+  background-size: 200% 200%;
+  animation: causticsMove 12s ease-in-out infinite alternate;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes causticsMove {
+  0%   { background-position: 0% 0%; opacity: 0.5; }
+  50%  { background-position: 50% 50%; opacity: 1; }
+  100% { background-position: 100% 0%; opacity: 0.5; }
+}
+
+/* Bottom glow line */
+.site-header .container {
+  position: relative;
+  z-index: 2;
 }
 
 .header-content {
@@ -54,79 +103,46 @@ html, body {
   gap: 24px;
 }
 
+/* ── Logo section ── */
 .logo-section {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 28px;
   position: relative;
-}
-
-.logo-section::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--orange), transparent);
-  opacity: 0.6;
+  margin-left: -8px;
 }
 
 .logo-img {
-  height: 130px;
+  height: 150px;
   width: auto;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3)) drop-shadow(0 0 20px rgba(255, 106, 0, 0.2));
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
   transition: all 0.3s ease;
   position: relative;
 }
 
 .logo-img:hover {
-  transform: scale(1.05);
-  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 30px rgba(255, 106, 0, 0.3));
+  transform: scale(1.04);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
 }
 
+/* ── Brand title ── */
 .brand-title {
   font-family: 'Righteous', cursive;
-  font-size: 42px;
+  font-size: 38px;
   font-weight: 900;
   margin: 0;
-  line-height: 1.1;
+  line-height: 1;
   color: var(--white);
   text-transform: uppercase;
-  letter-spacing: 3px;
-  font-style: italic;
-  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5);
-  background: linear-gradient(135deg, var(--squalo-orange), var(--squalo-neon-orange));
+  letter-spacing: 4px;
+  white-space: nowrap;
+  background: linear-gradient(135deg, var(--squalo-neon-orange), #ff7a00);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 18px rgba(255, 159, 0, 0.45)) drop-shadow(0 0 40px rgba(255, 122, 0, 0.2));
   position: relative;
-}
-
-.brand-title::before {
-  content: 'SQUALO';
-  position: absolute;
-  top: -2px;
-  left: 0;
-  color: rgba(255, 255, 255, 0.1);
-  z-index: -1;
-  font-size: 48px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-}
-
-.brand-title::after {
-  content: 'SCHWIMMCOACHING';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  color: rgba(255, 255, 255, 0.05);
-  z-index: -1;
-  font-size: 36px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
 }
 
 .main-nav {
@@ -577,13 +593,12 @@ main {
   margin: 4px;
 }
 
-/* Hero */
+/* ── Hero ── */
 .hero {
   position: relative;
   text-align: center;
   padding: 120px 20px 100px;
   background:
-    linear-gradient(135deg, rgba(102, 224, 255, 0.92), rgba(127, 243, 255, 0.88), rgba(102, 224, 255, 0.95)),
     url('../images/hero-bg.jpg') center / cover no-repeat;
   color: var(--white);
   border-radius: 12px;
@@ -593,37 +608,39 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
 }
 
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='100' height='20' viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 25 0, 50 10 T 100 10' fill='none' stroke='rgba(255,255,255,0.1)' stroke-width='1'/%3E%3C/svg%3E") repeat-x;
-  background-size: 100px 20px;
-  animation: wave 8s linear infinite;
-  opacity: 0.3;
-}
-
-@keyframes wave {
-  0% { background-position: 0 0; }
-  100% { background-position: 100px 0; }
-}
-
+/* Warm amber/orange dusk overlay – urban/sunset feel */
 .hero-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background: linear-gradient(
     to bottom,
-    rgba(6, 59, 122, 0.10) 0%,
-    rgba(6, 59, 122, 0.20) 40%,
-    rgba(6, 59, 122, 0.40) 100%
+    rgba(180, 100, 20, 0.08) 0%,
+    rgba(160, 80, 30, 0.12) 30%,
+    rgba(120, 60, 25, 0.18) 55%,
+    rgba(80, 45, 20, 0.35) 100%
   );
   z-index: 1;
+}
+
+/* Aquamarine pool glow – radial hotspot at bottom center */
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 45%;
+  background: radial-gradient(
+    ellipse 100% 60% at center bottom,
+    rgba(102, 224, 255, 0.35) 0%,
+    rgba(127, 243, 255, 0.15) 30%,
+    transparent 70%
+  );
+  z-index: 1;
+  pointer-events: none;
 }
 
 .hero-content {
@@ -644,33 +661,19 @@ main {
   text-transform: uppercase;
   letter-spacing: 5px;
   font-style: italic;
-  text-shadow: 4px 4px 12px rgba(0, 0, 0, 0.6);
   position: relative;
-  background: linear-gradient(135deg, var(--squalo-orange), var(--squalo-neon-orange));
+  background: linear-gradient(135deg, var(--squalo-neon-orange), #ff7a00);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-.hero-title::after {
-  content: '';
-  position: absolute;
-  top: -20px;
-  right: -40px;
-  font-size: 32px;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
 }
 
 .hero-subtitle-text {
   font-size: 32px;
   letter-spacing: 10px;
   color: var(--orange);
-  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.6);
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
   font-weight: 700;
   position: relative;
 }
@@ -1427,29 +1430,17 @@ main {
   .logo-section {
     flex-direction: column;
     gap: 12px;
-  }
-
-  .logo-section::after {
-    width: 60%;
-    left: 20%;
+    margin-left: 0;
   }
 
   .logo-img {
-    height: 80px;
+    height: 90px;
   }
 
   .brand-title {
-    font-size: 32px;
-    text-align: center;
-  }
-
-  .brand-title::before {
-    font-size: 38px;
-  }
-
-  .brand-title::after {
     font-size: 28px;
-    bottom: -6px;
+    text-align: center;
+    white-space: normal;
   }
 
   .main-nav {
