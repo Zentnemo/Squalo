@@ -426,4 +426,60 @@ SWIM_LOCATIONS = [
         "crowd_level": "low",
         "maps_url": "https://maps.google.com/?q=Strandbad+Orankesee+Berlin"
     },
+    # ── 31 ── Steingarten am Plötzensee – freie Badestelle (Ostufer)
+    {
+        "name": "Steingarten am Plötzensee",
+        "location_type": "Badestelle",
+        "district": "Mitte",
+        "address": "Am Plötzensee (Ostufer), 13355 Berlin",
+        "latitude": 52.5410,
+        "longitude": 13.3320,
+        "official_status": "open",
+        "verified_status": "verified",
+        "water_temperature": "18°C",
+        "crowd_level": "medium",
+        "maps_url": "https://maps.google.com/?q=Steingarten+am+Pl%C3%B6tzensee+Berlin"
+    },
+    # ── 32 ── Badestelle Grünau – freie Badestelle an der Dahme
+    {
+        "name": "Badestelle Grünau",
+        "location_type": "Badestelle",
+        "district": "Treptow-Köpenick",
+        "address": "Dahmeufer Nähe S Grünau, 12527 Berlin",
+        "latitude": 52.4130,
+        "longitude": 13.5770,
+        "official_status": "open",
+        "verified_status": "verified",
+        "water_temperature": "19°C",
+        "crowd_level": "medium",
+        "maps_url": "https://maps.google.com/?q=Badestelle+Gr%C3%BCnau+Dahme+Berlin"
+    },
+    # ── 33 ── Strandbad Schmöckwitz / Zeuthener See
+    {
+        "name": "Strandbad Schmöckwitz",
+        "location_type": "Strandbad",
+        "district": "Treptow-Köpenick",
+        "address": "Schmöckwitzwerder 1, 12527 Berlin",
+        "latitude": 52.3770,
+        "longitude": 13.6880,
+        "official_status": "open",
+        "verified_status": "verified",
+        "water_temperature": "20°C",
+        "crowd_level": "medium",
+        "maps_url": "https://maps.google.com/?q=Strandbad+Schm%C3%B6ckwitz+Berlin"
+    },
+    # ── 34 ── Biesdorfer Baggersee – freier Badesee in Marzahn
+    {
+        "name": "Biesdorfer Baggersee",
+        "location_type": "See",
+        "district": "Marzahn-Hellersdorf",
+        "address": "Am Biesdorfer Baggersee, 12683 Berlin",
+        "latitude": 52.5090,
+        "longitude": 13.5600,
+        "official_status": "open",
+        "verified_status": "verified",
+        "water_temperature": "21°C",
+        "crowd_level": "medium",
+        "maps_url": "https://maps.google.com/?q=Biesdorfer+Baggersee+Berlin"
+    },
 ]
