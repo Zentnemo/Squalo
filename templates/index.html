@@ -3,9 +3,9 @@
   <section class="hero">
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1 class="hero-title">SQUALO<br><span class="hero-subtitle-text">SCHWIMMCOACHING</span></h1>
+      <h1 class="hero-title">SQUALO SCHWIMMCOACHING</h1>
       <p class="hero-tagline">Trainiere in den besten Schwimmbädern Berlins</p>
-      <p class="hero-description">23 Berliner Schwimmlocations – buche jetzt dein persönliches Training</p>
+      <p class="hero-description">{{ locations|length }} Berliner Schwimmlocations – Buche dein persönliches Training an deinem Wunschort</p>
 
       {% if not current_user.is_authenticated %}
         <div class="cta-buttons">

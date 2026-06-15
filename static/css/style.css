@@ -610,33 +610,33 @@ main {
   justify-content: center;
 }
 
-/* Warm amber/orange dusk overlay – urban/sunset feel */
+/* Warm amber/orange dusk overlay – urban rooftop sunset feel */
 .hero-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   background: linear-gradient(
     to bottom,
-    rgba(180, 100, 20, 0.08) 0%,
-    rgba(160, 80, 30, 0.12) 30%,
-    rgba(120, 60, 25, 0.18) 55%,
-    rgba(80, 45, 20, 0.35) 100%
+    rgba(220, 140, 50, 0.06) 0%,
+    rgba(200, 120, 40, 0.10) 25%,
+    rgba(180, 100, 35, 0.14) 50%,
+    rgba(100, 60, 25, 0.20) 100%
   );
   z-index: 1;
 }
 
-/* Aquamarine pool glow – radial hotspot at bottom center */
+/* Aquamarine pool glow – subtle radiant hotspot at bottom center */
 .hero::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 70%;
-  height: 45%;
+  width: 60%;
+  height: 40%;
   background: radial-gradient(
     ellipse 100% 60% at center bottom,
-    rgba(102, 224, 255, 0.35) 0%,
-    rgba(127, 243, 255, 0.15) 30%,
+    rgba(102, 224, 255, 0.25) 0%,
+    rgba(127, 243, 255, 0.10) 35%,
     transparent 70%
   );
   z-index: 1;
@@ -653,78 +653,37 @@ main {
 
 .hero-title {
   font-family: 'Righteous', cursive;
-  font-size: 72px;
+  font-size: 64px;
   font-weight: 900;
-  margin: 0 0 12px 0;
-  line-height: 1.1;
-  color: var(--white);
+  margin: 0 0 8px 0;
+  line-height: 1.15;
   text-transform: uppercase;
-  letter-spacing: 5px;
-  font-style: italic;
-  position: relative;
+  letter-spacing: 6px;
   background: linear-gradient(135deg, var(--squalo-neon-orange), #ff7a00);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
-}
-
-.hero-subtitle-text {
-  font-size: 32px;
-  letter-spacing: 10px;
-  color: var(--orange);
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
-  font-weight: 700;
-  position: relative;
-}
-
-.hero-subtitle-text::before {
-  content: '•';
-  color: var(--light-turquoise);
-  margin-right: 8px;
-}
-
-.hero-subtitle-text::after {
-  content: '•';
-  color: var(--light-turquoise);
-  margin-left: 8px;
+  filter: drop-shadow(0 0 24px rgba(255, 159, 0, 0.5)) drop-shadow(0 0 60px rgba(255, 122, 0, 0.2));
 }
 
 .hero-tagline {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 20px 0 12px 0;
-  color: var(--squalo-deep-blue);
-  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  letter-spacing: 0.5px;
 }
 
 .hero-description {
   font-size: 18px;
   margin: 0 0 40px 0;
-  opacity: 0.98;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
-}
-
-.hero h1 {
-  margin: 0 0 12px 0;
-  font-size: 56px;
-  font-weight: 700;
-}
-
-.tagline {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 10px 0;
-  color: var(--light-turquoise);
-}
-
-.subtitle {
-  font-size: 18px;
-  margin: 0 0 30px 0;
-  opacity: 0.9;
+  font-weight: 500;
 }
 
 .cta-buttons {
@@ -1407,17 +1366,16 @@ main {
 /* Responsive */
 @media (max-width: 768px) {
   .hero-title {
-    font-size: 42px;
+    font-size: 38px;
     letter-spacing: 3px;
   }
 
-  .hero-subtitle-text {
-    font-size: 22px;
-    letter-spacing: 6px;
+  .hero-tagline {
+    font-size: 20px;
   }
 
-  .hero h1 {
-    font-size: 36px;
+  .hero-description {
+    font-size: 16px;
   }
 
   .header-content {
