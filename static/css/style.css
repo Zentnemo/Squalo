@@ -378,16 +378,9 @@ html, body {
   background: rgba(255, 159, 0, 0.08);
 }
 
-/* Buoy markers on left/right of each lane */
+/* Buoy markers on left/right of each lane – hidden for clean nav */
 .lane-buoy-marker {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background: var(--squalo-neon-orange);
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  transition: all 0.3s ease;
+  display: none;
 }
 
 .lane-item:hover .lane-buoy-marker,
@@ -414,17 +407,17 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 3px 0;
+  padding: 4px 0;
   position: relative;
-  height: 16px;
+  height: 18px;
 }
 
 /* Extended lane rope line through divider */
 .lane-divider::before {
   content: '';
   position: absolute;
-  left: 12%;
-  right: 12%;
+  left: 8%;
+  right: 8%;
   top: 50%;
   height: 1.5px;
   background: linear-gradient(90deg,
@@ -643,6 +636,24 @@ html, body {
 }
 
 .pool-lane-rope:hover .lane-buoy:nth-child(even) {
+  animation-delay: 0.15s;
+}
+
+/* Brand buoy chain hover animation */
+.brand-buoy-rope:hover .brand-buoy {
+  animation: buoyBob 1.2s ease-in-out infinite;
+}
+
+.brand-buoy-rope:hover .brand-buoy:nth-child(even) {
+  animation-delay: 0.15s;
+}
+
+/* Lane divider buoy hover */
+.lane-divider:hover .divider-buoy {
+  animation: buoyBob 1.2s ease-in-out infinite;
+}
+
+.lane-divider:hover .divider-buoy:nth-child(even) {
   animation-delay: 0.15s;
 }
 
@@ -2462,13 +2473,13 @@ main {
   }
 
   .lane-divider {
-    height: 12px;
+    height: 14px;
     gap: 5px;
   }
 
   .lane-divider::before {
-    left: 10%;
-    right: 10%;
+    left: 5%;
+    right: 5%;
   }
 
   .divider-buoy {

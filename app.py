@@ -252,6 +252,7 @@ def create_app() -> Flask:
                 "🏅 5,0 ⭐ Bewertungen (8 Bewertungen)"
             )
             existing_coach.external_profile_url = "https://www.superprof.de/jahre-schwimmerfahrung-rettungschwimmer-und-viel-geduld-mit-mir-lernst-deinem-individuellen-tempo-deine-technik.html"
+            existing_coach.image_url = "/static/images/moritz-zentner.jpg"
             existing_coach.is_active = True
             print(f"[OK] Coach aktualisiert: {existing_coach.name}")
         else:
@@ -259,6 +260,7 @@ def create_app() -> Flask:
                 name="Moritz Zentner",
                 slug=coach_slug,
                 title="Schwimmlehrer – 22 Jahre Erfahrung, Rettungsschwimmer",
+                image_url="/static/images/moritz-zentner.jpg",
                 bio=(
                     "Ich bin Moritz, 26 Jahre alt und studiere Humanoide Robotik. "
                     "Schwimmen ist meine große Leidenschaft – ich schwimme jeden Tag und "
