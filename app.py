@@ -8,7 +8,7 @@ import os
 import time as time_mod
 from datetime import datetime, date
 from zoneinfo import ZoneInfo
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, Response
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -497,9 +497,61 @@ def create_app() -> Flask:
     @app.route("/dashboard")
     @login_required
     def dashboard():
-        bookings = Booking.query.filter_by(user_id=current_user.id).order_by(Booking.created_at.desc()).all()
+        all_bookings = Booking.query.filter_by(user_id=current_user.id).order_by(Booking.created_at.desc()).all()
+        bookings_pending = [b for b in all_bookings if b.status == 'angefragt']
+        bookings_confirmed = [b for b in all_bookings if b.status == 'bestaetigt']
+        bookings_rejected = [b for b in all_bookings if b.status == 'abgelehnt']
         notes = TrainingNote.query.filter_by(user_id=current_user.id).order_by(TrainingNote.created_at.desc()).all()
-        return render_template("dashboard.html", bookings=bookings, notes=notes)
+        return render_template("dashboard.html",
+                               bookings=all_bookings,
+                               bookings_pending=bookings_pending,
+                               bookings_confirmed=bookings_confirmed,
+                               bookings_rejected=bookings_rejected,
+                               notes=notes)
+
+    @app.route("/calendar/<int:booking_id>.ics")
+    @login_required
+    def calendar_event(booking_id):
+        b = Booking.query.get_or_404(booking_id)
+        if b.user_id != current_user.id or b.status != 'bestaetigt':
+            flash("Kalender-Export nur für bestätigte eigene Termine möglich.", "warning")
+            return redirect(url_for("dashboard"))
+        if not b.confirmed_date:
+            flash("Kalender-Export: Kein bestätigtes Datum vorhanden.", "warning")
+            return redirect(url_for("dashboard"))
+        from datetime import timedelta
+        tz = ZoneInfo("Europe/Berlin")
+        start_dt = datetime.combine(b.confirmed_date, b.confirmed_time or datetime.min.time()).replace(tzinfo=tz)
+        end_dt = start_dt + timedelta(minutes=b.duration_minutes or 60)
+        loc_name = b.confirmed_location.name if b.confirmed_location else "TBD"
+        coach_name = b.preferred_coach.name if b.preferred_coach else "Moritz"
+        uid = f"squalo-booking-{b.id}@squalo.app"
+        dt_start = start_dt.strftime("%Y%m%dT%H%M%S")
+        dt_end = end_dt.strftime("%Y%m%dT%H%M%S")
+        dtstamp = datetime.now(tz).strftime("%Y%m%dT%H%M%S")
+        summary = "Squalo Schwimmtraining"
+        description = f"Schwimmtraining mit {coach_name}\\nOrt: {loc_name}\\nDauer: {b.duration_minutes} Minuten"
+        ics_content = """BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Squalo Schwimmcoaching//DE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:{}
+DTSTAMP:{}
+DTSTART:{}
+DTEND:{}
+SUMMARY:{}
+LOCATION:{}
+DESCRIPTION:{}
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR""".format(uid, dtstamp, dt_start, dt_end, summary, loc_name, description)
+        return Response(
+            ics_content,
+            mimetype="text/calendar",
+            headers={"Content-Disposition": f"attachment; filename=squalo-training-{b.id}.ics"}
+        )
 
     @app.route("/feed", methods=["GET", "POST"])
     @login_required

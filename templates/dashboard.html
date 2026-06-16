@@ -5,121 +5,197 @@
     <a href="{{ url_for('booking') }}" class="btn btn-primary">+ Neuen Termin anfragen</a>
   </div>
 
-  <section class="dashboard-section">
-    <h3>Deine Terminwünsche</h3>
-    
-    {% if bookings %}
-      <div class="bookings-list">
-        {% for b in bookings %}
-          <div class="booking-card">
-            <div class="booking-status status-{{ b.status|replace('ä', 'ae')|replace('ö', 'oe')|replace('ü', 'ue')|lower }}">
-              {% if b.status == 'bestaetigt' %}✅ BESTÄTIGT
-              {% elif b.status == 'abgelehnt' %}❌ ABGELEHNT
-              {% elif b.status == 'angefragt' %}⏳ ANGEFRAGT
-              {% else %}{{ b.status|upper }}
-              {% endif %}
-            </div>
-            <div class="booking-content">
+  {# ── Tab Navigation ── #}
+  <div class="dash-tabs">
+    <button class="dash-tab active" data-tab="termine">🗓️ Termine</button>
+    <button class="dash-tab" data-tab="sessions">🏊 Trainingseinheiten</button>
+    <button class="dash-tab" data-tab="plans">📋 Trainingspläne</button>
+    <button class="dash-tab" data-tab="data">📊 Trainingsdaten</button>
+  </div>
 
-              {# ── Duration & Pricing ── #}
-              {% if b.duration_minutes %}
-                <p><strong>⏱️ Dauer:</strong>
-                  {% if b.duration_minutes == 30 %}30 Minuten
-                  {% elif b.duration_minutes == 60 %}1 Stunde
-                  {% elif b.duration_minutes == 90 %}1,5 Stunden
-                  {% elif b.duration_minutes == 120 %}2 Stunden
-                  {% elif b.duration_minutes == 180 %}3 Stunden
-                  {% elif b.duration_minutes == 240 %}4 Stunden
-                  {% elif b.duration_minutes == 300 %}5 Stunden ✨
-                  {% else %}{{ b.duration_minutes }} Minuten
-                  {% endif %}
-                </p>
-              {% endif %}
-              {% if b.estimated_price %}
-                <p><strong>💰 Geschätzter Preis:</strong> {{ b.estimated_price|int }} €
-                  {% if b.duration_minutes == 300 %}
-                    <span style="font-size:13px;color:#e65c00;">(5-Stunden-Paket – eine Stunde geschenkt!)</span>
-                  {% endif %}
-                </p>
-              {% endif %}
+  {# ════════════════════════════════════════════════ #}
+  {# TAB: Termine                                    #}
+  {# ════════════════════════════════════════════════ #}
+  <div class="dash-panel active" id="panel-termine">
 
-              {# ── Time options ── #}
-              <p><strong>Zeitoptionen:</strong></p>
-              <ul>
-                {% if b.date_option_1 %}
-                  <li>📅 {{ b.date_option_1.strftime('%d.%m.%Y') }} {% if b.time_option_1 %}{{ b.time_option_1.strftime('%H:%M') }} Uhr{% endif %}</li>
-                {% elif b.requested_start %}
-                  <li>📅 {{ b.requested_start.strftime('%d.%m.%Y %H:%M') }} Uhr</li>
+    {# ── Offene Terminanfragen ── #}
+    <div class="dash-subsection">
+      <h3>Offene Terminanfragen</h3>
+      {% if bookings_pending %}
+        <div class="bookings-list">
+          {% for b in bookings_pending %}
+            <div class="booking-card card-pending">
+              <div class="booking-status status-angefragt">⏳ Angefragt</div>
+              <div class="booking-content">
+                {% if b.duration_minutes %}
+                  <p><strong>⏱️ Dauer:</strong>
+                    {% if b.duration_minutes == 30 %}30 Minuten
+                    {% elif b.duration_minutes == 60 %}1 Stunde
+                    {% elif b.duration_minutes == 90 %}1,5 Stunden
+                    {% elif b.duration_minutes == 120 %}2 Stunden
+                    {% elif b.duration_minutes == 180 %}3 Stunden
+                    {% elif b.duration_minutes == 240 %}4 Stunden
+                    {% elif b.duration_minutes == 300 %}5 Stunden ✨
+                    {% else %}{{ b.duration_minutes }} Minuten
+                    {% endif %}
+                  </p>
                 {% endif %}
-                {% if b.date_option_2 %}
-                  <li>📅 {{ b.date_option_2.strftime('%d.%m.%Y') }} {% if b.time_option_2 %}{{ b.time_option_2.strftime('%H:%M') }} Uhr{% endif %}</li>
+                {% if b.estimated_price %}
+                  <p><strong>💰 Geschätzter Preis:</strong> {{ b.estimated_price|int }} €</p>
                 {% endif %}
-                {% if b.date_option_3 %}
-                  <li>📅 {{ b.date_option_3.strftime('%d.%m.%Y') }} {% if b.time_option_3 %}{{ b.time_option_3.strftime('%H:%M') }} Uhr{% endif %}</li>
-                {% endif %}
-              </ul>
-
-              {# ── Priority ── #}
-              {% if b.priority_type %}
-                <p><strong> Priorität:</strong>
-                  {% if b.priority_type == 'time' %} Zeit wichtiger
-                  {% elif b.priority_type == 'location' %} Ort wichtiger
-                  {% else %} Beides gleich wichtig
-                  {% endif %}
-                </p>
-              {% endif %}
-
-              {# ── Location wishes ── #}
-              <div class="booking-locations">
-                <p><strong>Wunschorte:</strong></p>
+                <p><strong>Zeitoptionen:</strong></p>
                 <ul>
-                  {% if b.preferred_location_1 %}
-                    <li>1. {{ b.preferred_location_1.name }}</li>
+                  {% if b.date_option_1 %}
+                    <li>📅 {{ b.date_option_1.strftime('%d.%m.%Y') }}{% if b.time_option_1 %} {{ b.time_option_1.strftime('%H:%M') }} Uhr{% endif %}</li>
+                  {% elif b.requested_start %}
+                    <li>📅 {{ b.requested_start.strftime('%d.%m.%Y %H:%M') }} Uhr</li>
                   {% endif %}
-                  {% if b.preferred_location_2 %}
-                    <li>2. {{ b.preferred_location_2.name }}</li>
+                  {% if b.date_option_2 %}
+                    <li>📅 {{ b.date_option_2.strftime('%d.%m.%Y') }}{% if b.time_option_2 %} {{ b.time_option_2.strftime('%H:%M') }} Uhr{% endif %}</li>
                   {% endif %}
-                  {% if b.preferred_location_3 %}
-                    <li>3. {{ b.preferred_location_3.name }}</li>
+                  {% if b.date_option_3 %}
+                    <li>📅 {{ b.date_option_3.strftime('%d.%m.%Y') }}{% if b.time_option_3 %} {{ b.time_option_3.strftime('%H:%M') }} Uhr{% endif %}</li>
                   {% endif %}
                 </ul>
-              </div>
-
-              {# ── Confirmed details ── #}
-              {% if b.confirmed_date or b.confirmed_location %}
-                <div class="confirmed-location">
-                  <strong>✅ Bestätigt:</strong>
-                  {% if b.confirmed_date %}
-                    📅 {{ b.confirmed_date.strftime('%d.%m.%Y') }}
-                    {% if b.confirmed_time %} {{ b.confirmed_time.strftime('%H:%M') }} Uhr{% endif %}
-                  {% endif %}
-                  {% if b.confirmed_location %}
-                    — {{ b.confirmed_location.name }}
-                  {% endif %}
+                <div class="booking-locations">
+                  <p><strong>Wunschorte:</strong></p>
+                  <ul>
+                    {% if b.preferred_location_1 %}<li>1. {{ b.preferred_location_1.name }}</li>{% endif %}
+                    {% if b.preferred_location_2 %}<li>2. {{ b.preferred_location_2.name }}</li>{% endif %}
+                    {% if b.preferred_location_3 %}<li>3. {{ b.preferred_location_3.name }}</li>{% endif %}
+                  </ul>
                 </div>
-              {% endif %}
-
-              {% if b.training_goal %}
-                <p><strong>Trainingsziel:</strong> {{ b.training_goal }}</p>
-              {% endif %}
-              {% if b.preferred_coach %}
-                <p><strong>Coach-Präferenz:</strong> {{ b.preferred_coach.name }}</p>
-              {% endif %}
-              {% if b.user_note %}
-                <p><strong>Notiz:</strong> {{ b.user_note }}</p>
-              {% endif %}
-              {% if b.admin_note %}
-                <p class="admin-note"><strong>Notiz von Moritz:</strong> {{ b.admin_note }}</p>
-              {% endif %}
+                {% if b.preferred_coach %}
+                  <p><strong>🏊 Coach:</strong> {{ b.preferred_coach.name }}</p>
+                {% endif %}
+                {% if b.training_goal %}
+                  <p><strong>🎯 Trainingsziel:</strong> {{ b.training_goal }}</p>
+                {% endif %}
+                {% if b.user_note %}
+                  <p><strong>📝 Notiz:</strong> {{ b.user_note }}</p>
+                {% endif %}
+              </div>
             </div>
-          </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <div class="empty-state">
-        <p>Du hast noch keine Schwimmstunde angefragt.</p>
-        <a href="{{ url_for('booking') }}" class="btn btn-secondary">Jetzt Termin anfragen</a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <p>Keine offenen Terminanfragen.</p>
+          <a href="{{ url_for('booking') }}" class="btn btn-secondary">Jetzt Termin anfragen</a>
+        </div>
+      {% endif %}
+    </div>
+
+    {# ── Bestätigte Termine ── #}
+    <div class="dash-subsection">
+      <h3>Bestätigte Termine</h3>
+      {% if bookings_confirmed %}
+        <div class="bookings-list">
+          {% for b in bookings_confirmed %}
+            <div class="booking-card card-confirmed">
+              <div class="booking-status status-bestatigt">✅ Bestätigt</div>
+              <div class="booking-content">
+                <p><strong>📅 Datum:</strong> {{ b.confirmed_date.strftime('%d.%m.%Y') if b.confirmed_date else '–' }}{% if b.confirmed_time %} {{ b.confirmed_time.strftime('%H:%M') }} Uhr{% endif %}</p>
+                {% if b.confirmed_location %}
+                  <p><strong>📍 Ort:</strong> {{ b.confirmed_location.name }}</p>
+                {% endif %}
+                {% if b.preferred_coach %}
+                  <p><strong>🏊 Coach:</strong> {{ b.preferred_coach.name }}</p>
+                {% endif %}
+                {% if b.duration_minutes %}
+                  <p><strong>⏱️ Dauer:</strong>
+                    {% if b.duration_minutes == 60 %}1 Stunde
+                    {% elif b.duration_minutes == 90 %}1,5 Stunden
+                    {% elif b.duration_minutes == 120 %}2 Stunden
+                    {% else %}{{ b.duration_minutes }} Minuten
+                    {% endif %}
+                  </p>
+                {% endif %}
+                {% if b.admin_note %}
+                  <p class="admin-note"><strong>💬 Notiz von Moritz:</strong> {{ b.admin_note }}</p>
+                {% endif %}
+                <a href="{{ url_for('calendar_event', booking_id=b.id) }}" class="btn btn-calendar" title="In Kalender speichern">📅 In Kalender speichern</a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <p>Noch keine bestätigten Termine. Sobald Moritz deinen Termin bestätigt, erscheint er hier.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    {# ── Abgelehnte Termine ── #}
+    {% if bookings_rejected %}
+      <div class="dash-subsection">
+        <h3>Abgelehnte Termine</h3>
+        <div class="bookings-list">
+          {% for b in bookings_rejected %}
+            <div class="booking-card card-rejected">
+              <div class="booking-status status-abgelehnt">❌ Abgelehnt</div>
+              <div class="booking-content">
+                {% if b.date_option_1 %}
+                  <p><strong>Geplant:</strong> {{ b.date_option_1.strftime('%d.%m.%Y') }}{% if b.time_option_1 %} {{ b.time_option_1.strftime('%H:%M') }} Uhr{% endif %}</p>
+                {% endif %}
+                {% if b.admin_note %}
+                  <p><strong>Grund:</strong> {{ b.admin_note }}</p>
+                {% endif %}
+                <a href="{{ url_for('booking') }}" class="btn btn-secondary btn-sm">Neu anfragen</a>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
       </div>
     {% endif %}
-  </section>
+
+  </div>
+
+  {# ════════════════════════════════════════════════ #}
+  {# TAB: Trainingseinheiten                         #}
+  {# ════════════════════════════════════════════════ #}
+  <div class="dash-panel" id="panel-sessions">
+    <div class="dash-placeholder">
+      <div class="placeholder-icon">🏊</div>
+      <h3>Trainingseinheiten</h3>
+      <p>Hier erscheinen später deine bestätigten Trainingseinheiten mit Details zu Inhalt, Fortschritt und Feedback deines Coaches.</p>
+      {% if bookings_confirmed %}
+        <p class="placeholder-note">Du hast {{ bookings_confirmed|length }} bestätigte Termin{{ 'e' if bookings_confirmed|length != 1 else '' }} – sobald die Session-Verbindung aktiviert ist, siehst du hier alle Details.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {# ════════════════════════════════════════════════ #}
+  {# TAB: Trainingspläne                            #}
+  {# ════════════════════════════════════════════════ #}
+  <div class="dash-panel" id="panel-plans">
+    <div class="dash-placeholder">
+      <div class="placeholder-icon">📋</div>
+      <h3>Trainingspläne</h3>
+      <p>Hier findest du später deine individuellen Trainingspläne, die dein Coach für dich erstellt – angepasst an dein Level und deine Ziele.</p>
+    </div>
+  </div>
+
+  {# ════════════════════════════════════════════════ #}
+  {# TAB: Trainingsdaten                            #}
+  {# ════════════════════════════════════════════════ #}
+  <div class="dash-panel" id="panel-data">
+    <div class="dash-placeholder">
+      <div class="placeholder-icon">📊</div>
+      <h3>Trainingsdaten</h3>
+      <p>Hier erscheinen später deine Trainingsdaten, Fortschritte und Technikwerte – Schwimmstil, Distanzen, Zeiten und mehr.</p>
+    </div>
+  </div>
+
+  <script>
+  document.querySelectorAll('.dash-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.dash-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.dash-panel').forEach(function(p) { p.classList.remove('active'); });
+      this.classList.add('active');
+      var target = document.getElementById('panel-' + this.dataset.tab);
+      if (target) target.classList.add('active');
+    });
+  });
+  </script>
 {% endblock %}

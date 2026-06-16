@@ -2107,6 +2107,138 @@ main {
   margin-top: 8px;
 }
 
+/* ── Dashboard Tabs ── */
+.dash-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.dash-tab {
+  flex: 1;
+  min-width: 140px;
+  padding: 14px 16px;
+  border: 2px solid var(--turquoise);
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--dark-blue);
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.dash-tab:hover {
+  background: rgba(0, 168, 204, 0.08);
+  border-color: var(--dark-blue);
+}
+
+.dash-tab.active {
+  background: var(--turquoise);
+  color: #fff;
+  border-color: var(--turquoise);
+  box-shadow: 0 4px 12px rgba(0, 168, 204, 0.25);
+}
+
+.dash-panel {
+  display: none;
+}
+
+.dash-panel.active {
+  display: block;
+}
+
+.dash-subsection {
+  margin-bottom: 28px;
+}
+
+.dash-subsection h3 {
+  font-size: 20px;
+  color: var(--dark-blue);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(0, 168, 204, 0.15);
+}
+
+/* ── Booking Card Variants ── */
+.card-pending {
+  border-left: 4px solid #ffc107;
+}
+
+.card-confirmed {
+  border-left: 4px solid #28a745;
+}
+
+.card-rejected {
+  border-left: 4px solid #dc3545;
+  opacity: 0.75;
+}
+
+/* ── Calendar Export Button ── */
+.btn-calendar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--turquoise), #008ba3);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-calendar:hover {
+  background: linear-gradient(135deg, #008ba3, var(--dark-blue));
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 168, 204, 0.3);
+}
+
+/* ── Placeholder Cards ── */
+.dash-placeholder {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px dashed rgba(0, 168, 204, 0.3);
+  border-radius: 16px;
+  padding: 48px 32px;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.dash-placeholder .placeholder-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.dash-placeholder h3 {
+  color: var(--dark-blue);
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.dash-placeholder p {
+  max-width: 480px;
+  margin: 0 auto 8px;
+  line-height: 1.6;
+}
+
+.placeholder-note {
+  color: var(--turquoise);
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: 16px !important;
+}
+
 .empty-state {
   background: var(--white);
   padding: 40px;
@@ -2915,6 +3047,45 @@ main {
 
   .booking-card {
     padding: 14px;
+  }
+
+  /* ── Dashboard Tabs (Mobile) ── */
+  .dash-tabs {
+    flex-wrap: nowrap;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .dash-tab {
+    min-width: 0;
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 12px;
+    border-radius: 10px;
+    gap: 4px;
+  }
+
+  .dash-subsection h3 {
+    font-size: 18px;
+  }
+
+  .dash-placeholder {
+    padding: 32px 20px;
+  }
+
+  .dash-placeholder .placeholder-icon {
+    font-size: 36px;
+  }
+
+  .dash-placeholder h3 {
+    font-size: 18px;
+  }
+
+  .btn-calendar {
+    padding: 12px 18px;
+    font-size: 13px;
+    width: 100%;
+    justify-content: center;
   }
 
   /* ── Footer ── */
