@@ -54,9 +54,13 @@
       <h2 class="baywatch-title">🏖️ Squalo Baywatch</h2>
       <p>Entdecke Berliner Schwimmbäder, Seen und Badestellen für dein nächstes Training.</p>
       <div id="map"></div>
-      <p style="font-size: 13px; color: var(--text-light); margin-top: 12px;">
-        Powered by Leaflet & OpenStreetMap
-      </p>
+      <div class="map-legend">
+        <strong>Legende</strong>
+        <div class="legend-row"><span class="legend-dot" style="background:#063b7a;border-color:#28c76f;"></span> See / Badestelle</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#063b7a;border-color:#ffd43b;"></span> Strandbad</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#66e0ff;border-color:#ffd43b;"></span> Sommerbad / Freibad</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#66e0ff;border-color:#ffffff;"></span> Schwimmbad / Hallenbad</div>
+      </div>
     </section>
 
     <aside class="promo-panel">
@@ -112,19 +116,19 @@
             <p>Erstelle kostenlos dein Squalo-Konto mit Name, E-Mail und Passwort.</p>
           </div>
         </a>
-        <a href="{{ url_for('dashboard') }}" class="info-card-link">
+        <a href="{{ url_for('dashboard') }}" class="info-card-link" data-step="2">
           <div class="info-card">
             <h3>2️⃣ Termin anfragen</h3>
             <p>Wähle Datum, Uhrzeit und bis zu 3 Wunsch-Schwimmorte aus.</p>
           </div>
         </a>
-        <a href="{{ url_for('coaches') }}" class="info-card-link">
+        <a href="{{ url_for('coaches') }}" class="info-card-link" data-step="3">
           <div class="info-card">
             <h3>3️⃣ Bestätigung erhalten</h3>
             <p>Moritz bestätigt oder lehnt deinen Termin ab und wählt einen finalen Ort.</p>
           </div>
         </a>
-        <a href="{{ url_for('dashboard') }}" class="info-card-link">
+        <a href="{{ url_for('dashboard') }}" class="info-card-link" data-step="4">
           <div class="info-card">
             <h3>4️⃣ Trainieren</h3>
             <p>Dein Schwimmtraining wartet! Weitere Anfragen verwaltest du im Dashboard.</p>
@@ -319,19 +323,5 @@
       marker.bindPopup(popup, { maxWidth: 300 });
     });
 
-    // ── Map Legend ──
-    const legend = L.control({ position: 'bottomright' });
-    legend.onAdd = function () {
-      const div = L.DomUtil.create('div', 'map-legend');
-      div.innerHTML = `
-        <strong>Legende</strong>
-        <div><span class="legend-dot squalo-marker-indoor" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Schwimmbad / Kombibad</div>
-        <div><span class="legend-dot squalo-marker-summer" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Sommerbad / Freibad</div>
-        <div><span class="legend-dot squalo-marker-beach" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> Strandbad</div>
-        <div><span class="legend-dot squalo-marker-lake" style="width:12px;height:12px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></span> See / Badestelle</div>
-      `;
-      return div;
-    };
-    legend.addTo(map);
   </script>
 {% endblock %}
