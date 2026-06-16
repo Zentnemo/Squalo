@@ -65,29 +65,114 @@ html, body {
   100% { background-position: 0% 40%; }
 }
 
-/* Caustic light pattern overlay */
+/* Caustic light pattern overlay – realistic pool glisten */
 .site-header::after {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 20px 20px at 20% 30%, rgba(255,255,255,0.25) 0%, transparent 70%),
-    radial-gradient(ellipse 15px 15px at 50% 20%, rgba(255,255,255,0.2) 0%, transparent 70%),
-    radial-gradient(ellipse 25px 25px at 75% 40%, rgba(255,255,255,0.15) 0%, transparent 70%),
-    radial-gradient(ellipse 18px 18px at 35% 70%, rgba(255,255,255,0.2) 0%, transparent 70%),
-    radial-gradient(ellipse 22px 22px at 65% 75%, rgba(255,255,255,0.18) 0%, transparent 70%),
-    radial-gradient(ellipse 12px 12px at 85% 25%, rgba(255,255,255,0.25) 0%, transparent 70%),
-    radial-gradient(ellipse 16px 16px at 10% 60%, rgba(255,255,255,0.2) 0%, transparent 70%);
-  background-size: 200% 200%;
-  animation: causticsMove 12s ease-in-out infinite alternate;
+    radial-gradient(ellipse 20px 20px at 20% 30%, rgba(255,255,255,0.30) 0%, transparent 70%),
+    radial-gradient(ellipse 12px 12px at 15% 45%, rgba(255,255,255,0.40) 0%, transparent 65%),
+    radial-gradient(ellipse 15px 15px at 50% 20%, rgba(255,255,255,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 25px 25px at 75% 40%, rgba(255,255,255,0.20) 0%, transparent 70%),
+    radial-gradient(ellipse 10px 10px at 30% 15%, rgba(255,255,255,0.45) 0%, transparent 60%),
+    radial-gradient(ellipse 18px 18px at 35% 70%, rgba(255,255,255,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 22px 22px at 65% 75%, rgba(255,255,255,0.22) 0%, transparent 70%),
+    radial-gradient(ellipse 8px 8px at 45% 50%, rgba(255,255,255,0.50) 0%, transparent 60%),
+    radial-gradient(ellipse 12px 12px at 85% 25%, rgba(255,255,255,0.30) 0%, transparent 70%),
+    radial-gradient(ellipse 14px 14px at 60% 15%, rgba(255,255,255,0.35) 0%, transparent 65%),
+    radial-gradient(ellipse 16px 16px at 10% 60%, rgba(255,255,255,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 9px 9px at 80% 55%, rgba(255,255,255,0.40) 0%, transparent 60%),
+    radial-gradient(ellipse 7px 7px at 25% 80%, rgba(255,255,255,0.50) 0%, transparent 55%),
+    radial-gradient(ellipse 11px 11px at 90% 35%, rgba(255,255,255,0.35) 0%, transparent 65%);
+  background-size: 300% 300%;
+  animation: causticsMove 10s ease-in-out infinite alternate;
   z-index: 1;
   pointer-events: none;
 }
 
 @keyframes causticsMove {
-  0%   { background-position: 0% 0%; opacity: 0.5; }
-  50%  { background-position: 50% 50%; opacity: 1; }
-  100% { background-position: 100% 0%; opacity: 0.5; }
+  0%   { background-position: 0% 0%; opacity: 0.4; }
+  25%  { background-position: 30% 40%; opacity: 0.8; }
+  50%  { background-position: 60% 60%; opacity: 1; }
+  75%  { background-position: 80% 30%; opacity: 0.7; }
+  100% { background-position: 100% 0%; opacity: 0.4; }
+}
+
+/* Sparkle overlay – tiny bright glints like sunlight on water */
+.header-sparkles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.header-sparkles::before {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  top: 18%;
+  left: 22%;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow:
+    0 0 6px 2px rgba(255,255,255,0.8),
+    80px 40px 0 0 rgba(255,255,255,0.6),
+    160px 10px 0 0 rgba(255,255,255,0.5),
+    240px 55px 0 0 rgba(255,255,255,0.7),
+    320px 25px 0 0 rgba(255,255,255,0.4),
+    400px 48px 0 0 rgba(255,255,255,0.6),
+    30px 90px 0 0 rgba(255,255,255,0.3),
+    120px 120px 0 0 rgba(255,255,255,0.5),
+    200px 85px 0 0 rgba(255,255,255,0.4),
+    280px 140px 0 0 rgba(255,255,255,0.5),
+    360px 105px 0 0 rgba(255,255,255,0.3),
+    440px 75px 0 0 rgba(255,255,255,0.6),
+    60px 170px 0 0 rgba(255,255,255,0.3),
+    180px 200px 0 0 rgba(255,255,255,0.4),
+    300px 180px 0 0 rgba(255,255,255,0.5),
+    420px 160px 0 0 rgba(255,255,255,0.3),
+    90px 240px 0 0 rgba(255,255,255,0.4),
+    220px 220px 0 0 rgba(255,255,255,0.3),
+    380px 230px 0 0 rgba(255,255,255,0.5),
+    140px 280px 0 0 rgba(255,255,255,0.3),
+    340px 270px 0 0 rgba(255,255,255,0.4);
+  animation: sparkleGlint 4s ease-in-out infinite;
+}
+
+.header-sparkles::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  top: 35%;
+  left: 8%;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow:
+    0 0 4px 1px rgba(255,255,255,0.7),
+    100px 20px 0 0 rgba(255,255,255,0.5),
+    190px 60px 0 0 rgba(255,255,255,0.4),
+    300px 15px 0 0 rgba(255,255,255,0.6),
+    410px 45px 0 0 rgba(255,255,255,0.5),
+    50px 130px 0 0 rgba(255,255,255,0.3),
+    150px 160px 0 0 rgba(255,255,255,0.4),
+    260px 100px 0 0 rgba(255,255,255,0.5),
+    370px 190px 0 0 rgba(255,255,255,0.3),
+    70px 210px 0 0 rgba(255,255,255,0.4),
+    210px 250px 0 0 rgba(255,255,255,0.3),
+    330px 140px 0 0 rgba(255,255,255,0.5);
+  animation: sparkleGlint 5s ease-in-out infinite 1.5s;
+}
+
+@keyframes sparkleGlint {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  20%      { opacity: 1; transform: scale(1.2); }
+  40%      { opacity: 0.6; transform: scale(0.8); }
+  60%      { opacity: 1; transform: scale(1); }
+  80%      { opacity: 0.3; transform: scale(0.6); }
 }
 
 .site-header .container {
@@ -113,13 +198,13 @@ html, body {
 
 .shark-icon {
   font-size: 15px;
-  margin-right: auto;
   opacity: 0.9;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
   transition: transform 0.3s ease;
   line-height: 1;
   display: inline-flex;
   align-items: center;
+  margin-left: 4px;
 }
 
 .shark-icon:hover {
@@ -178,7 +263,7 @@ html, body {
 }
 
 .logo-img {
-  height: 165px;
+  height: 175px;
   width: auto;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
   transition: all 0.3s ease;
@@ -193,20 +278,20 @@ html, body {
 /* ── Brand title ── */
 .brand-title {
   font-family: 'Righteous', cursive;
-  font-size: 44px;
+  font-size: 48px;
   font-weight: 900;
   margin: 0;
   line-height: 1;
   color: var(--white);
   text-transform: uppercase;
-  letter-spacing: 5px;
+  letter-spacing: 6px;
   white-space: nowrap;
   background: linear-gradient(135deg, var(--squalo-neon-orange), #ff7a00);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-shadow: none;
-  filter: drop-shadow(0 0 20px rgba(255, 159, 0, 0.5)) drop-shadow(0 0 50px rgba(255, 122, 0, 0.25));
+  filter: drop-shadow(0 0 20px rgba(255, 159, 0, 0.5)) drop-shadow(0 0 60px rgba(255, 122, 0, 0.3));
   position: relative;
 }
 
@@ -522,7 +607,7 @@ main {
    ══════════════════════════════════════ */
 .map-area {
   display: grid;
-  grid-template-columns: 240px 1fr 220px;
+  grid-template-columns: 240px 1fr 260px;
   gap: 24px;
   align-items: start;
   margin-top: 20px;
@@ -678,11 +763,13 @@ main {
 .promo-panel {
   position: relative;
   border-radius: 16px;
-  padding: 24px 18px 28px;
+  padding: 28px 18px 80px;
   overflow: hidden;
-  min-height: 480px;
+  min-height: 620px;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-direction: column;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
   border: 1px solid rgba(102, 224, 255, 0.2);
   background: linear-gradient(165deg, #4dd8ff 0%, #66e0ff 25%, #7ff3ff 50%, #66e0ff 75%, #4dd8ff 100%);
@@ -725,6 +812,7 @@ main {
   z-index: 2;
   color: #ffffff;
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+  margin-top: 20px;
 }
 
 .promo-icon {
@@ -738,20 +826,23 @@ main {
 
 @keyframes promoShark {
   0%      { transform: translate(0, 0) scaleX(1); }
-  15%     { transform: translate(8px, -4px) scaleX(1); }
-  30%     { transform: translate(3px, -6px) scaleX(1); }
-  50%     { transform: translate(-8px, -2px) scaleX(-1); }
-  70%     { transform: translate(-4px, 2px) scaleX(-1); }
-  85%     { transform: translate(2px, 4px) scaleX(-1); }
+  10%     { transform: translate(10px, -8px) scaleX(1); }
+  25%     { transform: translate(5px, -12px) scaleX(1); }
+  35%     { transform: translate(-6px, -6px) scaleX(-1); }
+  45%     { transform: translate(-10px, -2px) scaleX(-1); }
+  55%     { transform: translate(-5px, 10px) scaleX(-1); }  /* dive down a bit */
+  65%     { transform: translate(2px, 20px) scaleX(-1); }   /* chase fish down */
+  75%     { transform: translate(8px, 12px) scaleX(1); }    /* turn back up */
+  85%     { transform: translate(6px, 2px) scaleX(1); }
   100%    { transform: translate(0, 0) scaleX(1); }
 }
 
 .promo-content h3 {
   margin: 0 0 6px 0;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   color: #fff;
   line-height: 1.2;
 }
@@ -773,7 +864,51 @@ main {
   opacity: 0.95;
 }
 
-/* ── Small fishes ── */
+/* ── Underwater decoration (plants, stones) ── */
+.promo-decoration {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.seaweed {
+  position: absolute;
+  bottom: 0;
+  font-size: 28px;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+  animation: seaweedSway 4s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+}
+
+.seaweed-1 { left: 5%;  animation-duration: 3.5s; animation-delay: 0s;   font-size: 32px; }
+.seaweed-2 { left: 35%; animation-duration: 4.2s; animation-delay: 0.8s; font-size: 26px; }
+.seaweed-3 { left: 60%; animation-duration: 3.8s; animation-delay: 0.3s; font-size: 24px; }
+.seaweed-4 { left: 82%; animation-duration: 4.5s; animation-delay: 1.2s; font-size: 28px; }
+
+@keyframes seaweedSway {
+  0%   { transform: rotate(-5deg); }
+  50%  { transform: rotate(3deg); }
+  100% { transform: rotate(-4deg); }
+}
+
+.stone {
+  position: absolute;
+  bottom: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #8a7a6a, #5c4f42);
+  box-shadow: inset 0 -2px 4px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.stone-1 { left: 15%;  width: 22px; height: 18px; border-radius: 50% 50% 45% 40%; }
+.stone-2 { left: 48%;  width: 16px; height: 12px; border-radius: 40% 50% 35% 45%; bottom: 2px; }
+.stone-3 { left: 72%;  width: 28px; height: 16px; border-radius: 45% 40% 50% 35%; bottom: 6px; }
+
+/* ── Sea creatures / fishes ── */
 .promo-fishes {
   position: absolute;
   inset: 0;
@@ -784,33 +919,89 @@ main {
 
 .small-fish {
   position: absolute;
-  font-size: 16px;
-  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.15));
+  font-size: 15px;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.12));
   animation: fishSwim 12s ease-in-out infinite;
 }
 
-.small-fish:nth-child(1) {
-  top: 15%;
-  left: -20px;
+.fish-1 {
+  top: 18%;
+  left: -24px;
   animation-duration: 14s;
   animation-delay: 0s;
+  font-size: 17px;
 }
 
-.small-fish:nth-child(2) {
-  top: 30%;
+.fish-2 {
+  top: 35%;
   left: -30px;
   animation-duration: 18s;
-  animation-delay: 3s;
+  animation-delay: 2s;
+  font-size: 14px;
+}
+
+.fish-3 {
+  top: 55%;
+  left: -18px;
+  animation-duration: 12s;
+  animation-delay: 5s;
+  font-size: 13px;
+}
+
+.fish-4 {
+  top: 72%;
+  left: -35px;
+  animation-duration: 20s;
+  animation-delay: 1s;
+  font-size: 16px;
+}
+
+.fish-5 {
+  top: 28%;
+  left: -40px;
+  animation-duration: 22s;
+  animation-delay: 4s;
+  font-size: 18px;
+  animation-name: octopusSwim;
+}
+
+.fish-6 {
+  top: 5%;
+  left: -60px;
+  animation-duration: 30s;
+  animation-delay: 8s;
+  font-size: 32px;
+  animation-name: whaleGlide;
 }
 
 @keyframes fishSwim {
   0%   { transform: translateX(0) scaleX(1); opacity: 0; }
-  5%   { opacity: 0.7; }
-  40%  { transform: translateX(300px) scaleX(1); opacity: 0.8; }
+  5%   { opacity: 0.8; }
+  40%  { transform: translateX(300px) scaleX(1); opacity: 0.9; }
   45%  { transform: translateX(320px) scaleX(-1); opacity: 0.6; }
   80%  { transform: translateX(20px) scaleX(-1); opacity: 0.7; }
   85%  { transform: translateX(0) scaleX(1); opacity: 0.5; }
   100% { transform: translateX(-10px) scaleX(1); opacity: 0; }
+}
+
+@keyframes octopusSwim {
+  0%   { transform: translateX(0) translateY(0) scaleX(1); opacity: 0; }
+  10%  { opacity: 0.7; }
+  35%  { transform: translateX(250px) translateY(-8px) scaleX(1); opacity: 0.9; }
+  40%  { transform: translateX(270px) translateY(-10px) scaleX(-1); opacity: 0.7; }
+  70%  { transform: translateX(30px) translateY(5px) scaleX(-1); opacity: 0.8; }
+  75%  { transform: translateX(10px) translateY(3px) scaleX(1); opacity: 0.5; }
+  100% { transform: translateX(-20px) translateY(0) scaleX(1); opacity: 0; }
+}
+
+@keyframes whaleGlide {
+  0%   { transform: translateX(0) scaleX(1); opacity: 0; }
+  8%   { opacity: 0.3; }
+  30%  { transform: translateX(280px) scaleX(1); opacity: 0.4; }
+  45%  { transform: translateX(310px) scaleX(-1); opacity: 0.25; }
+  75%  { transform: translateX(40px) scaleX(-1); opacity: 0.3; }
+  85%  { transform: translateX(10px) scaleX(1); opacity: 0.2; }
+  100% { transform: translateX(-30px) scaleX(1); opacity: 0; }
 }
 
 /* ── Bubbles decoration ── */
@@ -832,18 +1023,20 @@ main {
   animation: bubbleUp 6s ease-in-out infinite;
 }
 
-.bubble:nth-child(1)  { left: 10%;  width: 10px; height: 10px; animation-delay: 0s;   animation-duration: 5.5s; }
-.bubble:nth-child(2)  { left: 28%;  width: 5px;  height: 5px;  animation-delay: 1.0s; animation-duration: 4.8s; }
-.bubble:nth-child(3)  { left: 45%;  width: 14px; height: 14px; animation-delay: 2.2s; animation-duration: 7.5s; }
-.bubble:nth-child(4)  { left: 60%;  width: 7px;  height: 7px;  animation-delay: 0.6s; animation-duration: 5.2s; }
-.bubble:nth-child(5)  { left: 74%;  width: 11px; height: 11px; animation-delay: 3.0s; animation-duration: 6.8s; }
-.bubble:nth-child(6)  { left: 88%;  width: 6px;  height: 6px;  animation-delay: 1.8s; animation-duration: 4.5s; }
+.bubble:nth-child(1)  { left: 8%;   width: 10px; height: 10px; animation-delay: 0s;   animation-duration: 5.5s; }
+.bubble:nth-child(2)  { left: 22%;  width: 5px;  height: 5px;  animation-delay: 1.0s; animation-duration: 4.8s; }
+.bubble:nth-child(3)  { left: 38%;  width: 14px; height: 14px; animation-delay: 2.2s; animation-duration: 7.5s; }
+.bubble:nth-child(4)  { left: 52%;  width: 7px;  height: 7px;  animation-delay: 0.6s; animation-duration: 5.2s; }
+.bubble:nth-child(5)  { left: 65%;  width: 6px;  height: 6px;  animation-delay: 1.8s; animation-duration: 4.5s; }
+.bubble:nth-child(6)  { left: 76%;  width: 11px; height: 11px; animation-delay: 3.0s; animation-duration: 6.8s; }
+.bubble:nth-child(7)  { left: 88%;  width: 8px;  height: 8px;  animation-delay: 0.9s; animation-duration: 5.8s; }
+.bubble:nth-child(8)  { left: 95%;  width: 5px;  height: 5px;  animation-delay: 2.6s; animation-duration: 4.2s; }
 
 @keyframes bubbleUp {
   0%   { transform: translateY(0)   scale(0.8); opacity: 0;   }
   15%  { transform: translateY(-40px) scale(1);   opacity: 0.8; }
   60%  { transform: translateY(-180px) scale(1.1); opacity: 0.5; }
-  100% { transform: translateY(-360px) scale(0.6); opacity: 0;   }
+  100% { transform: translateY(-400px) scale(0.6); opacity: 0;   }
 }
 
 /* ── Custom Blue Marker ── */
@@ -2005,12 +2198,12 @@ main {
 /* ── Tablet (max 1024px) ── */
 @media (max-width: 1024px) {
   .brand-title {
-    font-size: 36px;
-    letter-spacing: 3px;
+    font-size: 40px;
+    letter-spacing: 4px;
   }
 
   .logo-img {
-    height: 130px;
+    height: 140px;
   }
 
   .lane-item {
@@ -2059,11 +2252,11 @@ main {
   }
 
   .logo-img {
-    height: 110px;
+    height: 120px;
   }
 
   .brand-title {
-    font-size: 30px;
+    font-size: 34px;
     letter-spacing: 3px;
   }
 }
@@ -2098,7 +2291,7 @@ main {
   }
 
   .logo-img {
-    height: 80px;
+    height: 85px;
   }
 
   .logo-img:hover {
@@ -2106,7 +2299,7 @@ main {
   }
 
   .brand-title {
-    font-size: 26px;
+    font-size: 28px;
     text-align: center;
     white-space: normal;
     letter-spacing: 2px;
@@ -2322,8 +2515,8 @@ main {
   /* ── Premium Panel ── */
   .promo-panel {
     order: 3;
-    min-height: 180px;
-    padding: 16px 14px;
+    min-height: 240px;
+    padding: 20px 14px 70px;
   }
 
   .promo-icon {
@@ -2342,6 +2535,10 @@ main {
 
   .small-fish {
     display: none; /* hide fish on small screens – performance */
+  }
+
+  .promo-decoration {
+    display: none; /* hide decorations on mobile */
   }
 
   .bubble {
@@ -2628,11 +2825,11 @@ main {
   }
 
   .logo-img {
-    height: 60px;
+    height: 65px;
   }
 
   .brand-title {
-    font-size: 22px;
+    font-size: 24px;
     letter-spacing: 1.5px;
   }
 
@@ -2696,16 +2893,17 @@ main {
   }
 
   .promo-panel {
-    min-height: 150px;
-    padding: 12px 10px;
+    min-height: 180px;
+    padding: 16px 12px 50px;
   }
 
   .promo-icon {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .promo-content h3 {
-    font-size: 14px;
+    font-size: 15px;
+    letter-spacing: 1px;
   }
 
   .promo-content p {
@@ -2713,7 +2911,7 @@ main {
   }
 
   .bubble {
-    display: none; /* hide bubbles on very small screens */
+    display: none;
   }
 
   .location-header h3 {
