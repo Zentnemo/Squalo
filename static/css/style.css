@@ -178,7 +178,7 @@ html, body {
 }
 
 .logo-img {
-  height: 150px;
+  height: 165px;
   width: auto;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
   transition: all 0.3s ease;
@@ -193,20 +193,20 @@ html, body {
 /* ── Brand title ── */
 .brand-title {
   font-family: 'Righteous', cursive;
-  font-size: 38px;
+  font-size: 44px;
   font-weight: 900;
   margin: 0;
   line-height: 1;
   color: var(--white);
   text-transform: uppercase;
-  letter-spacing: 4px;
+  letter-spacing: 5px;
   white-space: nowrap;
   background: linear-gradient(135deg, var(--squalo-neon-orange), #ff7a00);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-shadow: none;
-  filter: drop-shadow(0 0 18px rgba(255, 159, 0, 0.45)) drop-shadow(0 0 40px rgba(255, 122, 0, 0.2));
+  filter: drop-shadow(0 0 20px rgba(255, 159, 0, 0.5)) drop-shadow(0 0 50px rgba(255, 122, 0, 0.25));
   position: relative;
 }
 
@@ -230,8 +230,8 @@ html, body {
   color: var(--white);
   text-decoration: none;
   font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 2px;
+  font-size: 13px;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
   position: relative;
   transition: all 0.3s ease;
@@ -326,6 +326,52 @@ html, body {
   text-shadow: 0 0 20px rgba(255, 159, 0, 0.3);
 }
 
+/* ── Lane Dividers between nav items ── */
+.lane-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 2px 0;
+  position: relative;
+  height: 12px;
+}
+
+/* Thin lane rope line through divider */
+.lane-divider::before {
+  content: '';
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 159, 0, 0.25),
+    transparent
+  );
+  transform: translateY(-50%);
+}
+
+.divider-buoy {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.divider-buoy:nth-child(odd) {
+  background: var(--squalo-neon-orange);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.divider-buoy:nth-child(even) {
+  background: #ffffff;
+  border: 1px solid rgba(255, 159, 0, 0.2);
+}
+
 /* ══════════════════════════════════════
    HEADER–HERO DIVIDER – Pool Lane Rope
    ══════════════════════════════════════ */
@@ -378,42 +424,36 @@ html, body {
   z-index: 0;
 }
 
-/* Individual buoys */
+/* Individual buoys – dense lane rope pattern */
 .lane-buoy {
   position: relative;
   z-index: 1;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
   flex-shrink: 0;
-  animation: buoyPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  border-radius: 50%;
+  animation: buoyPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   transition: transform 0.3s ease;
+  width: 7px;
+  height: 7px;
 }
 
 .lane-buoy:nth-child(odd) {
   background: var(--squalo-neon-orange);
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
 }
 
 .lane-buoy:nth-child(even) {
   background: #ffffff;
-  border: 2px solid rgba(255, 159, 0, 0.3);
+  border: 1.5px solid rgba(255, 159, 0, 0.3);
 }
 
-/* Staggered pop-in */
-.lane-buoy:nth-child(1)  { animation-delay: 0.05s; width: 10px; height: 10px; }
-.lane-buoy:nth-child(2)  { animation-delay: 0.10s; width: 14px; height: 14px; }
-.lane-buoy:nth-child(3)  { animation-delay: 0.15s; width: 10px; height: 10px; }
-.lane-buoy:nth-child(4)  { animation-delay: 0.20s; width: 13px; height: 13px; }
-.lane-buoy:nth-child(5)  { animation-delay: 0.25s; width: 10px; height: 10px; }
-.lane-buoy:nth-child(6)  { animation-delay: 0.30s; width: 14px; height: 14px; }
-.lane-buoy:nth-child(7)  { animation-delay: 0.35s; width: 10px; height: 10px; }
-.lane-buoy:nth-child(8)  { animation-delay: 0.40s; width: 13px; height: 13px; }
-.lane-buoy:nth-child(9)  { animation-delay: 0.45s; width: 10px; height: 10px; }
-.lane-buoy:nth-child(10) { animation-delay: 0.50s; width: 14px; height: 14px; }
-.lane-buoy:nth-child(11) { animation-delay: 0.55s; width: 10px; height: 10px; }
-.lane-buoy:nth-child(12) { animation-delay: 0.60s; width: 13px; height: 13px; }
+/* Staggered pop-in using n-th-child formula */
+.lane-buoy { animation-delay: calc(0.015s * var(--i, 0)); }
+.lane-buoy:nth-child(4n+1) { --i: 1; width: 7px; height: 7px; }
+.lane-buoy:nth-child(4n+2) { --i: 2; width: 9px; height: 9px; }
+.lane-buoy:nth-child(4n+3) { --i: 3; width: 6px; height: 6px; }
+.lane-buoy:nth-child(4n+4) { --i: 4; width: 8px; height: 8px; }
+
 
 @keyframes buoyPop {
   0%   { transform: scale(0) translateY(-8px); opacity: 0; }
@@ -1964,6 +2004,20 @@ main {
 
 /* ── Tablet (max 1024px) ── */
 @media (max-width: 1024px) {
+  .brand-title {
+    font-size: 36px;
+    letter-spacing: 3px;
+  }
+
+  .logo-img {
+    height: 130px;
+  }
+
+  .lane-item {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+
   .hero {
     padding: 80px 20px 70px;
     min-height: 380px;
@@ -2044,7 +2098,7 @@ main {
   }
 
   .logo-img {
-    height: 70px;
+    height: 80px;
   }
 
   .logo-img:hover {
@@ -2052,7 +2106,7 @@ main {
   }
 
   .brand-title {
-    font-size: 24px;
+    font-size: 26px;
     text-align: center;
     white-space: normal;
     letter-spacing: 2px;
@@ -2079,14 +2133,29 @@ main {
   }
 
   .lane-item {
-    padding: 8px 16px;
-    font-size: 13px;
+    padding: 7px 14px;
+    font-size: 12px;
     letter-spacing: 1.5px;
   }
 
   .lane-buoy-marker {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
+  }
+
+  .lane-divider {
+    height: 8px;
+    gap: 4px;
+  }
+
+  .lane-divider::before {
+    left: 15%;
+    right: 15%;
+  }
+
+  .divider-buoy {
+    width: 4px;
+    height: 4px;
   }
 
   /* Mobile: top bar */
@@ -2109,7 +2178,7 @@ main {
 
   /* Mobile: header main */
   .header-main {
-    padding: 14px 0 12px;
+    padding: 12px 0 10px;
   }
 
   .header-content {
@@ -2167,7 +2236,7 @@ main {
 
   /* ── Header–Hero Divider Mobile ── */
   .header-hero-divider {
-    height: 16px;
+    height: 14px;
   }
 
   .pool-lane-rope {
@@ -2175,8 +2244,9 @@ main {
   }
 
   .lane-buoy {
-    width: 7px !important;
-    height: 7px !important;
+    width: 5px !important;
+    height: 5px !important;
+    border-width: 1px !important;
   }
 
   /* ── Map Area ── */
@@ -2558,12 +2628,12 @@ main {
   }
 
   .logo-img {
-    height: 55px;
+    height: 60px;
   }
 
   .brand-title {
-    font-size: 20px;
-    letter-spacing: 1px;
+    font-size: 22px;
+    letter-spacing: 1.5px;
   }
 
   .main-nav a {
@@ -2576,14 +2646,14 @@ main {
   }
 
   .lane-item {
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 5px 10px;
+    font-size: 11px;
     letter-spacing: 1px;
   }
 
   .lane-buoy-marker {
-    width: 5px;
-    height: 5px;
+    width: 4px;
+    height: 4px;
   }
 
   .top-bar-link {
@@ -2596,7 +2666,7 @@ main {
   }
 
   .header-main {
-    padding: 10px 0 10px;
+    padding: 8px 0 6px;
   }
 
   .map-section h2 {

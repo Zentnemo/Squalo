@@ -6,12 +6,13 @@
     <title>Squalo Schwimmcoaching Berlin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=3">
     <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="site-header">
-        {% set current_route = request.endpoint %}
+        {# Safe current route for active-state detection #}
+        {% set current_route = request.endpoint or '' %}
         {# ── Top Bar (Account / Login + Shark) ── #}
         <div class="top-bar">
             <div class="container">
@@ -47,16 +48,31 @@
                         <span class="lane-label">Home</span>
                         <span class="lane-buoy-marker"></span>
                     </a>
+                    <div class="lane-divider" aria-hidden="true">
+                        <span class="divider-buoy"></span>
+                        <span class="divider-buoy"></span>
+                        <span class="divider-buoy"></span>
+                    </div>
                     <a href="{{ url_for('coaches') }}" class="lane-item {% if current_route == 'coaches' %}active{% endif %}">
                         <span class="lane-buoy-marker"></span>
                         <span class="lane-label">Coaches</span>
                         <span class="lane-buoy-marker"></span>
                     </a>
+                    <div class="lane-divider" aria-hidden="true">
+                        <span class="divider-buoy"></span>
+                        <span class="divider-buoy"></span>
+                        <span class="divider-buoy"></span>
+                    </div>
                     <a href="{{ url_for('shop') }}" class="lane-item {% if current_route == 'shop' %}active{% endif %}">
                         <span class="lane-buoy-marker"></span>
                         <span class="lane-label">Shop</span>
                         <span class="lane-buoy-marker"></span>
                     </a>
+                    <div class="lane-divider" aria-hidden="true">
+                        <span class="divider-buoy"></span>
+                        <span class="divider-buoy"></span>
+                        <span class="divider-buoy"></span>
+                    </div>
                     <a href="{{ url_for('dashboard') }}" class="lane-item {% if current_route == 'dashboard' %}active{% endif %}">
                         <span class="lane-buoy-marker"></span>
                         <span class="lane-label">Dashboard</span>
@@ -69,6 +85,98 @@
 
     <div class="header-hero-divider">
       <div class="pool-lane-rope">
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
+        <span class="lane-buoy"></span>
         <span class="lane-buoy"></span>
         <span class="lane-buoy"></span>
         <span class="lane-buoy"></span>
