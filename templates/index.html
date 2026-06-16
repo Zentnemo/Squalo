@@ -102,22 +102,34 @@
   <section class="info-section">
     <h2>Wie funktioniert Squalo?</h2>
     <div class="info-cards">
-      <div class="info-card">
-        <h3>1️⃣ Registrieren</h3>
-        <p>Erstelle kostenlos dein Squalo-Konto mit Name, E-Mail und Passwort.</p>
-      </div>
-      <div class="info-card">
-        <h3>2️⃣ Termin anfragen</h3>
-        <p>Wähle Datum, Uhrzeit und bis zu 3 Wunsch-Schwimmorte aus.</p>
-      </div>
-      <div class="info-card">
-        <h3>3️⃣ Bestätigung erhalten</h3>
-        <p>Moritz bestätigt oder lehnt deinen Termin ab und wählt einen finalen Ort.</p>
-      </div>
-      <div class="info-card">
-        <h3>4️⃣ Trainieren</h3>
-        <p>Dein Schwimmtraining wartet! Weitere Anfragen verwaltest du im Dashboard.</p>
-      </div>
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('dashboard') }}" class="info-card-link">
+      {% else %}
+        <a href="{{ url_for('login') }}" class="info-card-link">
+      {% endif %}
+          <div class="info-card">
+            <h3>1️⃣ Registrieren</h3>
+            <p>Erstelle kostenlos dein Squalo-Konto mit Name, E-Mail und Passwort.</p>
+          </div>
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="info-card-link">
+          <div class="info-card">
+            <h3>2️⃣ Termin anfragen</h3>
+            <p>Wähle Datum, Uhrzeit und bis zu 3 Wunsch-Schwimmorte aus.</p>
+          </div>
+        </a>
+        <a href="{{ url_for('coaches') }}" class="info-card-link">
+          <div class="info-card">
+            <h3>3️⃣ Bestätigung erhalten</h3>
+            <p>Moritz bestätigt oder lehnt deinen Termin ab und wählt einen finalen Ort.</p>
+          </div>
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="info-card-link">
+          <div class="info-card">
+            <h3>4️⃣ Trainieren</h3>
+            <p>Dein Schwimmtraining wartet! Weitere Anfragen verwaltest du im Dashboard.</p>
+          </div>
+        </a>
     </div>
   </section>
 
@@ -150,8 +162,8 @@
               <p><strong>Verifiziert:</strong> {{ loc._verified_label }}</p>
             </div>
             <div class="location-footer">
-              <a href="{{ loc.maps_url }}" target="_blank" class="btn-small">Route in Google Maps</a>
-              <a href="{{ url_for('booking') }}?location_id={{ loc.id }}" class="btn-small btn-primary">Termin hier anfragen</a>
+              <a href="{{ loc.maps_url }}" target="_blank" class="btn-small btn-route">Route in Google Maps</a>
+              <a href="{{ url_for('booking') }}?location_id={{ loc.id }}" class="btn-small btn-booking">Termin hier anfragen</a>
             </div>
           </div>
         {% endfor %}

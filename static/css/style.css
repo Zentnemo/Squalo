@@ -459,9 +459,9 @@ html, body {
    ══════════════════════════════════════ */
 .brand-buoy-chain {
   position: relative;
-  margin: -2px auto 4px;
+  margin: 0 auto -2px;
   max-width: 95%;
-  height: 12px;
+  height: 14px;
   overflow: hidden;
 }
 
@@ -523,27 +523,28 @@ html, body {
 /* ── Marmorfliesen-Übergang Header → Hero ── */
 .header-hero-divider {
   position: relative;
-  height: 24px;
+  height: 20px;
   overflow: hidden;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  margin-top: -4px;
   /* Marble tile base */
   background:
-    /* Subtle veining */
+    /* Large tile veining */
     repeating-linear-gradient(
       135deg,
       transparent,
-      transparent 18px,
-      rgba(180, 190, 195, 0.06) 18px,
-      rgba(180, 190, 195, 0.06) 19px
+      transparent 55px,
+      rgba(180, 190, 195, 0.07) 55px,
+      rgba(180, 190, 195, 0.07) 56px
     ),
     repeating-linear-gradient(
       45deg,
       transparent,
-      transparent 24px,
-      rgba(160, 175, 180, 0.05) 24px,
-      rgba(160, 175, 180, 0.05) 25px
+      transparent 70px,
+      rgba(160, 175, 180, 0.05) 70px,
+      rgba(160, 175, 180, 0.05) 71px
     ),
     /* Main marble gradient */
     linear-gradient(135deg,
@@ -555,9 +556,9 @@ html, body {
       #edf0f2 85%,
       #e8ecef 100%
     );
-  /* Grout lines top & bottom */
-  border-top: 1px solid rgba(180, 190, 195, 0.5);
-  border-bottom: 1px solid rgba(180, 190, 195, 0.5);
+  /* Soft grout lines */
+  border-top: 1px solid rgba(190, 200, 205, 0.35);
+  border-bottom: 1px solid rgba(190, 200, 205, 0.35);
   box-shadow:
     inset 0 1px 2px rgba(255, 255, 255, 0.8),
     inset 0 -1px 2px rgba(0, 0, 0, 0.04),
@@ -1912,6 +1913,9 @@ main {
 
 .location-footer {
   padding: 0 16px 16px 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .btn-small {
@@ -1927,6 +1931,22 @@ main {
 
 .btn-small:hover {
   background: var(--light-turquoise);
+}
+
+.btn-route {
+  background: var(--turquoise);
+}
+
+.btn-route:hover {
+  background: var(--light-turquoise);
+}
+
+.btn-booking {
+  background: var(--squalo-neon-orange);
+}
+
+.btn-booking:hover {
+  background: var(--orange);
 }
 
 /* ══════════════════════════════════════
@@ -1974,7 +1994,7 @@ main {
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
-/* Subtle water reflection at bottom */
+/* Orange + Blue accent line */
 .info-card::after {
   content: '';
   position: absolute;
@@ -1983,21 +2003,33 @@ main {
   right: 0;
   height: 3px;
   background: linear-gradient(90deg,
-    var(--turquoise),
     var(--squalo-neon-orange),
-    var(--turquoise)
+    var(--turquoise),
+    var(--squalo-neon-orange)
   );
   opacity: 0;
   transition: opacity 0.35s ease;
+}
+
+.info-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.info-card-link:hover {
+  text-decoration: none;
+  color: inherit;
 }
 
 .info-card:hover {
   transform: translateY(-6px);
   box-shadow:
     0 12px 32px rgba(0, 61, 77, 0.12),
-    0 4px 8px rgba(0, 168, 204, 0.08),
+    0 4px 8px rgba(255, 159, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 168, 204, 0.25);
+  border-color: rgba(255, 159, 0, 0.25);
+  cursor: pointer;
 }
 
 .info-card:hover::after {
@@ -2645,6 +2677,7 @@ main {
   /* ── Header–Hero Divider Mobile ── */
   .header-hero-divider {
     height: 14px;
+    margin-top: -2px;
   }
 
   .pool-lane-rope {
@@ -2659,7 +2692,7 @@ main {
 
   .brand-buoy-chain {
     max-width: 95%;
-    margin: 0px auto 4px;
+    margin: 0px auto -1px;
     height: 10px;
   }
 
@@ -2819,6 +2852,8 @@ main {
 
   .location-footer {
     padding: 0 14px 14px;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .location-footer .btn-small {
@@ -2828,7 +2863,7 @@ main {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 2px;
+    margin: 0;
     min-width: 44px;
   }
 
