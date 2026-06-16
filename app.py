@@ -948,6 +948,8 @@ def create_app() -> Flask:
         if note:
             booking.admin_note = note
         db.session.commit()
+        # Send confirmation email to customer
+        send_customer_confirmation_email(booking)
         flash(f"Booking #{booking.id} bestätigt", "success")
         return redirect(url_for("admin"))
 
@@ -963,6 +965,8 @@ def create_app() -> Flask:
         if note:
             booking.admin_note = note
         db.session.commit()
+        # Send rejection email to customer
+        send_customer_rejection_email(booking, admin_note=note)
         flash(f"Booking #{booking.id} abgelehnt", "info")
         return redirect(url_for("admin"))
 
@@ -989,7 +993,7 @@ def create_app() -> Flask:
                 AppSetting.set("booking_notification_email", email)
                 flash("Einstellungen gespeichert", "success")
             return redirect(url_for("admin_settings"))
-        current_email = AppSetting.get("booking_notification_email", "info@squalo.local")
+        current_email = AppSetting.get("booking_notification_email", DEFAULT_ADMIN_EMAIL)
         return render_template("admin_settings.html", current_email=current_email)
 
     @app.route("/admin/coaches", methods=["GET", "POST"])

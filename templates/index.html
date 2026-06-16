@@ -3,19 +3,19 @@
   <section class="hero">
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1 class="hero-title">SQUALO SCHWIMMCOACHING</h1>
-      <p class="hero-tagline">Trainiere in den besten Schwimmbädern Berlins</p>
-      <p class="hero-description">{{ locations|length }} Berliner Schwimmlocations – Buche dein persönliches Training an deinem Wunschort</p>
+      <h1 class="hero-title hero-anim hero-anim-sunrise">SQUALO SCHWIMMCOACHING</h1>
+      <p class="hero-tagline hero-anim hero-anim-fog">Trainiere in den besten Schwimmbädern Berlins</p>
+      <p class="hero-description hero-anim hero-anim-fog">{{ locations|length }} Berliner Schwimmlocations – Buche dein persönliches Training an deinem Wunschort</p>
 
       {% if not current_user.is_authenticated %}
-        <div class="cta-buttons">
-          <a class="btn btn-hero-primary" href="{{ url_for('register') }}">Kostenlos registrieren</a>
-          <a class="btn btn-hero-secondary" href="{{ url_for('login') }}">Einloggen</a>
+        <div class="cta-buttons hero-anim hero-anim-buoy">
+          <a class="btn btn-hero-primary hero-btn-water" href="{{ url_for('register') }}">Kostenlos registrieren</a>
+          <a class="btn btn-hero-secondary hero-btn-water" href="{{ url_for('login') }}">Einloggen</a>
         </div>
       {% else %}
-        <div class="cta-buttons">
-          <a class="btn btn-hero-primary" href="{{ url_for('booking') }}">Termin anfragen</a>
-          <a class="btn btn-hero-secondary" href="{{ url_for('dashboard') }}">Mein Dashboard</a>
+        <div class="cta-buttons hero-anim hero-anim-buoy">
+          <a class="btn btn-hero-primary hero-btn-water" href="{{ url_for('booking') }}">Termin anfragen</a>
+          <a class="btn btn-hero-secondary hero-btn-water" href="{{ url_for('dashboard') }}">Mein Dashboard</a>
         </div>
       {% endif %}
     </div>

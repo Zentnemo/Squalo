@@ -114,7 +114,18 @@
                 {% if b.admin_note %}
                   <p class="admin-note"><strong>💬 Notiz von Moritz:</strong> {{ b.admin_note }}</p>
                 {% endif %}
-                <a href="{{ url_for('calendar_event', booking_id=b.id) }}" class="btn btn-calendar" title="In Kalender speichern">📅 In Kalender speichern</a>
+                <div class="calendar-actions">
+                  <a href="{{ url_for('calendar_event', booking_id=b.id) }}" class="btn btn-calendar" title="In Kalender speichern">📅 In Kalender speichern (.ics)</a>
+                  {% if b.confirmed_date %}
+                    {% set gcal_start = b.confirmed_date.strftime('%Y%m%d') ~ 'T' ~ (b.confirmed_time.strftime('%H%M%S') if b.confirmed_time else '000000') %}
+                    {% set dur_min = b.duration_minutes or 60 %}
+                    {% set end_hour = (b.confirmed_time.hour if b.confirmed_time else 0) + ((b.confirmed_time.minute if b.confirmed_time else 0) + dur_min) // 60 %}
+                    {% set end_min = ((b.confirmed_time.minute if b.confirmed_time else 0) + dur_min) % 60 %}
+                    {% set gcal_end = b.confirmed_date.strftime('%Y%m%d') ~ 'T' ~ '%02d' % end_hour ~ '%02d' % end_min ~ '00' %}
+                    {% set gcal_loc = b.confirmed_location.name if b.confirmed_location else '' %}
+                    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Squalo+Schwimmtraining&dates={{ gcal_start }}/{{ gcal_end }}&location={{ gcal_loc|urlencode }}&details=Schwimmtraining+mit+Squalo" class="btn btn-calendar" target="_blank" rel="noopener" title="In Google Kalender öffnen">📆 Google Kalender</a>
+                  {% endif %}
+                </div>
               </div>
             </div>
           {% endfor %}
