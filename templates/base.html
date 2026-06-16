@@ -6,7 +6,7 @@
     <title>Squalo Schwimmcoaching Berlin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=11">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=12">
     <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -45,92 +45,8 @@
                     </div>
                 </div>
 
-                <!-- Buoy chain under brand title -->
-                <div class="brand-buoy-chain" aria-hidden="true">
-                  <div class="brand-buoy-rope">
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                    <span class="brand-buoy"></span>
-                  </div>
-                </div>
+                <!-- Pool tile strip above nav -->
+                <div class="pool-tile-strip" aria-hidden="true"></div>
 
                 <nav class="lane-nav" aria-label="Hauptnavigation">
                     <a href="{{ url_for('index') }}" class="lane-item {% if current_route == 'index' %}active{% endif %}">
@@ -163,118 +79,12 @@
                         <span class="lane-buoy-marker"></span>
                     </a>
                 </nav>
+
+                <!-- Pool tile strip below nav -->
+                <div class="pool-tile-strip" aria-hidden="true"></div>
             </div>
         </div>
     </header>
-
-    <div class="header-hero-divider">
-      <div class="pool-lane-rope">
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-        <span class="lane-buoy"></span>
-      </div>
-    </div>
 
     <main class="page-main">
         {% with messages = get_flashed_messages(with_categories=true) %}
