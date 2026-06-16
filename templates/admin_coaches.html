@@ -7,48 +7,45 @@
     </div>
   </div>
 
-  {# ── Existing Coaches ── #}
+  {# ── Coach List ── #}
   <section class="admin-section">
     <h3>Coaches</h3>
     {% if coaches %}
-      <table class="bookings-table" style="width:100%;">
-        <thead>
-          <tr>
-            <th>Aktiv</th>
-            <th>Name</th>
-            <th>Titel</th>
-            <th>Bio</th>
-            <th>Status</th>
-            <th>Reviews</th>
-            <th>Aktionen</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for coach in coaches %}
-            <tr>
-              <td>{{ '✅' if coach.is_active else '❌' }}</td>
-              <td><strong>{{ coach.name }}</strong></td>
-              <td>{{ coach.title or '–' }}</td>
-              <td style="max-width:250px;font-size:13px;">{{ coach.bio|truncate(120) if coach.bio else '–' }}</td>
-              <td>
-                {% if coach.is_active %}
-                  <span class="status-badge" style="background:#e6f9e6;">Aktiv</span>
-                {% else %}
-                  <span class="status-badge" style="background:#ffe6e6;">Inaktiv</span>
-                {% endif %}
-              </td>
-              <td>{{ coach.reviews|length }}</td>
-              <td>
-                <form method="POST" action="{{ url_for('admin_coach_toggle', coach_id=coach.id) }}" style="display:inline;">
-                  <button type="submit" class="btn-small {{ 'btn-warning' if coach.is_active else 'btn-success' }}">
-                    {{ 'Deaktivieren' if coach.is_active else 'Aktivieren' }}
-                  </button>
-                </form>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="coach-grid">
+        {% for coach in coaches %}
+          <div class="coach-card {% if not coach.is_active %}coach-inactive{% endif %}">
+            <div class="coach-card-header">
+              {% if coach.image_url %}
+                <img src="{{ coach.image_url }}" alt="{{ coach.name }}" class="coach-avatar">
+              {% else %}
+                <div class="coach-avatar-placeholder">{{ coach.name[0] }}</div>
+              {% endif %}
+              <div class="coach-card-info">
+                <strong>{{ coach.display_name }}</strong>
+                <span class="coach-title">{{ coach.title or coach.specialization or '–' }}</span>
+              </div>
+              <span class="status-badge {{ 'badge-active' if coach.is_active else 'badge-inactive' }}">
+                {{ 'Aktiv' if coach.is_active else 'Inaktiv' }}
+              </span>
+            </div>
+            <div class="coach-card-details">
+              {% if coach.email %}<div class="coach-detail">📧 {{ coach.email }}</div>{% endif %}
+              {% if coach.cities_list %}
+                <div class="coach-detail">📍 {{ coach.cities_list|join(', ') }}</div>
+              {% endif %}
+              <div class="coach-detail">💬 {{ coach.reviews|length }} Reviews</div>
+            </div>
+            <div class="coach-card-actions">
+              <a href="{{ url_for('admin_coach_edit', coach_id=coach.id) }}" class="btn btn-small btn-outline">✏️ Bearbeiten</a>
+              <form method="POST" action="{{ url_for('admin_coach_toggle', coach_id=coach.id) }}" style="display:inline;">
+                <button type="submit" class="btn btn-small {{ 'btn-warning' if coach.is_active else 'btn-success' }}">
+                  {{ 'Deaktivieren' if coach.is_active else 'Aktivieren' }}
+                </button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
     {% else %}
       <p>Keine Coaches vorhanden.</p>
     {% endif %}
@@ -57,10 +54,34 @@
   {# ── Create Coach ── #}
   <section class="admin-section">
     <h3>Neuen Coach anlegen</h3>
-    <form method="POST" class="booking-form" style="max-width:600px;">
+    <form method="POST" class="booking-form" style="max-width:700px;">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="first_name">Vorname</label>
+          <input type="text" id="first_name" name="first_name">
+        </div>
+        <div class="form-group">
+          <label for="last_name">Nachname</label>
+          <input type="text" id="last_name" name="last_name">
+        </div>
+      </div>
       <div class="form-group">
         <label for="name">Name *</label>
         <input type="text" id="name" name="name" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">E-Mail</label>
+          <input type="email" id="email" name="email">
+        </div>
+        <div class="form-group">
+          <label for="specialization">Spezialisierung</label>
+          <input type="text" id="specialization" name="specialization" placeholder="z.B. Kraul, Brustschwimmen">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="cities_served">Einsatzorte (kommasepariert)</label>
+        <input type="text" id="cities_served" name="cities_served" placeholder="z.B. Berlin, Potsdam, Hamburg">
       </div>
       <div class="form-group">
         <label for="title">Titel / Spezialisierung</label>
@@ -82,13 +103,15 @@
         <label for="experience">Erfahrung</label>
         <textarea id="experience" name="experience" rows="2" placeholder="z.B. 10 Jahre Erfahrung"></textarea>
       </div>
-      <div class="form-group">
-        <label for="image_url">Profilbild-URL</label>
-        <input type="url" id="image_url" name="image_url" placeholder="https://...">
-      </div>
-      <div class="form-group">
-        <label for="external_profile_url">Externer Profil-Link (z.B. Superprof)</label>
-        <input type="url" id="external_profile_url" name="external_profile_url" placeholder="https://www.superprof.de/...">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="image_url">Profilbild-URL</label>
+          <input type="url" id="image_url" name="image_url" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label for="external_profile_url">Externer Profil-Link</label>
+          <input type="url" id="external_profile_url" name="external_profile_url" placeholder="https://...">
+        </div>
       </div>
       <div class="form-group">
         <label>

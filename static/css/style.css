@@ -4051,3 +4051,446 @@ main {
   }
 }
 
+/* ══════════════════════════════════════
+   ADMIN PANEL – Coach Panel Tabs
+   ══════════════════════════════════════ */
+
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 24px 0 28px;
+  background: var(--white);
+  padding: 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.admin-tab {
+  flex: 1;
+  padding: 14px 20px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  font-family: 'Righteous', cursive;
+  font-size: 15px;
+  color: var(--dark-blue);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.admin-tab:hover {
+  background: rgba(0, 168, 204, 0.08);
+  border-color: rgba(0, 168, 204, 0.2);
+}
+
+.admin-tab.active {
+  background: var(--turquoise);
+  color: var(--white);
+  border-color: var(--turquoise);
+  box-shadow: 0 4px 14px rgba(0, 168, 204, 0.3);
+}
+
+.admin-panel {
+  display: none;
+}
+
+.admin-panel.active {
+  display: block;
+}
+
+/* ── Admin Subsection ── */
+.admin-subsection {
+  margin-top: 24px;
+}
+
+.admin-subsection h3 {
+  font-family: 'Righteous', cursive;
+  font-size: 20px;
+  color: var(--dark-blue);
+  margin: 0 0 16px;
+}
+
+.subsection-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.subsection-header h3 {
+  margin: 0;
+}
+
+/* ── Week Calendar Grid ── */
+.week-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.week-header h3 {
+  font-family: 'Righteous', cursive;
+  font-size: 20px;
+  color: var(--dark-blue);
+  margin: 0;
+}
+
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.week-day {
+  background: var(--white);
+  border-radius: 10px;
+  border: 2px solid #e8f4f8;
+  min-height: 140px;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.week-day.today {
+  border-color: var(--turquoise);
+  box-shadow: 0 0 0 2px rgba(0, 168, 204, 0.2);
+}
+
+.week-day.has-events {
+  border-color: rgba(0, 168, 204, 0.3);
+}
+
+.week-day-header {
+  background: linear-gradient(135deg, var(--dark-blue), #006070);
+  color: var(--white);
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.week-day.today .week-day-header {
+  background: linear-gradient(135deg, var(--turquoise), var(--light-turquoise));
+}
+
+.day-name {
+  display: block;
+  font-family: 'Righteous', cursive;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.day-num {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.day-month {
+  display: block;
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.week-day-events {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.week-event {
+  background: linear-gradient(135deg, #e0f7fa, #f0fbff);
+  border-left: 3px solid var(--turquoise);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 11px;
+}
+
+.event-time {
+  display: block;
+  font-weight: 700;
+  color: var(--dark-blue);
+  font-size: 12px;
+}
+
+.event-client {
+  display: block;
+  color: var(--text-dark);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-location {
+  display: block;
+  color: var(--text-light);
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-duration {
+  display: block;
+  font-size: 10px;
+  color: var(--turquoise);
+  font-weight: 600;
+}
+
+.week-day-empty {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 12px;
+  padding: 16px 0;
+  font-style: italic;
+}
+
+/* ── Coach Admin Cards ── */
+.coach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.admin .coach-card,
+#panel-coaches .coach-card {
+  background: var(--white);
+  border-radius: 12px;
+  border: 1px solid #e8f4f8;
+  padding: 18px;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.admin .coach-card:hover,
+#panel-coaches .coach-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  border-color: var(--turquoise);
+}
+
+.coach-inactive {
+  opacity: 0.6;
+}
+
+.coach-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.coach-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--turquoise);
+}
+
+.coach-avatar-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--turquoise), var(--light-turquoise));
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Righteous', cursive;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.coach-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.coach-card-info strong {
+  display: block;
+  font-size: 15px;
+  color: var(--dark-blue);
+}
+
+.coach-card-info .coach-title {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status-badge.badge-active {
+  background: #e6f9e6;
+  color: #28a745;
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge.badge-inactive {
+  background: #ffe6e6;
+  color: #dc3545;
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge.badge-active {
+  background: #e6f9e6;
+  color: #28a745;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge.badge-pending {
+  background: #fff3cd;
+  color: #856404;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.coach-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.coach-detail {
+  font-size: 12px;
+  color: var(--text-dark);
+}
+
+.coach-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Form Row (side by side) ── */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--turquoise);
+  color: var(--turquoise);
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.btn-outline:hover {
+  background: var(--turquoise);
+  color: var(--white);
+}
+
+/* ── Admin Panel Mobile ── */
+@media (max-width: 768px) {
+  .admin-tabs {
+    gap: 4px;
+    padding: 4px;
+    margin: 16px 0 20px;
+  }
+
+  .admin-tab {
+    padding: 10px 8px;
+    font-size: 13px;
+    gap: 4px;
+  }
+
+  .week-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .week-day {
+    min-height: auto;
+  }
+
+  .week-day-events {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .week-event {
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .week-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .coach-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .subsection-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .admin-subsection h3 {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-tab {
+    padding: 8px 6px;
+    font-size: 11px;
+    gap: 2px;
+  }
+
+  .week-event {
+    min-width: 100%;
+  }
+
+  .coach-card-header {
+    flex-wrap: wrap;
+  }
+}
+

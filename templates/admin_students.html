@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="dashboard-header">
+    <h2>👥 Schüler-Verwaltung</h2>
+    <div class="cta-buttons">
+      <a href="{{ url_for('admin') }}" class="btn btn-secondary">← Zurück zum Coach Panel</a>
+    </div>
+  </div>
+
+  <section class="admin-section">
+    <h3>Registrierte Schüler ({{ student_data|length }})</h3>
+    {% if student_data %}
+      <div class="bookings-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>E-Mail</th>
+              <th>Rolle</th>
+              <th>Buchungen</th>
+              <th>Bestätigt</th>
+              <th>Ausstehend</th>
+              <th>Registriert</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in student_data %}
+              <tr>
+                <td><strong>{{ item.user.name }}</strong></td>
+                <td>{{ item.user.email }}</td>
+                <td>
+                  <span class="status-badge">{{ item.user.role or 'user' }}</span>
+                </td>
+                <td>{{ item.booking_count }}</td>
+                <td>
+                  {% if item.confirmed_count > 0 %}
+                    <span class="badge badge-active">{{ item.confirmed_count }}</span>
+                  {% else %}
+                    <span style="color:#999;">0</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if item.pending_count > 0 %}
+                    <span class="badge badge-pending">{{ item.pending_count }}</span>
+                  {% else %}
+                    <span style="color:#999;">0</span>
+                  {% endif %}
+                </td>
+                <td>{{ item.user.created_at.strftime('%d.%m.%Y') if item.user.created_at else '–' }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p style="color:var(--text-muted);">Noch keine Schüler registriert.</p>
+    {% endif %}
+  </section>
+{% endblock %}

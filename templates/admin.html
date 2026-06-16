@@ -2,136 +2,307 @@
 {% block content %}
   <div class="dashboard-header">
     <h2>Coach Panel 🔐</h2>
-    <div class="cta-buttons">
-      <a href="{{ url_for('admin_week') }}" class="btn btn-primary">📅 Wochenplan</a>
-      <a href="{{ url_for('admin_coaches') }}" class="btn btn-primary">🏊 Coach-Verwaltung</a>
-      <a href="{{ url_for('admin_settings') }}" class="btn btn-secondary">⚙️ Einstellungen</a>
+  </div>
+
+  {# ── Tab Navigation ── #}
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="wochenplan">📅 Wochenplan</button>
+    <button class="admin-tab" data-tab="coaches">🏊 Coach-Verwaltung</button>
+    <button class="admin-tab" data-tab="schueler">👥 Schüler</button>
+  </div>
+
+  {# ═══════════════════════════════════════════════════════════════
+     PANEL 1: WOCHENPLAN
+     ═══════════════════════════════════════════════════════════════ #}
+  <div class="admin-panel active" id="panel-wochenplan">
+    <div class="week-header">
+      <h3>📆 Woche: {{ week_start.strftime('%d.%m.') }} – {{ week_end.strftime('%d.%m.%Y') }}</h3>
+      <a href="{{ url_for('admin_week') }}" class="btn btn-small btn-outline">Vollständige Liste →</a>
+    </div>
+
+    <div class="week-grid">
+      {% for day in week_days %}
+        <div class="week-day {% if day.is_today %}today{% endif %} {% if day.bookings %}has-events{% endif %}">
+          <div class="week-day-header">
+            <span class="day-name">{{ day.day_name }}</span>
+            <span class="day-num">{{ day.day_num }}</span>
+            <span class="day-month">{{ day.month }}</span>
+          </div>
+          <div class="week-day-events">
+            {% if day.bookings %}
+              {% for b in day.bookings %}
+                <div class="week-event">
+                  <span class="event-time">{{ b.confirmed_time.strftime('%H:%M') if b.confirmed_time else '–:–' }}</span>
+                  <span class="event-client">{{ b.user.name }}</span>
+                  {% if b.confirmed_location %}
+                    <span class="event-location">{{ b.confirmed_location.name|truncate(20) }}</span>
+                  {% endif %}
+                  <span class="event-duration">{{ b.duration_minutes }} Min</span>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="week-day-empty">Frei</div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {# ── Offene Anfragen (Pending) ── #}
+    {% if bookings_pending %}
+      <div class="admin-subsection">
+        <h3>⏳ Offene Terminanfragen ({{ bookings_pending|length }})</h3>
+        <div class="bookings-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Kunde</th>
+                <th>Dauer</th>
+                <th>Preis</th>
+                <th>Coach-Wunsch</th>
+                <th>Zeitoptionen</th>
+                <th>Orte</th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for b in bookings_pending %}
+                <tr>
+                  <td><strong>{{ b.user.name }}</strong></td>
+                  <td>{{ b.duration_minutes }} Min</td>
+                  <td><strong>{{ b.estimated_price|int }} €</strong></td>
+                  <td>{{ b.preferred_coach.name if b.preferred_coach else '–' }}</td>
+                  <td class="locations-cell">
+                    <ul style="margin:0;padding-left:16px;font-size:12px;">
+                      {% if b.date_option_1 %}
+                        <li>{{ b.date_option_1.strftime('%d.%m') }} {{ b.time_option_1.strftime('%H:%M') if b.time_option_1 else '' }}</li>
+                      {% endif %}
+                      {% if b.date_option_2 %}
+                        <li>{{ b.date_option_2.strftime('%d.%m') }} {{ b.time_option_2.strftime('%H:%M') if b.time_option_2 else '' }}</li>
+                      {% endif %}
+                      {% if b.date_option_3 %}
+                        <li>{{ b.date_option_3.strftime('%d.%m') }} {{ b.time_option_3.strftime('%H:%M') if b.time_option_3 else '' }}</li>
+                      {% endif %}
+                    </ul>
+                  </td>
+                  <td>
+                    <ul style="margin:0;padding-left:16px;font-size:12px;">
+                      {% if b.preferred_location_1 %}<li>{{ b.preferred_location_1.name|truncate(25) }}</li>{% endif %}
+                      {% if b.preferred_location_2 %}<li>{{ b.preferred_location_2.name|truncate(25) }}</li>{% endif %}
+                      {% if b.preferred_location_3 %}<li>{{ b.preferred_location_3.name|truncate(25) }}</li>{% endif %}
+                    </ul>
+                  </td>
+                  <td>
+                    <div class="admin-actions" style="flex-direction:column;gap:4px;">
+                      <form method="POST" action="{{ url_for('admin_confirm_booking', booking_id=b.id) }}" class="inline-form" style="flex-wrap:wrap;gap:4px;">
+                        <select name="confirmed_location" class="location-select" style="font-size:12px;">
+                          <option value="">-- Ort --</option>
+                          {% if b.preferred_location_1 %}<option value="{{ b.preferred_location_1.id }}">{{ b.preferred_location_1.name|truncate(20) }}</option>{% endif %}
+                          {% if b.preferred_location_2 %}<option value="{{ b.preferred_location_2.id }}">{{ b.preferred_location_2.name|truncate(20) }}</option>{% endif %}
+                          {% if b.preferred_location_3 %}<option value="{{ b.preferred_location_3.id }}">{{ b.preferred_location_3.name|truncate(20) }}</option>{% endif %}
+                        </select>
+                        <input type="date" name="confirmed_date" class="note-input" style="font-size:12px;">
+                        <input type="time" name="confirmed_time" class="note-input" style="font-size:12px;">
+                        <input type="text" name="admin_note" placeholder="Notiz..." class="note-input" style="font-size:12px;">
+                        <button type="submit" class="btn-small btn-success">✓</button>
+                      </form>
+                      <form method="POST" action="{{ url_for('admin_reject_booking', booking_id=b.id) }}" class="inline-form" style="gap:4px;">
+                        <button type="submit" class="btn-small btn-danger">✗</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  {# ═══════════════════════════════════════════════════════════════
+     PANEL 2: COACH-VERWALTUNG
+     ═══════════════════════════════════════════════════════════════ #}
+  <div class="admin-panel" id="panel-coaches">
+    {# ── Coach List ── #}
+    <div class="admin-subsection">
+      <div class="subsection-header">
+        <h3>🏊 Coaches ({{ coaches|length }})</h3>
+        <button class="btn btn-primary btn-small" onclick="document.getElementById('coach-create-form').classList.toggle('hidden')">+ Neuer Coach</button>
+      </div>
+      {% if coaches %}
+        <div class="coach-grid">
+          {% for coach in coaches %}
+            <div class="coach-card {% if not coach.is_active %}coach-inactive{% endif %}">
+              <div class="coach-card-header">
+                {% if coach.image_url %}
+                  <img src="{{ coach.image_url }}" alt="{{ coach.name }}" class="coach-avatar">
+                {% else %}
+                  <div class="coach-avatar-placeholder">{{ coach.name[0] }}</div>
+                {% endif %}
+                <div class="coach-card-info">
+                  <strong>{{ coach.display_name }}</strong>
+                  <span class="coach-title">{{ coach.title or coach.specialization or '–' }}</span>
+                </div>
+                <span class="status-badge {{ 'badge-active' if coach.is_active else 'badge-inactive' }}">
+                  {{ 'Aktiv' if coach.is_active else 'Inaktiv' }}
+                </span>
+              </div>
+              <div class="coach-card-details">
+                {% if coach.email %}<div class="coach-detail">📧 {{ coach.email }}</div>{% endif %}
+                {% if coach.cities_list %}
+                  <div class="coach-detail">📍 {{ coach.cities_list|join(', ') }}</div>
+                {% endif %}
+                <div class="coach-detail">💬 {{ coach.reviews|length }} Reviews</div>
+              </div>
+              <div class="coach-card-actions">
+                <a href="{{ url_for('admin_coach_edit', coach_id=coach.id) }}" class="btn btn-small btn-outline">✏️ Bearbeiten</a>
+                <form method="POST" action="{{ url_for('admin_coach_toggle', coach_id=coach.id) }}" style="display:inline;">
+                  <button type="submit" class="btn btn-small {{ 'btn-warning' if coach.is_active else 'btn-success' }}">
+                    {{ 'Deaktivieren' if coach.is_active else 'Aktivieren' }}
+                  </button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p style="color:var(--text-muted);">Noch keine Coaches angelegt.</p>
+      {% endif %}
+    </div>
+
+    {# ── Create Coach Form ── #}
+    <div class="admin-subsection hidden" id="coach-create-form">
+      <h3>Neuen Coach anlegen</h3>
+      <form method="POST" action="{{ url_for('admin_coaches') }}" class="booking-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="create-first_name">Vorname</label>
+            <input type="text" id="create-first_name" name="first_name">
+          </div>
+          <div class="form-group">
+            <label for="create-last_name">Nachname</label>
+            <input type="text" id="create-last_name" name="last_name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="create-name">Anzeigename *</label>
+          <input type="text" id="create-name" name="name" required placeholder="Vollständiger Name">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="create-email">E-Mail</label>
+            <input type="email" id="create-email" name="email">
+          </div>
+          <div class="form-group">
+            <label for="create-specialization">Spezialisierung</label>
+            <input type="text" id="create-specialization" name="specialization" placeholder="z.B. Kraul, Brustschwimmen">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="create-cities_served">Einsatzorte (kommasepariert)</label>
+          <input type="text" id="create-cities_served" name="cities_served" placeholder="z.B. Berlin, Potsdam, Hamburg">
+        </div>
+        <div class="form-group">
+          <label for="create-title">Titel</label>
+          <input type="text" id="create-title" name="title" placeholder="z.B. Schwimmlehrer – 10 Jahre Erfahrung">
+        </div>
+        <div class="form-group">
+          <label for="create-bio">Bio</label>
+          <textarea id="create-bio" name="bio" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="create-strengths">Stärken</label>
+          <textarea id="create-strengths" name="strengths" rows="3" placeholder="z.B. Techniktraining&#10;Kraul&#10;Ausdauer"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="create-swim_style">Trainingsansatz</label>
+            <textarea id="create-swim_style" name="swim_style" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="create-experience">Erfahrung</label>
+            <textarea id="create-experience" name="experience" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="create-image_url">Profilbild-URL</label>
+            <input type="url" id="create-image_url" name="image_url" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label for="create-external_profile_url">Externer Link</label>
+            <input type="url" id="create-external_profile_url" name="external_profile_url" placeholder="https://...">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" name="is_active" value="1" checked>
+            Aktiv (auf Coaches-Seite sichtbar)
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary">Coach anlegen</button>
+      </form>
     </div>
   </div>
 
-  <section class="admin-section">
-    <h3>Alle Buchungsanfragen</h3>
-    {% if bookings %}
-      <div class="bookings-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Status</th>
-              <th>Nutzer</th>
-              <th>E-Mail</th>
-              <th>Dauer</th>
-              <th>Preis</th>
-              <th>Coach</th>
-              <th>Zeitoptionen</th>
-              <th>Prio</th>
-              <th>Wunschorte</th>
-              <th>Aktionen</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for b in bookings %}
-              <tr class="booking-row booking-status-{{ b.status|replace('ä', 'ae')|replace('ö', 'oe')|lower }}">
-                <td>
-                  <span class="status-badge">
-                    {% if b.status == 'bestaetigt' %}✅ BESTÄTIGT
-                    {% elif b.status == 'abgelehnt' %}❌ ABGELEHNT
-                    {% else %}⏳ {{ b.status|upper }}
-                    {% endif %}
-                  </span>
-                </td>
-                <td>{{ b.user.name }}</td>
-                <td>{{ b.user.email }}</td>
-                <td style="white-space:nowrap;">
-                  {% if b.duration_minutes %}
-                    {% if b.duration_minutes == 30 %}30 Min
-                    {% elif b.duration_minutes == 60 %}1 Std
-                    {% elif b.duration_minutes == 90 %}1,5 Std
-                    {% elif b.duration_minutes == 120 %}2 Std
-                    {% elif b.duration_minutes == 180 %}3 Std
-                    {% elif b.duration_minutes == 240 %}4 Std
-                    {% elif b.duration_minutes == 300 %}5 Std ✨
-                    {% else %}{{ b.duration_minutes }} Min
-                    {% endif %}
-                  {% else %}–{% endif %}
-                </td>
-                <td>
-                  {% if b.estimated_price %}
-                    <strong>{{ b.estimated_price|int }} €</strong>
-                    {% if b.duration_minutes == 300 %}<br><span style="font-size:11px;color:#e65c00;">🎉 Paket</span>{% endif %}
-                  {% else %}–{% endif %}
-                </td>
-                <td>
-                  {% if b.preferred_coach %}
-                    {{ b.preferred_coach.name }}
-                  {% else %}
-                    <em style="color:#999;">Egal</em>
-                  {% endif %}
-                </td>
-                <td class="locations-cell">
-                  <ul style="margin:0;padding-left:16px;font-size:13px;">
-                    {% if b.date_option_1 %}
-                      <li>{{ b.date_option_1.strftime('%d.%m.%Y') }} {% if b.time_option_1 %}{{ b.time_option_1.strftime('%H:%M') }}{% endif %}</li>
-                    {% elif b.requested_start %}
-                      <li>{{ b.requested_start.strftime('%d.%m.%Y %H:%M') }}</li>
-                    {% endif %}
-                    {% if b.date_option_2 %}
-                      <li>{{ b.date_option_2.strftime('%d.%m.%Y') }} {% if b.time_option_2 %}{{ b.time_option_2.strftime('%H:%M') }}{% endif %}</li>
-                    {% endif %}
-                    {% if b.date_option_3 %}
-                      <li>{{ b.date_option_3.strftime('%d.%m.%Y') }} {% if b.time_option_3 %}{{ b.time_option_3.strftime('%H:%M') }}{% endif %}</li>
-                    {% endif %}
-                  </ul>
-                </td>
-                <td>{% if b.priority_type == 'time' %}⏰ Zeit{% elif b.priority_type == 'location' %}📍 Ort{% else %}⚖️ Beides{% endif %}</td>
-                <td class="locations-cell">
-                  <ul style="margin:0;padding-left:16px;font-size:13px;">
-                    {% if b.preferred_location_1 %}<li>{{ b.preferred_location_1.name }}</li>{% endif %}
-                    {% if b.preferred_location_2 %}<li>{{ b.preferred_location_2.name }}</li>{% endif %}
-                    {% if b.preferred_location_3 %}<li>{{ b.preferred_location_3.name }}</li>{% endif %}
-                  </ul>
-                </td>
-                <td>
-                  {% if b.status == 'angefragt' %}
-                  <div class="admin-actions">
-                    <form method="POST" action="{{ url_for('admin_confirm_booking', booking_id=b.id) }}" class="inline-form">
-                      <select name="confirmed_location" class="location-select">
-                        <option value="">-- Ort --</option>
-                        {% if b.preferred_location_1 %}<option value="{{ b.preferred_location_1.id }}">{{ b.preferred_location_1.name }}</option>{% endif %}
-                        {% if b.preferred_location_2 %}<option value="{{ b.preferred_location_2.id }}">{{ b.preferred_location_2.name }}</option>{% endif %}
-                        {% if b.preferred_location_3 %}<option value="{{ b.preferred_location_3.id }}">{{ b.preferred_location_3.name }}</option>{% endif %}
-                      </select>
-                      <input type="date" name="confirmed_date" class="note-input" title="Bestätigtes Datum">
-                      <input type="time" name="confirmed_time" class="note-input" title="Bestätigte Uhrzeit">
-                      <input type="text" name="admin_note" placeholder="Coach-Notiz..." class="note-input">
-                      <button type="submit" class="btn-small btn-success">✓ Bestätigen</button>
-                    </form>
-                    <form method="POST" action="{{ url_for('admin_reject_booking', booking_id=b.id) }}" class="inline-form">
-                      <input type="text" name="admin_note" placeholder="Grund..." class="note-input">
-                      <button type="submit" class="btn-small btn-danger">✗ Ablehnen</button>
-                    </form>
-                  </div>
-                  {% else %}
-                    <em style="font-size:12px;color:#888;">
-                      {% if b.confirmed_date %}📅 {{ b.confirmed_date.strftime('%d.%m.%Y') }}{% endif %}
-                      {% if b.confirmed_time %} {{ b.confirmed_time.strftime('%H:%M') }}{% endif %}
-                      {% if b.confirmed_location %} — {{ b.confirmed_location.name }}{% endif %}
-                    </em>
-                  {% endif %}
-                </td>
+  {# ═══════════════════════════════════════════════════════════════
+     PANEL 3: SCHÜLER
+     ═══════════════════════════════════════════════════════════════ #}
+  <div class="admin-panel" id="panel-schueler">
+    <div class="admin-subsection">
+      <h3>👥 Schüler ({{ students|length }})</h3>
+      {% if students %}
+        <div class="bookings-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>Buchungen</th>
+                <th>Bestätigt</th>
+                <th>Ausstehend</th>
+                <th>Registriert</th>
               </tr>
-              <tr class="booking-details">
-                <td colspan="10">
-                  {% if b.training_goal %}<strong>Trainingsziel:</strong> {{ b.training_goal }}<br>{% endif %}
-                  {% if b.user_note %}<strong>Nutzer-Notiz:</strong> {{ b.user_note }}<br>{% endif %}
-                  {% if b.admin_note %}<strong>Coach-Notiz:</strong> {{ b.admin_note }}<br>{% endif %}
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% else %}
-      <p>Keine Terminwünsche vorhanden.</p>
-    {% endif %}
-  </section>
+            </thead>
+            <tbody>
+              {% for s in students %}
+                <tr>
+                  <td><strong>{{ s.name }}</strong></td>
+                  <td>{{ s.email }}</td>
+                  <td>{{ s.bookings|length }}</td>
+                  <td>
+                    <span class="badge badge-active">
+                      {{ s.bookings|selectattr('status', 'equalto', 'bestaetigt')|list|length }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge badge-pending">
+                      {{ s.bookings|selectattr('status', 'equalto', 'angefragt')|list|length }}
+                    </span>
+                  </td>
+                  <td>{{ s.created_at.strftime('%d.%m.%Y') if s.created_at else '–' }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p style="color:var(--text-muted);">Noch keine Schüler registriert.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {# ── Tab switching script ── #}
+  <script>
+    document.querySelectorAll('.admin-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.admin-tab').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.admin-panel').forEach(function(p) { p.classList.remove('active'); });
+        this.classList.add('active');
+        var target = document.getElementById('panel-' + this.dataset.tab);
+        if (target) target.classList.add('active');
+      });
+    });
+  </script>
 {% endblock %}

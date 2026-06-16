@@ -95,15 +95,34 @@ class Coach(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     slug = db.Column(db.String(160), unique=True, nullable=False)
+    first_name = db.Column(db.String(80))
+    last_name = db.Column(db.String(80))
+    email = db.Column(db.String(128))
     title = db.Column(db.String(200))
     bio = db.Column(db.Text)
     strengths = db.Column(db.Text)
     swim_style = db.Column(db.Text)
     experience = db.Column(db.Text)
+    specialization = db.Column(db.String(200))
+    cities_served = db.Column(db.Text)  # comma-separated, e.g. "Berlin,Potsdam"
     image_url = db.Column(db.String(500))
     external_profile_url = db.Column(db.String(500))
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    @property
+    def cities_list(self):
+        """Return cities as a list, parsed from comma-separated string."""
+        if self.cities_served:
+            return [c.strip() for c in self.cities_served.split(',') if c.strip()]
+        return []
+
+    @property
+    def display_name(self):
+        """Return composed name if first/last available, else full name."""
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        return self.name
 
 
 class CoachReview(db.Model):

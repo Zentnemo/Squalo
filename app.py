@@ -5,8 +5,11 @@ Includes minimal auth (register/login), required pages and CLI helpers.
 """
 
 import os
+import smtplib
 import time as time_mod
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from zoneinfo import ZoneInfo
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, Response
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
@@ -20,6 +23,9 @@ from location_status import compute_location_status
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
+# ── Default admin email ───────────────────────────────────────────
+DEFAULT_ADMIN_EMAIL = "zentner.moritz@gmail.com"
+
 
 def allowed_file(filename: str) -> bool:
     if not filename:
@@ -27,55 +33,187 @@ def allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def send_booking_notification(booking):
-    """Simulate sending an email notification for a new booking."""
+def get_admin_email():
+    """Return the admin notification email from settings or env, with fallback."""
+    return (
+        os.environ.get("BOOKING_NOTIFICATION_EMAIL")
+        or AppSetting.get("booking_notification_email")
+        or DEFAULT_ADMIN_EMAIL
+    )
+
+
+def send_email(subject, recipient, body_text, body_html=None):
+    """Send an email via SMTP. Falls back to console logging if SMTP is not configured.
+
+    SMTP is configured via environment variables:
+        MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, MAIL_USE_TLS, MAIL_DEFAULT_SENDER
+    If none are set, the email is printed to the console (development mode).
+    """
+    mail_server = os.environ.get("MAIL_SERVER")
+    mail_port = int(os.environ.get("MAIL_PORT", "587"))
+    mail_username = os.environ.get("MAIL_USERNAME")
+    mail_password = os.environ.get("MAIL_PASSWORD")
+    mail_use_tls = os.environ.get("MAIL_USE_TLS", "true").lower() in ("true", "1", "yes")
+    mail_sender = os.environ.get("MAIL_DEFAULT_SENDER", mail_username or "noreply@squalo.app")
+
+    if not mail_server or not mail_username or not mail_password:
+        # ── Console fallback (development) ──
+        print("\n" + "=" * 60)
+        print(f"SIMULIERTE E-MAIL (kein SMTP konfiguriert)")
+        print(f"Von:    {mail_sender}")
+        print(f"An:     {recipient}")
+        print(f"Betreff: {subject}")
+        print("-" * 60)
+        print(body_text)
+        if body_html:
+            print("-" * 60)
+            print("[HTML-Version verfügbar, wird in Konsole nicht angezeigt]")
+        print("=" * 60 + "\n")
+        return True
+
     try:
-        admin_email = AppSetting.get("booking_notification_email", "info@squalo.local")
-        user = User.query.get(booking.user_id)
-        subject = "Neue Squalo-Terminanfrage"
+        msg = MIMEMultipart("alternative")
+        msg["From"] = mail_sender
+        msg["To"] = recipient
+        msg["Subject"] = subject
+        msg.attach(MIMEText(body_text, "plain", "utf-8"))
+        if body_html:
+            msg.attach(MIMEText(body_html, "html", "utf-8"))
 
-        time_options = []
-        if booking.date_option_1:
-            t1 = booking.time_option_1.strftime('%H:%M') if booking.time_option_1 else '?'
-            time_options.append(f"{booking.date_option_1.strftime('%d.%m.%Y')} {t1} Uhr")
-        if booking.date_option_2:
-            t2 = booking.time_option_2.strftime('%H:%M') if booking.time_option_2 else '?'
-            time_options.append(f"{booking.date_option_2.strftime('%d.%m.%Y')} {t2} Uhr")
-        if booking.date_option_3:
-            t3 = booking.time_option_3.strftime('%H:%M') if booking.time_option_3 else '?'
-            time_options.append(f"{booking.date_option_3.strftime('%d.%m.%Y')} {t3} Uhr")
-        # Fallback to legacy field
-        if not time_options and booking.requested_start:
-            time_options.append(booking.requested_start.strftime('%d.%m.%Y %H:%M') + " Uhr")
-
-        locs = []
-        for lid in [booking.preferred_location_1_id, booking.preferred_location_2_id, booking.preferred_location_3_id]:
-            if lid:
-                loc = Location.query.get(lid)
-                if loc:
-                    locs.append(loc.name)
-
-        lines = [
-            f"An: {admin_email}",
-            f"Betreff: {subject}",
-            "",
-            f"Kunde: {user.name if user else 'unbekannt'}",
-            f"E-Mail: {user.email if user else 'unbekannt'}",
-            f"Zeitoptionen: {', '.join(time_options) if time_options else 'keine'}",
-            f"Wunschorte: {', '.join(locs) if locs else 'keine'}",
-            f"Coach-Präferenz: {booking.preferred_coach.name if booking.preferred_coach else 'keine'}",
-            f"Trainingsziel: {booking.training_goal or 'keines'}",
-            f"Notiz: {booking.user_note or 'keine'}",
-            f"Admin-Link: /admin/booking/{booking.id}",
-        ]
-        print("=" * 60)
-        print("SIMULIERTE BUCHUNGSBENACHRICHTIGUNG")
-        print("=" * 60)
-        for line in lines:
-            print(line)
-        print("=" * 60)
+        with smtplib.SMTP(mail_server, mail_port, timeout=15) as server:
+            if mail_use_tls:
+                server.starttls()
+            server.login(mail_username, mail_password)
+            server.sendmail(mail_sender, [recipient], msg.as_string())
+        print(f"[MAIL] E-Mail gesendet an {recipient}: {subject}")
+        return True
     except Exception as e:
-        print(f"Notification error (non-critical): {e}")
+        print(f"[MAIL-FEHLER] Konnte E-Mail nicht senden: {e}")
+        # Fallback: log the email content so it's not lost
+        print(f"  Betreff: {subject}")
+        print(f"  An: {recipient}")
+        print(f"  Text: {body_text[:300]}")
+        return False
+
+
+def send_booking_notification(booking):
+    """Send admin notification when a new booking request is submitted."""
+    admin_email = get_admin_email()
+    user = User.query.get(booking.user_id)
+    subject = "Neue Squalo-Terminanfrage"
+
+    time_options = []
+    if booking.date_option_1:
+        t1 = booking.time_option_1.strftime('%H:%M') if booking.time_option_1 else '?'
+        time_options.append(f"  - {booking.date_option_1.strftime('%d.%m.%Y')} {t1} Uhr")
+    if booking.date_option_2:
+        t2 = booking.time_option_2.strftime('%H:%M') if booking.time_option_2 else '?'
+        time_options.append(f"  - {booking.date_option_2.strftime('%d.%m.%Y')} {t2} Uhr")
+    if booking.date_option_3:
+        t3 = booking.time_option_3.strftime('%H:%M') if booking.time_option_3 else '?'
+        time_options.append(f"  - {booking.date_option_3.strftime('%d.%m.%Y')} {t3} Uhr")
+    if not time_options and booking.requested_start:
+        time_options.append(f"  - {booking.requested_start.strftime('%d.%m.%Y %H:%M')} Uhr")
+
+    locs = []
+    for lid in [booking.preferred_location_1_id, booking.preferred_location_2_id, booking.preferred_location_3_id]:
+        if lid:
+            loc = Location.query.get(lid)
+            if loc:
+                locs.append(loc.name)
+
+    duration_map = {30: "30 Min", 60: "1 Std", 90: "1,5 Std", 120: "2 Std",
+                    180: "3 Std", 240: "4 Std", 300: "5 Std (Paket)"}
+    duration_str = duration_map.get(booking.duration_minutes, f"{booking.duration_minutes} Min")
+
+    body = f"""Hallo Moritz,
+
+eine neue Terminanfrage ist eingegangen.
+
+Kunde: {user.name if user else 'unbekannt'}
+E-Mail: {user.email if user else 'unbekannt'}
+
+Zeitoptionen:
+{chr(10).join(time_options) if time_options else '  keine'}
+
+Wunschorte: {', '.join(locs) if locs else 'keine'}
+Coach-Wunsch: {booking.preferred_coach.name if booking.preferred_coach else 'egal'}
+Dauer: {duration_str}
+Trainingsziel: {booking.training_goal or 'keines'}
+Notiz: {booking.user_note or 'keine'}
+Geschätzter Preis: {int(booking.estimated_price)} €
+
+Link: /admin
+
+Viele Grüße
+Squalo Benachrichtigungssystem"""
+
+    send_email(subject, admin_email, body)
+
+
+def send_customer_confirmation_email(booking):
+    """Send customer email when a booking is confirmed."""
+    user = User.query.get(booking.user_id)
+    if not user or not user.email:
+        return
+
+    subject = "Dein Squalo Schwimmtraining wurde bestätigt"
+
+    date_str = booking.confirmed_date.strftime('%d.%m.%Y') if booking.confirmed_date else 'TBD'
+    time_str = booking.confirmed_time.strftime('%H:%M') if booking.confirmed_time else 'TBD'
+    loc_name = booking.confirmed_location.name if booking.confirmed_location else 'TBD'
+    coach_name = booking.preferred_coach.name if booking.preferred_coach else 'Moritz'
+    duration_map = {30: "30 Min", 60: "1 Std", 90: "1,5 Std", 120: "2 Std",
+                    180: "3 Std", 240: "4 Std", 300: "5 Std"}
+    duration_str = duration_map.get(booking.duration_minutes, f"{booking.duration_minutes} Min")
+
+    body = f"""Hallo {user.name},
+
+gute Nachrichten: Dein Squalo Schwimmtraining wurde bestätigt!
+
+Datum:     {date_str}
+Uhrzeit:   {time_str}
+Ort:       {loc_name}
+Coach:     {coach_name}
+Dauer:     {duration_str}
+
+Du kannst den Termin direkt in deinen Kalender übernehmen:
+- Öffne dein Dashboard unter /dashboard
+- Klicke bei bestätigten Terminen auf "In Kalender speichern"
+- Die .ics-Datei funktioniert auf iPhone, Android und Desktop
+
+Wir freuen uns auf dich!
+
+Viele Grüße
+Dein Squalo-Team"""
+
+    send_email(subject, user.email, body)
+
+
+def send_customer_rejection_email(booking, admin_note=None):
+    """Send customer email when a booking is rejected."""
+    user = User.query.get(booking.user_id)
+    if not user or not user.email:
+        return
+
+    subject = "Deine Squalo Terminanfrage"
+
+    note_line = ""
+    if admin_note:
+        note_line = f"\nKommentar vom Coach:\n{admin_note}\n"
+
+    body = f"""Hallo {user.name},
+
+leider konnte deine gewünschte Terminanfrage nicht wie gewünscht umgesetzt werden.
+
+Das bedeutet aber nicht, dass du kein Schwimmtraining bekommst!
+Du kannst jederzeit einen neuen Termin anfragen unter /booking – wähle einfach andere Zeiten oder Orte.
+
+{note_line}
+Viele Grüße
+Dein Squalo-Team"""
+
+    send_email(subject, user.email, body)
 
 
 def create_app() -> Flask:
@@ -133,6 +271,30 @@ def create_app() -> Flask:
                     print("[MIGRATION] Spalte preferred_coach_id hinzugefügt")
         except Exception as e:
             print(f"[MIGRATION] Fehler (ignoriert): {e}")
+
+        # ── Migration: Neue Coach-Spalten (email, cities, etc.) ─────
+        try:
+            with db.engine.connect() as conn:
+                import sqlalchemy as sa
+                inspector = sa.inspect(db.engine)
+                columns = [c['name'] for c in inspector.get_columns('coach')]
+                new_cols = {
+                    'first_name': "ALTER TABLE coach ADD COLUMN first_name VARCHAR(80)",
+                    'last_name': "ALTER TABLE coach ADD COLUMN last_name VARCHAR(80)",
+                    'email': "ALTER TABLE coach ADD COLUMN email VARCHAR(128)",
+                    'cities_served': "ALTER TABLE coach ADD COLUMN cities_served TEXT",
+                    'specialization': "ALTER TABLE coach ADD COLUMN specialization VARCHAR(200)",
+                }
+                added = 0
+                for col_name, ddl in new_cols.items():
+                    if col_name not in columns:
+                        conn.execute(sa.text(ddl))
+                        added += 1
+                if added:
+                    conn.commit()
+                    print(f"[MIGRATION] Coach-Spalten hinzugefügt: {added}")
+        except Exception as e:
+            print(f"[MIGRATION] Coach-Spalten (ignoriert): {e}")
         
         # ── Admin-User ──────────────────────────────────────────────
         # Admin-E-Mail (fest, kann später über ENV geändert werden)
@@ -519,34 +681,63 @@ def create_app() -> Flask:
         if not b.confirmed_date:
             flash("Kalender-Export: Kein bestätigtes Datum vorhanden.", "warning")
             return redirect(url_for("dashboard"))
-        from datetime import timedelta
+
         tz = ZoneInfo("Europe/Berlin")
         start_dt = datetime.combine(b.confirmed_date, b.confirmed_time or datetime.min.time()).replace(tzinfo=tz)
         end_dt = start_dt + timedelta(minutes=b.duration_minutes or 60)
         loc_name = b.confirmed_location.name if b.confirmed_location else "TBD"
         coach_name = b.preferred_coach.name if b.preferred_coach else "Moritz"
+        user = User.query.get(b.user_id)
+        user_name = user.name if user else ""
+
         uid = f"squalo-booking-{b.id}@squalo.app"
         dt_start = start_dt.strftime("%Y%m%dT%H%M%S")
         dt_end = end_dt.strftime("%Y%m%dT%H%M%S")
         dtstamp = datetime.now(tz).strftime("%Y%m%dT%H%M%S")
         summary = "Squalo Schwimmtraining"
-        description = f"Schwimmtraining mit {coach_name}\\nOrt: {loc_name}\\nDauer: {b.duration_minutes} Minuten"
-        ics_content = """BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Squalo Schwimmcoaching//DE
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-BEGIN:VEVENT
-UID:{}
-DTSTAMP:{}
-DTSTART:{}
-DTEND:{}
-SUMMARY:{}
-LOCATION:{}
-DESCRIPTION:{}
-STATUS:CONFIRMED
-END:VEVENT
-END:VCALENDAR""".format(uid, dtstamp, dt_start, dt_end, summary, loc_name, description)
+        description = (
+            f"Dein bestätigtes Squalo Schwimmtraining mit {coach_name}.\\n"
+            f"Ort: {loc_name}\\n"
+            f"Dauer: {b.duration_minutes} Minuten\\n"
+            f"Schüler: {user_name}"
+        )
+
+        ics_content = (
+            "BEGIN:VCALENDAR\r\n"
+            "VERSION:2.0\r\n"
+            "PRODID:-//Squalo Schwimmcoaching//DE\r\n"
+            "CALSCALE:GREGORIAN\r\n"
+            "METHOD:PUBLISH\r\n"
+            "X-WR-TIMEZONE:Europe/Berlin\r\n"
+            "BEGIN:VTIMEZONE\r\n"
+            "TZID:Europe/Berlin\r\n"
+            "BEGIN:DAYLIGHT\r\n"
+            "TZOFFSETFROM:+0100\r\n"
+            "TZOFFSETTO:+0200\r\n"
+            "TZNAME:CEST\r\n"
+            "DTSTART:19700329T020000\r\n"
+            "RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=3\r\n"
+            "END:DAYLIGHT\r\n"
+            "BEGIN:STANDARD\r\n"
+            "TZOFFSETFROM:+0200\r\n"
+            "TZOFFSETTO:+0100\r\n"
+            "TZNAME:CET\r\n"
+            "DTSTART:19701025T030000\r\n"
+            "RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10\r\n"
+            "END:STANDARD\r\n"
+            "END:VTIMEZONE\r\n"
+            "BEGIN:VEVENT\r\n"
+            f"UID:{uid}\r\n"
+            f"DTSTAMP:{dtstamp}\r\n"
+            f"DTSTART;TZID=Europe/Berlin:{dt_start}\r\n"
+            f"DTEND;TZID=Europe/Berlin:{dt_end}\r\n"
+            f"SUMMARY:{summary}\r\n"
+            f"LOCATION:{loc_name}\r\n"
+            f"DESCRIPTION:{description}\r\n"
+            "STATUS:CONFIRMED\r\n"
+            "END:VEVENT\r\n"
+            "END:VCALENDAR\r\n"
+        )
         return Response(
             ics_content,
             mimetype="text/calendar",
@@ -678,10 +869,58 @@ END:VCALENDAR""".format(uid, dtstamp, dt_start, dt_end, summary, loc_name, descr
         if getattr(current_user, "role", "") != "admin":
             flash("Access denied", "danger")
             return redirect(url_for("index"))
+
+        from datetime import timedelta
+
+        # ── Wochenplan: current week (Mon–Sun) ───────────────────
+        today = date.today()
+        # Find Monday of this week
+        week_start = today - timedelta(days=today.weekday())
+        week_end = week_start + timedelta(days=6)
+
+        # Confirmed bookings in this week
+        week_confirmed = Booking.query.filter(
+            Booking.status == 'bestaetigt',
+            Booking.confirmed_date >= week_start,
+            Booking.confirmed_date <= week_end,
+        ).order_by(Booking.confirmed_date.asc(), Booking.confirmed_time.asc()).all()
+
+        # Pending bookings (angefragt) – shown separately for awareness
+        bookings_pending = Booking.query.filter_by(status='angefragt').order_by(Booking.created_at.desc()).all()
+
+        # All bookings for full overview
         bookings = Booking.query.order_by(Booking.created_at.desc()).all()
-        users = User.query.order_by(User.name.asc()).all()
+
+        # ── Coaches ───────────────────────────────────────────────
         coaches = Coach.query.order_by(Coach.name.asc()).all()
-        return render_template("admin.html", bookings=bookings, users=users, coaches=coaches)
+
+        # ── Schüler (Users) ──────────────────────────────────────
+        students = User.query.filter(User.role != 'admin').order_by(User.name.asc()).all()
+
+        # Build week calendar: list of 7 day-dicts
+        import calendar as cal_mod
+        week_days = []
+        day_names_de = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
+        for i in range(7):
+            d = week_start + timedelta(days=i)
+            day_bookings = [b for b in week_confirmed if b.confirmed_date == d]
+            week_days.append({
+                'date': d,
+                'day_name': day_names_de[i],
+                'day_num': d.day,
+                'month': d.strftime('%b'),
+                'bookings': day_bookings,
+                'is_today': d == today,
+            })
+
+        return render_template("admin.html",
+                               week_days=week_days,
+                               week_start=week_start,
+                               week_end=week_end,
+                               bookings_pending=bookings_pending,
+                               bookings=bookings,
+                               coaches=coaches,
+                               students=students)
 
     @app.route("/admin/booking/<int:booking_id>/confirm", methods=["POST"])
     @login_required
@@ -761,10 +1000,18 @@ END:VCALENDAR""".format(uid, dtstamp, dt_start, dt_end, summary, loc_name, descr
             return redirect(url_for("index"))
         if request.method == "POST":
             name = request.form.get("name", "").strip()
+            first_name = request.form.get("first_name", "").strip()
+            last_name = request.form.get("last_name", "").strip()
+            email = request.form.get("email", "").strip()
             title = request.form.get("title", "").strip()
             bio = request.form.get("bio", "").strip()
             strengths = request.form.get("strengths", "").strip()
+            swim_style = request.form.get("swim_style", "").strip()
+            experience = request.form.get("experience", "").strip()
+            specialization = request.form.get("specialization", "").strip()
+            cities_served = request.form.get("cities_served", "").strip()
             image_url = request.form.get("image_url", "").strip()
+            external_profile_url = request.form.get("external_profile_url", "").strip()
             is_active = request.form.get("is_active") == "1"
             coach_id = request.form.get("coach_id")
             if not name:
@@ -776,18 +1023,30 @@ END:VCALENDAR""".format(uid, dtstamp, dt_start, dt_end, summary, loc_name, descr
                 if coach:
                     coach.name = name
                     coach.slug = slug
+                    coach.first_name = first_name
+                    coach.last_name = last_name
+                    coach.email = email
                     coach.title = title
                     coach.bio = bio
                     coach.strengths = strengths
+                    coach.swim_style = swim_style
+                    coach.experience = experience
+                    coach.specialization = specialization
+                    coach.cities_served = cities_served
                     coach.image_url = image_url
+                    coach.external_profile_url = external_profile_url
                     coach.is_active = is_active
                     flash(f"Coach {name} aktualisiert.", "success")
             else:
                 if Coach.query.filter_by(slug=slug).first():
                     flash("Ein Coach mit diesem Namen existiert bereits.", "danger")
                     return redirect(url_for("admin_coaches"))
-                coach = Coach(name=name, slug=slug, title=title, bio=bio,
-                              strengths=strengths, image_url=image_url, is_active=is_active)
+                coach = Coach(name=name, slug=slug, first_name=first_name, last_name=last_name,
+                              email=email, title=title, bio=bio, strengths=strengths,
+                              swim_style=swim_style, experience=experience,
+                              specialization=specialization, cities_served=cities_served,
+                              image_url=image_url, external_profile_url=external_profile_url,
+                              is_active=is_active)
                 db.session.add(coach)
                 flash(f"Coach {name} angelegt.", "success")
             db.session.commit()
@@ -806,6 +1065,72 @@ END:VCALENDAR""".format(uid, dtstamp, dt_start, dt_end, summary, loc_name, descr
         db.session.commit()
         flash(f"Coach {'aktiviert' if coach.is_active else 'deaktiviert'}.", "info")
         return redirect(url_for("admin_coaches"))
+
+    @app.route("/admin/coaches/<int:coach_id>/edit", methods=["GET", "POST"])
+    @login_required
+    def admin_coach_edit(coach_id):
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+        coach = Coach.query.get_or_404(coach_id)
+        if request.method == "POST":
+            coach.first_name = request.form.get("first_name", "").strip()
+            coach.last_name = request.form.get("last_name", "").strip()
+            coach.email = request.form.get("email", "").strip()
+            coach.title = request.form.get("title", "").strip()
+            coach.bio = request.form.get("bio", "").strip()
+            coach.strengths = request.form.get("strengths", "").strip()
+            coach.swim_style = request.form.get("swim_style", "").strip()
+            coach.experience = request.form.get("experience", "").strip()
+            coach.specialization = request.form.get("specialization", "").strip()
+            coach.cities_served = request.form.get("cities_served", "").strip()
+            coach.image_url = request.form.get("image_url", "").strip()
+            coach.external_profile_url = request.form.get("external_profile_url", "").strip()
+            coach.is_active = request.form.get("is_active") == "1"
+            # Update name from first/last if provided
+            fn = coach.first_name
+            ln = coach.last_name
+            if fn and ln:
+                coach.name = f"{fn} {ln}"
+                coach.slug = coach.name.lower().replace(" ", "-").replace("ö", "oe").replace("ä", "ae").replace("ü", "ue")
+            db.session.commit()
+            flash(f"Coach {coach.name} aktualisiert.", "success")
+            return redirect(url_for("admin_coaches"))
+        return render_template("admin_coach_edit.html", coach=coach)
+
+    @app.route("/admin/coaches/<int:coach_id>/delete", methods=["POST"])
+    @login_required
+    def admin_coach_delete(coach_id):
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+        coach = Coach.query.get_or_404(coach_id)
+        name = coach.name
+        db.session.delete(coach)
+        db.session.commit()
+        flash(f"Coach {name} gelöscht.", "info")
+        return redirect(url_for("admin_coaches"))
+
+    @app.route("/admin/students")
+    @login_required
+    def admin_students():
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+        students = User.query.filter(User.role != 'admin').order_by(User.name.asc()).all()
+        # Attach booking count per student
+        student_data = []
+        for s in students:
+            booking_count = Booking.query.filter_by(user_id=s.id).count()
+            confirmed_count = Booking.query.filter_by(user_id=s.id, status='bestaetigt').count()
+            pending_count = Booking.query.filter_by(user_id=s.id, status='angefragt').count()
+            student_data.append({
+                'user': s,
+                'booking_count': booking_count,
+                'confirmed_count': confirmed_count,
+                'pending_count': pending_count,
+            })
+        return render_template("admin_students.html", student_data=student_data)
 
     @app.route("/uploads/<path:filename>")
     def uploaded_file(filename):
