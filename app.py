@@ -217,18 +217,19 @@ def create_app() -> Flask:
         if existing_coach:
             # Update existing
             existing_coach.name = "Moritz Zentner"
-            existing_coach.title = "Schwimmlehrer – 22 Jahre Erfahrung, Rettungsschwimmer"
+            existing_coach.title = "Schwimmlehrer – 24 Jahre Erfahrung, Rettungsschwimmer"
             existing_coach.bio = (
-                "Ich bin Moritz, 26 Jahre alt und studiere Humanoide Robotik. "
+                "Ich bin Moritz, 28 Jahre alt und studiere Humanoide Robotik. "
                 "Schwimmen ist meine große Leidenschaft – ich schwimme jeden Tag und "
-                "gebe die Technik, die ich in über 20 Jahren gesammelt habe, mit Freude "
+                "gebe die Technik, die ich in über 22 Jahren gesammelt habe, mit Freude "
                 "an dich weiter. Ich war Mitglied in 3 verschiedenen Schwimmvereinen und "
                 "konnte so viele Coaching-Stile aufnehmen, um genau den anzuwenden, der "
                 "zu dir passt. Egal ob Anfänger, Wiedereinsteiger oder Fortgeschrittener – "
                 "mit Geduld und einem geschulten Auge verbessern wir gemeinsam deine Technik."
             )
             existing_coach.strengths = (
-                "• 🏊 22 Jahre Schwimmerfahrung – aktiver Tages-Schwimmer\n"
+                "• 🏊 24 Jahre Schwimmerfahrung – aktiver Tages-Schwimmer\n"
+                "• 🏆 2 Jahre Einzelcoaching – individuell auf dich abgestimmt\n"
                 "• 🏆 3 Schwimmvereine – breit gefächertes Coaching-Know-how\n"
                 "• 🧘 Ruhige, geduldige Anleitung – individuelles Tempo\n"
                 "• 🎯 Gezielte Technikverbesserung – Wasserlage, Atmung, Bewegungsökonomie\n"
@@ -245,7 +246,8 @@ def create_app() -> Flask:
                 "unserer Stunden fit hält."
             )
             existing_coach.experience = (
-                "🏅 22 Jahre Schwimmerfahrung\n"
+                "🏅 24 Jahre Schwimmerfahrung\n"
+                "🏅 2 Jahre Einzelcoaching-Erfahrung\n"
                 "🏅 Mitglied in 3 Schwimmvereinen\n"
                 "🏅 Rettungsschwimmer\n"
                 "🏅 49+ Schüler erfolgreich trainiert\n"
@@ -259,19 +261,20 @@ def create_app() -> Flask:
             coach = Coach(
                 name="Moritz Zentner",
                 slug=coach_slug,
-                title="Schwimmlehrer – 22 Jahre Erfahrung, Rettungsschwimmer",
+                title="Schwimmlehrer – 24 Jahre Erfahrung, Rettungsschwimmer",
                 image_url="/static/images/moritz-zentner.jpg",
                 bio=(
-                    "Ich bin Moritz, 26 Jahre alt und studiere Humanoide Robotik. "
+                    "Ich bin Moritz, 28 Jahre alt und studiere Humanoide Robotik. "
                     "Schwimmen ist meine große Leidenschaft – ich schwimme jeden Tag und "
-                    "gebe die Technik, die ich in über 20 Jahren gesammelt habe, mit Freude "
+                    "gebe die Technik, die ich in über 22 Jahren gesammelt habe, mit Freude "
                     "an dich weiter. Ich war Mitglied in 3 verschiedenen Schwimmvereinen und "
                     "konnte so viele Coaching-Stile aufnehmen, um genau den anzuwenden, der "
                     "zu dir passt. Egal ob Anfänger, Wiedereinsteiger oder Fortgeschrittener – "
                     "mit Geduld und einem geschulten Auge verbessern wir gemeinsam deine Technik."
                 ),
                 strengths=(
-                    "• 🏊 22 Jahre Schwimmerfahrung – aktiver Tages-Schwimmer\n"
+                    "• 🏊 24 Jahre Schwimmerfahrung – aktiver Tages-Schwimmer\n"
+                    "• 🏆 2 Jahre Einzelcoaching – individuell auf dich abgestimmt\n"
                     "• 🏆 3 Schwimmvereine – breit gefächertes Coaching-Know-how\n"
                     "• 🧘 Ruhige, geduldige Anleitung – individuelles Tempo\n"
                     "• 🎯 Gezielte Technikverbesserung – Wasserlage, Atmung, Bewegungsökonomie\n"
@@ -288,7 +291,8 @@ def create_app() -> Flask:
                     "unserer Stunden fit hält."
                 ),
                 experience=(
-                    "🏅 22 Jahre Schwimmerfahrung\n"
+                    "🏅 24 Jahre Schwimmerfahrung\n"
+                    "🏅 2 Jahre Einzelcoaching-Erfahrung\n"
                     "🏅 Mitglied in 3 Schwimmvereinen\n"
                     "🏅 Rettungsschwimmer\n"
                     "🏅 49+ Schüler erfolgreich trainiert\n"
