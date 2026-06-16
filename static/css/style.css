@@ -298,7 +298,7 @@ html, body {
   flex-direction: column;
   gap: 0;
   margin-top: 18px;
-  max-width: 500px;
+  max-width: 1100px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -461,7 +461,7 @@ html, body {
   position: relative;
   height: 14px;
   margin: 12px auto;
-  max-width: 95%;
+  max-width: 100%;
   overflow: hidden;
   /* Premium pool tile segments with grout */
   background:
@@ -514,6 +514,60 @@ html, body {
       rgba(255, 255, 255, 0.28) 100%
     );
   pointer-events: none;
+}
+
+/* ══════════════════════════════════════
+   STARTING BLOCKS – Pool lane starting platforms
+   ══════════════════════════════════════ */
+.starting-block {
+  width: 24px;
+  height: 18px;
+  flex-shrink: 0;
+  position: relative;
+  margin-left: 12px;
+  /* Top platform surface */
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(235, 242, 247, 0.92) 45%,
+    rgba(215, 227, 235, 0.88) 100%
+  );
+  border: 1px solid rgba(175, 190, 205, 0.4);
+  border-radius: 2px 2px 0 0;
+  box-shadow:
+    0 -1px 3px rgba(0, 0, 0, 0.05),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Front face of the starting block */
+.starting-block::before {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: -1px;
+  right: -1px;
+  height: 4px;
+  background: linear-gradient(180deg,
+    rgba(195, 208, 218, 0.75) 0%,
+    rgba(175, 190, 200, 0.85) 100%
+  );
+  border-radius: 0 0 1px 1px;
+}
+
+/* Grip texture on top */
+.starting-block::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  right: 3px;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(180, 195, 210, 0.3) 0px,
+    rgba(180, 195, 210, 0.3) 2px,
+    transparent 2px,
+    transparent 4px
+  );
 }
 
 /* Lane divider buoy – always floating */
@@ -2518,6 +2572,18 @@ main {
   .pool-tile-strip {
     height: 10px;
     margin: 8px auto;
+  }
+
+  /* ── Starting Blocks Mobile ── */
+  .starting-block {
+    width: 18px;
+    height: 14px;
+    margin-left: 8px;
+  }
+
+  .starting-block::before {
+    height: 3px;
+    bottom: -3px;
   }
 
   /* ── Map Area ── */
