@@ -6,13 +6,13 @@
     <title>Squalo Schwimmcoaching Berlin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=5">
     <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="site-header">
-        {# Water sparkle overlay for realistic pool glisten #}
-        <div class="header-sparkles" aria-hidden="true"></div>
+        {# Water caustic overlay for realistic pool light refraction #}
+        <div class="header-caustics" aria-hidden="true"></div>
         {# Safe current route for active-state detection #}
         {% set current_route = request.endpoint or '' %}
         {# ── Top Bar (Account / Login + Shark) ── #}
@@ -45,6 +45,52 @@
                     </div>
                 </div>
 
+                <!-- Buoy chain under brand title -->
+                <div class="brand-buoy-chain" aria-hidden="true">
+                  <div class="brand-buoy-rope">
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                    <span class="brand-buoy"></span>
+                  </div>
+                </div>
+
                 <nav class="lane-nav" aria-label="Hauptnavigation">
                     <a href="{{ url_for('index') }}" class="lane-item {% if current_route == 'index' %}active{% endif %}">
                         <span class="lane-buoy-marker"></span>
@@ -52,6 +98,8 @@
                         <span class="lane-buoy-marker"></span>
                     </a>
                     <div class="lane-divider" aria-hidden="true">
+                        <span class="divider-buoy"></span>
+                        <span class="divider-buoy"></span>
                         <span class="divider-buoy"></span>
                         <span class="divider-buoy"></span>
                         <span class="divider-buoy"></span>
@@ -65,6 +113,8 @@
                         <span class="divider-buoy"></span>
                         <span class="divider-buoy"></span>
                         <span class="divider-buoy"></span>
+                        <span class="divider-buoy"></span>
+                        <span class="divider-buoy"></span>
                     </div>
                     <a href="{{ url_for('shop') }}" class="lane-item {% if current_route == 'shop' %}active{% endif %}">
                         <span class="lane-buoy-marker"></span>
@@ -72,6 +122,8 @@
                         <span class="lane-buoy-marker"></span>
                     </a>
                     <div class="lane-divider" aria-hidden="true">
+                        <span class="divider-buoy"></span>
+                        <span class="divider-buoy"></span>
                         <span class="divider-buoy"></span>
                         <span class="divider-buoy"></span>
                         <span class="divider-buoy"></span>
