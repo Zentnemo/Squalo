@@ -405,19 +405,20 @@ html, body {
 .lane-divider {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: space-between;
   padding: 4px 0;
   position: relative;
   height: 18px;
+  flex: 1;
+  min-width: 0;
 }
 
 /* Extended lane rope line through divider */
 .lane-divider::before {
   content: '';
   position: absolute;
-  left: 8%;
-  right: 8%;
+  left: 2%;
+  right: 2%;
   top: 50%;
   height: 1.5px;
   background: linear-gradient(90deg,
@@ -431,13 +432,16 @@ html, body {
 }
 
 .divider-buoy {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   flex-shrink: 0;
   position: relative;
   z-index: 1;
 }
+
+.divider-buoy:nth-child(4n+2) { width: 7px; height: 7px; }
+.divider-buoy:nth-child(4n)   { width: 4px; height: 4px; }
 
 .divider-buoy:nth-child(odd) {
   background: var(--squalo-neon-orange);
@@ -648,13 +652,25 @@ html, body {
   animation-delay: 0.15s;
 }
 
-/* Lane divider buoy hover */
-.lane-divider:hover .divider-buoy {
-  animation: buoyBob 1.2s ease-in-out infinite;
+/* Lane divider buoy – always floating */
+.lane-divider .divider-buoy {
+  animation: buoyBob 1.8s ease-in-out infinite;
 }
 
-.lane-divider:hover .divider-buoy:nth-child(even) {
-  animation-delay: 0.15s;
+.lane-divider .divider-buoy:nth-child(2n) {
+  animation-delay: 0.2s;
+}
+
+.lane-divider .divider-buoy:nth-child(3n) {
+  animation-delay: 0.5s;
+}
+
+.lane-divider .divider-buoy:nth-child(5n) {
+  animation-delay: 0.8s;
+}
+
+.lane-divider .divider-buoy:nth-child(7n) {
+  animation-delay: 1.1s;
 }
 
 @keyframes buoyBob {
@@ -2474,17 +2490,16 @@ main {
 
   .lane-divider {
     height: 14px;
-    gap: 5px;
   }
 
   .lane-divider::before {
-    left: 5%;
-    right: 5%;
+    left: 2%;
+    right: 2%;
   }
 
   .divider-buoy {
-    width: 5px;
-    height: 5px;
+    width: 4px;
+    height: 4px;
   }
 
   /* Mobile: top bar */
