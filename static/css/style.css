@@ -132,7 +132,7 @@ html, body {
       rgba(255,255,255,0.05) 110px,
       transparent 150px
     );
-  animation: causticsFlow 12s linear infinite;
+  animation: causticsFlow 18s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
   opacity: 1.0;
 }
 
@@ -158,15 +158,17 @@ html, body {
       rgba(255,255,255,0.03) 110px,
       transparent 140px
     );
-  animation: causticsFlow 15s linear infinite reverse;
+  animation: causticsFlow 22s cubic-bezier(0.4, 0.0, 0.6, 1.0) infinite reverse;
   opacity: 0.75;
 }
 
 @keyframes causticsFlow {
   0%   { transform: translateX(0) translateY(0); }
-  25%  { transform: translateX(3%) translateY(-2%); }
-  50%  { transform: translateX(-2%) translateY(3%); }
-  75%  { transform: translateX(4%) translateY(1%); }
+  20%  { transform: translateX(4%) translateY(-3%); }
+  40%  { transform: translateX(-1%) translateY(2%); }
+  55%  { transform: translateX(5%) translateY(-1%); }
+  70%  { transform: translateX(-3%) translateY(4%); }
+  85%  { transform: translateX(2%) translateY(-2%); }
   100% { transform: translateX(0) translateY(0); }
 }
 
@@ -411,31 +413,33 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 2px 0;
+  gap: 8px;
+  padding: 3px 0;
   position: relative;
-  height: 12px;
+  height: 16px;
 }
 
-/* Thin lane rope line through divider */
+/* Extended lane rope line through divider */
 .lane-divider::before {
   content: '';
   position: absolute;
-  left: 20%;
-  right: 20%;
+  left: 12%;
+  right: 12%;
   top: 50%;
-  height: 1px;
+  height: 1.5px;
   background: linear-gradient(90deg,
     transparent,
-    rgba(255, 159, 0, 0.25),
+    rgba(255, 159, 0, 0.35) 20%,
+    var(--squalo-neon-orange) 50%,
+    rgba(255, 159, 0, 0.35) 80%,
     transparent
   );
   transform: translateY(-50%);
 }
 
 .divider-buoy {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
   position: relative;
@@ -457,8 +461,8 @@ html, body {
    ══════════════════════════════════════ */
 .brand-buoy-chain {
   position: relative;
-  margin: 2px auto 6px;
-  max-width: 440px;
+  margin: -2px auto 4px;
+  max-width: 95%;
   height: 12px;
   overflow: hidden;
 }
@@ -496,24 +500,24 @@ html, body {
   border-radius: 50%;
   animation: buoyPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 
 .brand-buoy:nth-child(odd) {
   background: var(--squalo-neon-orange);
-  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.5);
 }
 
 .brand-buoy:nth-child(even) {
   background: #ffffff;
-  border: 1.5px solid rgba(255, 159, 0, 0.3);
+  border: 2px solid rgba(255, 159, 0, 0.3);
 }
 
 .brand-buoy:nth-child(4n+1) { width: 6px; height: 6px; animation-delay: 0.02s; }
-.brand-buoy:nth-child(4n+2) { width: 8px; height: 8px; animation-delay: 0.05s; }
+.brand-buoy:nth-child(4n+2) { width: 9px; height: 9px; animation-delay: 0.05s; }
 .brand-buoy:nth-child(4n+3) { width: 5px; height: 5px; animation-delay: 0.08s; }
-.brand-buoy:nth-child(4n+4) { width: 7px; height: 7px; animation-delay: 0.04s; }
+.brand-buoy:nth-child(4n+4) { width: 8px; height: 8px; animation-delay: 0.04s; }
 
 /* ══════════════════════════════════════
    HEADER–HERO DIVIDER – Pool Lane Rope
@@ -522,9 +526,10 @@ html, body {
   position: relative;
   height: 28px;
   background: linear-gradient(to bottom, 
-    rgba(102,224,255,0.30) 0%,
-    rgba(127,243,255,0.12) 40%,
-    rgba(0,61,77,0.04) 100%
+    rgba(102,224,255,0.45) 0%,
+    rgba(127,243,255,0.25) 30%,
+    rgba(0,168,204,0.12) 60%,
+    rgba(0,61,77,0.08) 100%
   );
   overflow: hidden;
   display: flex;
@@ -532,24 +537,28 @@ html, body {
   justify-content: center;
 }
 
-/* Water shimmer extension into divider */
+/* Water shimmer extension into divider – stronger pool integration */
 .header-hero-divider::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(165deg,
-    rgba(77,216,255,0.20) 0%,
-    transparent 50%,
-    rgba(127,243,255,0.15) 100%
-  );
-  animation: dividerWater 10s ease-in-out infinite alternate;
+  background: 
+    radial-gradient(ellipse 60% 80% at 30% 50%, rgba(127,243,255,0.20) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 70% 30%, rgba(102,224,255,0.15) 0%, transparent 65%),
+    linear-gradient(165deg,
+      rgba(77,216,255,0.25) 0%,
+      transparent 40%,
+      rgba(127,243,255,0.20) 70%,
+      transparent 100%
+    );
+  animation: dividerWater 8s ease-in-out infinite alternate;
   pointer-events: none;
 }
 
 @keyframes dividerWater {
-  0%   { opacity: 0.3; }
-  50%  { opacity: 0.7; }
-  100% { opacity: 0.3; }
+  0%   { opacity: 0.4; background-position: 0% 0%; }
+  50%  { opacity: 0.85; background-position: 40% 30%; }
+  100% { opacity: 0.4; background-position: 0% 0%; }
 }
 
 /* Lane rope – horizontal cable */
@@ -925,7 +934,7 @@ main {
 
 .promo-content {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   color: #ffffff;
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
   margin-top: 0;
@@ -1024,7 +1033,7 @@ main {
 .promo-fishes {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   pointer-events: none;
   overflow: hidden;
 }
@@ -1037,63 +1046,67 @@ main {
 }
 
 .fish-1 {
-  top: 72%;
+  top: 80%;
   left: -24px;
-  animation-duration: 16s;
-  animation-delay: 0s;
-  font-size: 14px;
-}
-
-.fish-2 {
-  top: 78%;
-  left: -30px;
-  animation-duration: 18s;
-  animation-delay: 3s;
-  font-size: 12px;
-}
-
-.fish-3 {
-  top: 84%;
-  left: -18px;
   animation-duration: 14s;
-  animation-delay: 6s;
-  font-size: 11px;
-}
-
-.fish-4 {
-  top: 90%;
-  left: -35px;
-  animation-duration: 20s;
-  animation-delay: 2s;
+  animation-delay: 0s;
   font-size: 13px;
 }
 
+.fish-2 {
+  top: 85%;
+  left: -30px;
+  animation-duration: 16s;
+  animation-delay: 3s;
+  font-size: 11px;
+}
+
+.fish-3 {
+  top: 90%;
+  left: -18px;
+  animation-duration: 12s;
+  animation-delay: 6s;
+  font-size: 10px;
+}
+
+.fish-4 {
+  top: 94%;
+  left: -35px;
+  animation-duration: 18s;
+  animation-delay: 2s;
+  font-size: 12px;
+}
+
 .fish-5 {
-  top: 48%;
+  top: 46%;
   left: -40px;
-  animation-duration: 30s;
-  animation-delay: 10s;
+  animation-duration: 28s;
+  animation-delay: 12s;
   font-size: 18px;
   animation-name: octopusSwim;
 }
 
 .fish-6 {
-  top: 38%;
+  top: 36%;
   left: -80px;
-  animation-duration: 40s;
-  animation-delay: 20s;
-  font-size: 26px;
+  animation-duration: 38s;
+  animation-delay: 18s;
+  font-size: 24px;
   animation-name: whaleGlide;
 }
 
 @keyframes fishSwim {
   0%   { transform: translateX(0) scaleX(1); opacity: 0; }
-  5%   { opacity: 0.8; }
-  40%  { transform: translateX(300px) scaleX(1); opacity: 0.9; }
-  45%  { transform: translateX(320px) scaleX(-1); opacity: 0.6; }
-  80%  { transform: translateX(20px) scaleX(-1); opacity: 0.7; }
-  85%  { transform: translateX(0) scaleX(1); opacity: 0.5; }
-  100% { transform: translateX(-10px) scaleX(1); opacity: 0; }
+  4%   { opacity: 0.9; }
+  30%  { transform: translateX(240px) scaleX(1); opacity: 1; }
+  33%  { transform: translateX(260px) scaleX(-1); opacity: 0.8; }
+  55%  { transform: translateX(180px) scaleX(-1); opacity: 0.9; }
+  58%  { transform: translateX(160px) scaleX(1); opacity: 0.6; }
+  75%  { transform: translateX(80px) scaleX(1); opacity: 0.7; }
+  78%  { transform: translateX(60px) scaleX(-1); opacity: 0.5; }
+  92%  { transform: translateX(10px) scaleX(-1); opacity: 0.6; }
+  96%  { transform: translateX(0) scaleX(1); opacity: 0.3; }
+  100% { transform: translateX(-5px) scaleX(1); opacity: 0; }
 }
 
 @keyframes octopusSwim {
@@ -2449,18 +2462,18 @@ main {
   }
 
   .lane-divider {
-    height: 8px;
-    gap: 4px;
+    height: 12px;
+    gap: 5px;
   }
 
   .lane-divider::before {
-    left: 15%;
-    right: 15%;
+    left: 10%;
+    right: 10%;
   }
 
   .divider-buoy {
-    width: 4px;
-    height: 4px;
+    width: 5px;
+    height: 5px;
   }
 
   /* Mobile: top bar */
@@ -2555,19 +2568,19 @@ main {
   }
 
   .brand-buoy-chain {
-    max-width: 90%;
-    margin: 2px auto 6px;
+    max-width: 95%;
+    margin: 0px auto 4px;
     height: 10px;
   }
 
   .brand-buoy {
     width: 5px !important;
     height: 5px !important;
-    border-width: 1px !important;
+    border-width: 1.5px !important;
   }
 
   .brand-buoy:nth-child(4n+1) { width: 5px; height: 5px; }
-  .brand-buoy:nth-child(4n+2) { width: 6px; height: 6px; }
+  .brand-buoy:nth-child(4n+2) { width: 7px; height: 7px; }
   .brand-buoy:nth-child(4n+3) { width: 4px; height: 4px; }
   .brand-buoy:nth-child(4n+4) { width: 6px; height: 6px; }
 
