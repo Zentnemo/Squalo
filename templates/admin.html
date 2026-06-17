@@ -8,8 +8,7 @@
   <div class="admin-tabs">
     <button class="admin-tab active" data-tab="wochenplan">📅 Wochenplan</button>
     <button class="admin-tab" data-tab="coaches">🏊 Coach-Verwaltung</button>
-    <button class="admin-tab" data-tab="schueler">👥 Schüler</button>
-  </div>
+    <button class="admin-tab" data-tab="schueler">👥 Schüler</button>    <a href="{{ url_for('admin_settings') }}" class="admin-tab admin-tab-link">⚙️ Einstellungen</a>  </div>
 
   {# ═══════════════════════════════════════════════════════════════
      PANEL 1: WOCHENPLAN
@@ -47,6 +46,49 @@
         </div>
       {% endfor %}
     </div>
+
+    {# ── Bestätigt, aber ohne Termin (kein confirmed_date) ── #}
+    {% set no_date_confirmed = bookings|selectattr('status', 'equalto', 'bestaetigt')|selectattr('confirmed_date', 'none')|list %}
+    {% if no_date_confirmed %}
+      <div class="admin-subsection" style="margin-top:24px;">
+        <h3>⚠️ Bestätigt ohne Termin ({{ no_date_confirmed|length }})</h3>
+        <p style="color:var(--text-light);font-size:14px;margin-bottom:12px;">Diese Buchungen wurden bestätigt, haben aber noch kein Datum/Ort zugewiesen.</p>
+        <div class="bookings-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Kunde</th>
+                <th>Dauer</th>
+                <th>Coach</th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for b in no_date_confirmed %}
+                <tr>
+                  <td><strong>{{ b.user.name }}</strong></td>
+                  <td>{{ b.duration_minutes }} Min</td>
+                  <td>{{ b.preferred_coach.name if b.preferred_coach else '–' }}</td>
+                  <td>
+                    <form method="POST" action="{{ url_for('admin_confirm_booking', booking_id=b.id) }}" class="inline-form" style="flex-wrap:wrap;gap:4px;">
+                      <select name="confirmed_location" class="location-select" style="font-size:12px;">
+                        <option value="">-- Ort --</option>
+                        {% if b.preferred_location_1 %}<option value="{{ b.preferred_location_1.id }}">{{ b.preferred_location_1.name|truncate(20) }}</option>{% endif %}
+                        {% if b.preferred_location_2 %}<option value="{{ b.preferred_location_2.id }}">{{ b.preferred_location_2.name|truncate(20) }}</option>{% endif %}
+                        {% if b.preferred_location_3 %}<option value="{{ b.preferred_location_3.id }}">{{ b.preferred_location_3.name|truncate(20) }}</option>{% endif %}
+                      </select>
+                      <input type="date" name="confirmed_date" class="note-input" style="font-size:12px;" required>
+                      <input type="time" name="confirmed_time" class="note-input" style="font-size:12px;" required>
+                      <button type="submit" class="btn-small btn-success">Termin setzen ✓</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% endif %}
 
     {# ── Offene Anfragen (Pending) ── #}
     {% if bookings_pending %}

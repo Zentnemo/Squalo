@@ -5,26 +5,100 @@
     <a href="{{ url_for('admin') }}" class="btn btn-secondary">← Zurück zum Coach</a>
   </div>
 
-  <section class="admin-section" style="max-width:600px;">
-    <h3>Buchungsbenachrichtigungen</h3>
-    <p>An diese E-Mail-Adresse wird eine simulierte Benachrichtigung gesendet, wenn ein Nutzer eine neue Buchungsanfrage stellt.</p>
+  <section class="admin-section" style="max-width:700px;">
+    {# ── 1. Benachrichtigungs-E-Mail ── #}
+    <h3>📬 Buchungsbenachrichtigungen</h3>
+    <p>An diese E-Mail-Adresse wird eine Benachrichtigung gesendet, wenn ein Nutzer eine neue Buchungsanfrage stellt.</p>
     
     <form method="post" class="booking-form">
       <div class="form-group">
-        <label for="booking_notification_email">📬 Benachrichtigungs-E-Mail</label>
+        <label for="booking_notification_email">Benachrichtigungs-E-Mail</label>
         <input type="email" id="booking_notification_email" name="booking_notification_email"
                value="{{ current_email }}" required
-               placeholder="z.B. info@squalo.local">
+               placeholder="z.B. zentner.moritz@gmail.com">
       </div>
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Speichern</button>
+
+      <div class="form-group">
+        <label for="default_sender_name">Standard-Absendername</label>
+        <input type="text" id="default_sender_name" name="default_sender_name"
+               value="{{ default_sender_name or 'Squalo Schwimmcoaching' }}"
+               placeholder="z.B. Squalo Schwimmcoaching">
+      </div>
+
+      {# ── 2. Mail-Vorlagen ── #}
+      <h3 style="margin-top:32px;">📝 Mail-Vorlagen</h3>
+      <p style="color:var(--text-light);font-size:14px;">
+        Diese Texte werden für automatische Benachrichtigungen verwendet. 
+        Platzhalter werden automatisch ersetzt.
+      </p>
+
+      {# ── Neue Buchungsanfrage ── #}
+      <div class="mail-template-card">
+        <h4>1️⃣ Neue Buchungsanfrage → Coach/Admin</h4>
+        <div class="form-group">
+          <label for="tpl_new_subject">Betreff</label>
+          <input type="text" id="tpl_new_subject" name="tpl_new_subject"
+                 value="{{ tpl_new_subject or 'Neue Squalo-Terminanfrage' }}">
+        </div>
+        <div class="form-group">
+          <label for="tpl_new_body">Text (Platzhalter: {{name}}, {{email}}, {{zeitoptionen}}, {{wunschorte}}, {{coach}}, {{dauer}}, {{ziel}}, {{notiz}}, {{preis}})</label>
+          <textarea id="tpl_new_body" name="tpl_new_body" rows="10" class="mail-textarea">{{ tpl_new_body }}</textarea>
+        </div>
+      </div>
+
+      {# ── Termin bestätigt ── #}
+      <div class="mail-template-card">
+        <h4>2️⃣ Termin bestätigt → Schüler</h4>
+        <div class="form-group">
+          <label for="tpl_confirm_subject">Betreff</label>
+          <input type="text" id="tpl_confirm_subject" name="tpl_confirm_subject"
+                 value="{{ tpl_confirm_subject or 'Dein Squalo Schwimmtraining wurde bestätigt' }}">
+        </div>
+        <div class="form-group">
+          <label for="tpl_confirm_body">Text (Platzhalter: {{name}}, {{datum}}, {{uhrzeit}}, {{ort}}, {{dauer}}, {{coach}})</label>
+          <textarea id="tpl_confirm_body" name="tpl_confirm_body" rows="10" class="mail-textarea">{{ tpl_confirm_body }}</textarea>
+        </div>
+      </div>
+
+      {# ── Termin abgelehnt ── #}
+      <div class="mail-template-card">
+        <h4>3️⃣ Termin abgelehnt → Schüler</h4>
+        <div class="form-group">
+          <label for="tpl_reject_subject">Betreff</label>
+          <input type="text" id="tpl_reject_subject" name="tpl_reject_subject"
+                 value="{{ tpl_reject_subject or 'Deine Squalo Terminanfrage' }}">
+        </div>
+        <div class="form-group">
+          <label for="tpl_reject_body">Text (Platzhalter: {{name}}, {{notiz}})</label>
+          <textarea id="tpl_reject_body" name="tpl_reject_body" rows="8" class="mail-textarea">{{ tpl_reject_body }}</textarea>
+        </div>
+      </div>
+
+      {# ── Alternativvorschlag ── #}
+      <div class="mail-template-card">
+        <h4>4️⃣ Alternativvorschlag → Schüler</h4>
+        <div class="form-group">
+          <label for="tpl_alternative_subject">Betreff</label>
+          <input type="text" id="tpl_alternative_subject" name="tpl_alternative_subject"
+                 value="{{ tpl_alternative_subject or 'Alternativvorschlag für dein Squalo Schwimmtraining' }}">
+        </div>
+        <div class="form-group">
+          <label for="tpl_alternative_body">Text (Platzhalter: {{name}}, {{datum}}, {{uhrzeit}}, {{kommentar}})</label>
+          <textarea id="tpl_alternative_body" name="tpl_alternative_body" rows="8" class="mail-textarea">{{ tpl_alternative_body }}</textarea>
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-top:24px;">
+        <button type="submit" class="btn btn-primary">Alle Einstellungen speichern</button>
       </div>
     </form>
 
     <div style="margin-top:24px;padding:16px;background:#f0f8ff;border-radius:8px;border-left:4px solid var(--turquoise);">
       <p style="margin:0;font-size:14px;">
-        <strong>Hinweis:</strong> Aktuell werden Benachrichtigungen nur simuliert (Konsole-Ausgabe). 
-        Echte E-Mail-Zustellung wird später eingerichtet.
+        <strong>Hinweis:</strong> Wenn kein SMTP konfiguriert ist (keine MAIL_SERVER-Umgebungsvariable), 
+        werden E-Mails in der Konsole angezeigt (Entwicklungsmodus). 
+        Für den Produktiveinsatz auf Render die Variablen MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, 
+        MAIL_PASSWORD und MAIL_USE_TLS setzen.
       </p>
     </div>
   </section>

@@ -4456,6 +4456,49 @@ main {
   box-shadow: 0 4px 14px rgba(0, 168, 204, 0.3);
 }
 
+/* Settings link styled as a tab */
+.admin-tab-link {
+  text-decoration: none;
+}
+
+.admin-tab-link:hover {
+  background: rgba(255, 159, 0, 0.08);
+  border-color: rgba(255, 159, 0, 0.3);
+}
+
+/* Mail template cards in settings */
+.mail-template-card {
+  background: var(--white);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.mail-template-card h4 {
+  margin: 0 0 12px 0;
+  color: var(--dark-blue);
+  font-size: 15px;
+}
+
+.mail-textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.mail-textarea:focus {
+  border-color: var(--turquoise);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 168, 204, 0.15);
+}
+
 .admin-panel {
   display: none;
 }

@@ -100,7 +100,7 @@ def send_booking_notification(booking):
     """Send admin notification when a new booking request is submitted."""
     admin_email = get_admin_email()
     user = User.query.get(booking.user_id)
-    subject = "Neue Squalo-Terminanfrage"
+    subject = AppSetting.get('tpl_new_subject', 'Neue Squalo-Terminanfrage')
 
     time_options = []
     if booking.date_option_1:
@@ -126,27 +126,17 @@ def send_booking_notification(booking):
                     180: "3 Std", 240: "4 Std", 300: "5 Std (Paket)"}
     duration_str = duration_map.get(booking.duration_minutes, f"{booking.duration_minutes} Min")
 
-    body = f"""Hallo Moritz,
-
-eine neue Terminanfrage ist eingegangen.
-
-Kunde: {user.name if user else 'unbekannt'}
-E-Mail: {user.email if user else 'unbekannt'}
-
-Zeitoptionen:
-{chr(10).join(time_options) if time_options else '  keine'}
-
-Wunschorte: {', '.join(locs) if locs else 'keine'}
-Coach-Wunsch: {booking.preferred_coach.name if booking.preferred_coach else 'egal'}
-Dauer: {duration_str}
-Trainingsziel: {booking.training_goal or 'keines'}
-Notiz: {booking.user_note or 'keine'}
-Geschätzter Preis: {int(booking.estimated_price)} €
-
-Link: /admin
-
-Viele Grüße
-Squalo Benachrichtigungssystem"""
+    body = _render_template_from_settings('tpl_new_body',
+        name=user.name if user else 'unbekannt',
+        email=user.email if user else 'unbekannt',
+        zeitoptionen=chr(10).join(time_options) if time_options else '  keine',
+        wunschorte=', '.join(locs) if locs else 'keine',
+        coach=booking.preferred_coach.name if booking.preferred_coach else 'egal',
+        dauer=duration_str,
+        ziel=booking.training_goal or 'keines',
+        notiz=booking.user_note or 'keine',
+        preis=f"{int(booking.estimated_price)} €",
+    ) or _default_tpl_new().replace('{{name}}', user.name if user else 'unbekannt')
 
     send_email(subject, admin_email, body)
 
@@ -157,7 +147,7 @@ def send_customer_confirmation_email(booking):
     if not user or not user.email:
         return
 
-    subject = "Dein Squalo Schwimmtraining wurde bestätigt"
+    subject = AppSetting.get('tpl_confirm_subject', 'Dein Squalo Schwimmtraining wurde bestätigt')
 
     date_str = booking.confirmed_date.strftime('%d.%m.%Y') if booking.confirmed_date else 'TBD'
     time_str = booking.confirmed_time.strftime('%H:%M') if booking.confirmed_time else 'TBD'
@@ -167,15 +157,72 @@ def send_customer_confirmation_email(booking):
                     180: "3 Std", 240: "4 Std", 300: "5 Std"}
     duration_str = duration_map.get(booking.duration_minutes, f"{booking.duration_minutes} Min")
 
-    body = f"""Hallo {user.name},
+    body = _render_template_from_settings('tpl_confirm_body',
+        name=user.name,
+        datum=date_str,
+        uhrzeit=time_str,
+        ort=loc_name,
+        coach=coach_name,
+        dauer=duration_str,
+    ) or _default_tpl_confirm().replace('{{name}}', user.name)
+
+    send_email(subject, user.email, body)
+
+
+def send_customer_rejection_email(booking, admin_note=None):
+    """Send customer email when a booking is rejected."""
+    user = User.query.get(booking.user_id)
+    if not user or not user.email:
+        return
+
+    subject = AppSetting.get('tpl_reject_subject', 'Deine Squalo Terminanfrage')
+
+    note_line = ""
+    if admin_note:
+        note_line = f"\nKommentar vom Coach:\n{admin_note}\n"
+
+    body = _render_template_from_settings('tpl_reject_body',
+        name=user.name,
+        notiz=note_line,
+    ) or _default_tpl_reject().replace('{{name}}', user.name).replace('{{notiz}}', note_line)
+
+    send_email(subject, user.email, body)
+
+
+# ── Default mail templates (fallback when AppSetting is empty) ───────
+def _default_tpl_new():
+    return """Hallo Moritz,
+
+eine neue Terminanfrage ist eingegangen.
+
+Kunde: {{name}}
+E-Mail: {{email}}
+
+Zeitoptionen:
+{{zeitoptionen}}
+
+Wunschorte: {{wunschorte}}
+Coach-Wunsch: {{coach}}
+Dauer: {{dauer}}
+Trainingsziel: {{ziel}}
+Notiz: {{notiz}}
+Geschätzter Preis: {{preis}}
+
+Link: /admin
+
+Viele Grüße
+Squalo Benachrichtigungssystem"""
+
+def _default_tpl_confirm():
+    return """Hallo {{name}},
 
 gute Nachrichten: Dein Squalo Schwimmtraining wurde bestätigt!
 
-Datum:     {date_str}
-Uhrzeit:   {time_str}
-Ort:       {loc_name}
-Coach:     {coach_name}
-Dauer:     {duration_str}
+Datum:     {{datum}}
+Uhrzeit:   {{uhrzeit}}
+Ort:       {{ort}}
+Coach:     {{coach}}
+Dauer:     {{dauer}}
 
 Du kannst den Termin direkt in deinen Kalender übernehmen:
 - Öffne dein Dashboard unter /dashboard
@@ -187,33 +234,46 @@ Wir freuen uns auf dich!
 Viele Grüße
 Dein Squalo-Team"""
 
-    send_email(subject, user.email, body)
-
-
-def send_customer_rejection_email(booking, admin_note=None):
-    """Send customer email when a booking is rejected."""
-    user = User.query.get(booking.user_id)
-    if not user or not user.email:
-        return
-
-    subject = "Deine Squalo Terminanfrage"
-
-    note_line = ""
-    if admin_note:
-        note_line = f"\nKommentar vom Coach:\n{admin_note}\n"
-
-    body = f"""Hallo {user.name},
+def _default_tpl_reject():
+    return """Hallo {{name}},
 
 leider konnte deine gewünschte Terminanfrage nicht wie gewünscht umgesetzt werden.
 
 Das bedeutet aber nicht, dass du kein Schwimmtraining bekommst!
 Du kannst jederzeit einen neuen Termin anfragen unter /booking – wähle einfach andere Zeiten oder Orte.
 
-{note_line}
+{{notiz}}
+
 Viele Grüße
 Dein Squalo-Team"""
 
-    send_email(subject, user.email, body)
+def _default_tpl_alternative():
+    return """Hallo {{name}},
+
+wir haben einen Alternativvorschlag für dein Squalo Schwimmtraining:
+
+Datum:   {{datum}}
+Uhrzeit: {{uhrzeit}}
+
+Kommentar:
+{{kommentar}}
+
+Falls dieser Termin passt, antworte einfach auf diese E-Mail oder kontaktiere uns über dein Dashboard.
+
+Viele Grüße
+Dein Squalo-Team"""
+
+
+def _render_template_from_settings(tpl_key, **kwargs):
+    """Render a mail template from AppSetting, falling back to default."""
+    import re
+    tpl_text = AppSetting.get(tpl_key, "")
+    if not tpl_text:
+        return None
+    # Replace {{placeholder}} with values
+    for key, val in kwargs.items():
+        tpl_text = tpl_text.replace("{{" + key + "}}", str(val))
+    return tpl_text
 
 
 def create_app() -> Flask:
@@ -295,6 +355,15 @@ def create_app() -> Flask:
                     print(f"[MIGRATION] Coach-Spalten hinzugefügt: {added}")
         except Exception as e:
             print(f"[MIGRATION] Coach-Spalten (ignoriert): {e}")
+        
+        # ── Migration: Fix default notification email ─────────────
+        try:
+            current_email_val = AppSetting.get("booking_notification_email")
+            if current_email_val and current_email_val != DEFAULT_ADMIN_EMAIL:
+                AppSetting.set("booking_notification_email", DEFAULT_ADMIN_EMAIL)
+                print(f"[MIGRATION] Benachrichtigungs-Email korrigiert: {current_email_val} -> {DEFAULT_ADMIN_EMAIL}")
+        except Exception:
+            pass
         
         # ── Admin-User ──────────────────────────────────────────────
         # Admin-E-Mail (fest, kann später über ENV geändert werden)
@@ -988,13 +1057,43 @@ def create_app() -> Flask:
             flash("Access denied", "danger")
             return redirect(url_for("index"))
         if request.method == "POST":
+            # Benachrichtigungs-E-Mail
             email = request.form.get("booking_notification_email")
             if email:
                 AppSetting.set("booking_notification_email", email)
-                flash("Einstellungen gespeichert", "success")
+            # Absendername
+            sender_name = request.form.get("default_sender_name")
+            if sender_name is not None:
+                AppSetting.set("default_sender_name", sender_name)
+            # Mail-Templates speichern
+            tpl_keys = [
+                "tpl_new_subject", "tpl_new_body",
+                "tpl_confirm_subject", "tpl_confirm_body",
+                "tpl_reject_subject", "tpl_reject_body",
+                "tpl_alternative_subject", "tpl_alternative_body",
+            ]
+            for key in tpl_keys:
+                val = request.form.get(key)
+                if val is not None:
+                    AppSetting.set(key, val)
+            flash("Einstellungen gespeichert", "success")
             return redirect(url_for("admin_settings"))
+        # GET: current values
         current_email = AppSetting.get("booking_notification_email", DEFAULT_ADMIN_EMAIL)
-        return render_template("admin_settings.html", current_email=current_email)
+        default_sender_name = AppSetting.get("default_sender_name", "Squalo Schwimmcoaching")
+        return render_template("admin_settings.html",
+                               current_email=current_email,
+                               default_sender_name=default_sender_name,
+                               # Mail-Templates: use DB values or defaults
+                               tpl_new_subject=AppSetting.get("tpl_new_subject", "Neue Squalo-Terminanfrage"),
+                               tpl_new_body=AppSetting.get("tpl_new_body", _default_tpl_new()),
+                               tpl_confirm_subject=AppSetting.get("tpl_confirm_subject", "Dein Squalo Schwimmtraining wurde bestätigt"),
+                               tpl_confirm_body=AppSetting.get("tpl_confirm_body", _default_tpl_confirm()),
+                               tpl_reject_subject=AppSetting.get("tpl_reject_subject", "Deine Squalo Terminanfrage"),
+                               tpl_reject_body=AppSetting.get("tpl_reject_body", _default_tpl_reject()),
+                               tpl_alternative_subject=AppSetting.get("tpl_alternative_subject", "Alternativvorschlag für dein Squalo Schwimmtraining"),
+                               tpl_alternative_body=AppSetting.get("tpl_alternative_body", _default_tpl_alternative()),
+                               )
 
     @app.route("/admin/coaches", methods=["GET", "POST"])
     @login_required
