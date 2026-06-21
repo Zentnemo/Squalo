@@ -61,6 +61,20 @@
      PANEL 1: WOCHENPLAN
      ═══════════════════════════════════════════════════════════════ #}
   <div class="admin-panel active" id="panel-wochenplan">
+    <div class="week-nav">
+      <a href="{{ url_for('admin', week_offset=week_offset - 1) }}" class="btn btn-small btn-outline week-nav-btn">← Vorige Woche</a>
+      <div class="week-nav-center">
+        <span class="week-kw">KW {{ iso_week }}</span>
+        <span class="week-dates">{{ week_start.strftime('%d.%m.') }} – {{ week_end.strftime('%d.%m.%Y') }}</span>
+      </div>
+      {% if week_offset != 0 %}
+        <a href="{{ url_for('admin', week_offset=0) }}" class="btn btn-small btn-outline week-nav-btn week-nav-today">Diese Woche</a>
+      {% else %}
+        <span class="btn btn-small btn-outline week-nav-btn week-nav-current">Aktuelle Woche</span>
+      {% endif %}
+      <a href="{{ url_for('admin', week_offset=week_offset + 1) }}" class="btn btn-small btn-outline week-nav-btn">Nächste Woche →</a>
+    </div>
+
     <div class="week-header">
       <h3>📆 Woche: {{ week_start.strftime('%d.%m.') }} – {{ week_end.strftime('%d.%m.%Y') }}</h3>
       <a href="{{ url_for('admin_week') }}" class="btn btn-small btn-outline">Vollständige Liste →</a>
@@ -95,7 +109,8 @@
     </div>
 
     {# ── Bestätigt, aber ohne Termin (kein confirmed_date) ── #}
-    {% set no_date_confirmed = bookings|selectattr('status', 'equalto', 'bestaetigt')|selectattr('confirmed_date', 'none')|list %}
+    {% set confirmed_statuses = ['bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen'] %}
+    {% set no_date_confirmed = bookings|selectattr('status', 'in', confirmed_statuses)|selectattr('confirmed_date', 'none')|list %}
     {% if no_date_confirmed %}
       <div class="admin-subsection" style="margin-top:24px;">
         <h3>⚠️ Bestätigt ohne Termin ({{ no_date_confirmed|length }})</h3>

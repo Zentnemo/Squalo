@@ -994,15 +994,23 @@ def create_app() -> Flask:
 
         from datetime import timedelta
 
-        # ── Wochenplan: current week (Mon–Sun) ───────────────────
+        # ── Wochenplan: navigation with week_offset ──────────────
+        week_offset = request.args.get('week_offset', 0, type=int)
+
         today = date.today()
-        # Find Monday of this week
-        week_start = today - timedelta(days=today.weekday())
+        # Monday of this week + offset
+        week_start = today - timedelta(days=today.weekday()) + timedelta(weeks=week_offset)
         week_end = week_start + timedelta(days=6)
+
+        # ISO calendar week number
+        iso_year, iso_week, _ = week_start.isocalendar()
+
+        # Robust confirmed-status filter (handles legacy values)
+        confirmed_statuses = ['bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen']
 
         # Confirmed bookings in this week
         week_confirmed = Booking.query.filter(
-            Booking.status == 'bestaetigt',
+            Booking.status.in_(confirmed_statuses),
             Booking.confirmed_date >= week_start,
             Booking.confirmed_date <= week_end,
         ).order_by(Booking.confirmed_date.asc(), Booking.confirmed_time.asc()).all()
@@ -1065,6 +1073,9 @@ def create_app() -> Flask:
                                week_days=week_days,
                                week_start=week_start,
                                week_end=week_end,
+                               week_offset=week_offset,
+                               iso_year=iso_year,
+                               iso_week=iso_week,
                                bookings_pending=bookings_pending,
                                bookings=bookings,
                                coaches=coaches,

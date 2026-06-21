@@ -4653,6 +4653,48 @@ main {
   margin: 0;
 }
 
+/* ── Week Navigation ── */
+.week-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.week-nav-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 160px;
+}
+
+.week-kw {
+  font-family: 'Righteous', cursive;
+  font-size: 22px;
+  color: var(--turquoise);
+  line-height: 1.2;
+}
+
+.week-dates {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.week-nav-btn {
+  white-space: nowrap;
+  font-size: 13px !important;
+  padding: 8px 16px !important;
+}
+
+.week-nav-current {
+  background: var(--turquoise) !important;
+  color: var(--white) !important;
+  border-color: var(--turquoise) !important;
+  cursor: default;
+}
+
 /* ── Week Calendar Grid ── */
 .week-header {
   display: flex;
@@ -4957,6 +4999,21 @@ main {
     padding: 10px 8px;
     font-size: 13px;
     gap: 4px;
+  }
+
+  .week-nav {
+    gap: 8px;
+  }
+
+  .week-nav-center {
+    order: -1;
+    min-width: 100%;
+    margin-bottom: 4px;
+  }
+
+  .week-nav-btn {
+    font-size: 12px !important;
+    padding: 6px 12px !important;
   }
 
   .week-grid {
