@@ -30,7 +30,7 @@
               <tr class="booking-row booking-status-{{ b.status|replace('ä', 'ae')|replace('ö', 'oe')|lower }}">
                 <td>
                   <span class="status-badge">
-                    {% if b.status == 'bestaetigt' %}✅
+                    {% if b.status in ['bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen'] %}✅
                     {% elif b.status == 'abgelehnt' %}❌
                     {% else %}⏳
                     {% endif %}

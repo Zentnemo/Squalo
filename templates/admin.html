@@ -91,11 +91,14 @@
           <div class="week-day-events">
             {% if day.bookings %}
               {% for b in day.bookings %}
+                {% set eff_time = b.confirmed_time or b.time_option_1 or (b.requested_start.time() if b.requested_start) %}
                 <div class="week-event">
-                  <span class="event-time">{{ b.confirmed_time.strftime('%H:%M') if b.confirmed_time else '–:–' }}</span>
+                  <span class="event-time">{{ eff_time.strftime('%H:%M') if eff_time else '–:–' }}</span>
                   <span class="event-client">{{ b.user.name }}</span>
                   {% if b.confirmed_location %}
                     <span class="event-location">{{ b.confirmed_location.name|truncate(20) }}</span>
+                  {% elif b.preferred_location_1 %}
+                    <span class="event-location">{{ b.preferred_location_1.name|truncate(20) }}</span>
                   {% endif %}
                   <span class="event-duration">{{ b.duration_minutes }} Min</span>
                 </div>
@@ -370,6 +373,7 @@
               </tr>
             </thead>
             <tbody>
+              {% set all_confirmed = ['bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen'] %}
               {% for s in students %}
                 <tr>
                   <td><strong>{{ s.name }}</strong></td>
@@ -377,7 +381,7 @@
                   <td>{{ s.bookings|length }}</td>
                   <td>
                     <span class="badge badge-active">
-                      {{ s.bookings|selectattr('status', 'equalto', 'bestaetigt')|list|length }}
+                      {{ s.bookings|selectattr('status', 'in', all_confirmed)|list|length }}
                     </span>
                   </td>
                   <td>

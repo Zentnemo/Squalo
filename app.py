@@ -23,6 +23,45 @@ from location_status import compute_location_status
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
+
+# ── Confirmed-status helpers ──────────────────────────────────────
+CONFIRMED_STATUSES = ('bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen')
+
+
+def is_confirmed_status(status):
+    """Return True if *status* counts as a confirmed/accepted booking."""
+    return (status or '').lower() in CONFIRMED_STATUSES
+
+
+def get_effective_date(booking):
+    """Return the best available date for a booking.
+
+    Priority: confirmed_date → date_option_1 → requested_start.date()
+    Returns None only if all are missing.
+    """
+    if booking.confirmed_date:
+        return booking.confirmed_date
+    if booking.date_option_1:
+        return booking.date_option_1
+    if booking.requested_start:
+        return booking.requested_start.date() if hasattr(booking.requested_start, 'date') else booking.requested_start
+    return None
+
+
+def get_effective_time(booking):
+    """Return the best available time for a booking.
+
+    Priority: confirmed_time → time_option_1 → requested_start.time()
+    Returns None only if all are missing.
+    """
+    if booking.confirmed_time:
+        return booking.confirmed_time
+    if booking.time_option_1:
+        return booking.time_option_1
+    if booking.requested_start:
+        return booking.requested_start.time() if hasattr(booking.requested_start, 'time') else None
+    return None
+
 # ── Default admin email ───────────────────────────────────────────
 DEFAULT_ADMIN_EMAIL = "zentner.moritz@gmail.com"
 
@@ -783,7 +822,7 @@ def create_app() -> Flask:
     def dashboard():
         all_bookings = Booking.query.filter_by(user_id=current_user.id).order_by(Booking.created_at.desc()).all()
         bookings_pending = [b for b in all_bookings if b.status == 'angefragt']
-        bookings_confirmed = [b for b in all_bookings if b.status == 'bestaetigt']
+        bookings_confirmed = [b for b in all_bookings if is_confirmed_status(b.status)]
         bookings_rejected = [b for b in all_bookings if b.status == 'abgelehnt']
         notes = TrainingNote.query.filter_by(user_id=current_user.id).order_by(TrainingNote.created_at.desc()).all()
         return render_template("dashboard.html",
@@ -797,7 +836,7 @@ def create_app() -> Flask:
     @login_required
     def calendar_event(booking_id):
         b = Booking.query.get_or_404(booking_id)
-        if b.user_id != current_user.id or b.status != 'bestaetigt':
+        if b.user_id != current_user.id or not is_confirmed_status(b.status):
             flash("Kalender-Export nur für bestätigte eigene Termine möglich.", "warning")
             return redirect(url_for("dashboard"))
         if not b.confirmed_date:
@@ -1006,17 +1045,27 @@ def create_app() -> Flask:
         iso_year, iso_week, _ = week_start.isocalendar()
 
         # Robust confirmed-status filter (handles legacy values)
-        confirmed_statuses = ['bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen']
+        from sqlalchemy import or_, and_
 
-        # Confirmed bookings in this week
+        # Confirmed bookings in this week — match on effective date:
+        #   primary: confirmed_date in range
+        #   fallback: confirmed_date IS NULL but date_option_1 or requested_start in range
         week_confirmed = Booking.query.filter(
-            Booking.status.in_(confirmed_statuses),
-            Booking.confirmed_date >= week_start,
-            Booking.confirmed_date <= week_end,
-        ).order_by(Booking.confirmed_date.asc(), Booking.confirmed_time.asc()).all()
+            Booking.status.in_(CONFIRMED_STATUSES),
+            or_(
+                # Case 1: confirmed_date set and in range
+                and_(Booking.confirmed_date >= week_start, Booking.confirmed_date <= week_end),
+                # Case 2: confirmed_date NULL, fallback to date_option_1
+                and_(Booking.confirmed_date.is_(None), Booking.date_option_1 >= week_start, Booking.date_option_1 <= week_end),
+                # Case 3: confirmed_date NULL, date_option_1 NULL, fallback to requested_start
+                and_(Booking.confirmed_date.is_(None), Booking.date_option_1.is_(None),
+                     Booking.requested_start >= datetime.combine(week_start, datetime.min.time()),
+                     Booking.requested_start <= datetime.combine(week_end, datetime.max.time())),
+            ),
+        ).order_by(Booking.confirmed_date.asc(), Booking.date_option_1.asc(), Booking.requested_start.asc()).all()
 
         # Pending bookings (angefragt) – shown separately for awareness
-        bookings_pending = Booking.query.filter_by(status='angefragt').order_by(Booking.created_at.desc()).all()
+        bookings_pending = Booking.query.filter(Booking.status == 'angefragt').order_by(Booking.created_at.desc()).all()
 
         # All bookings for full overview
         bookings = Booking.query.order_by(Booking.created_at.desc()).all()
@@ -1033,7 +1082,8 @@ def create_app() -> Flask:
         day_names_de = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
         for i in range(7):
             d = week_start + timedelta(days=i)
-            day_bookings = [b for b in week_confirmed if b.confirmed_date == d]
+            # Use effective_date for matching (handles bookings with confirmed_date=None)
+            day_bookings = [b for b in week_confirmed if get_effective_date(b) == d]
             week_days.append({
                 'date': d,
                 'day_name': day_names_de[i],
@@ -1141,7 +1191,7 @@ def create_app() -> Flask:
             flash("Access denied", "danger")
             return redirect(url_for("index"))
         bookings = Booking.query.filter(
-            Booking.status.in_(["angefragt", "bestaetigt"])
+            Booking.status.in_(list(CONFIRMED_STATUSES) + ['angefragt'])
         ).order_by(Booking.created_at.desc()).all()
         return render_template("admin_week.html", bookings=bookings)
 
@@ -1320,7 +1370,7 @@ def create_app() -> Flask:
         student_data = []
         for s in students:
             booking_count = Booking.query.filter_by(user_id=s.id).count()
-            confirmed_count = Booking.query.filter_by(user_id=s.id, status='bestaetigt').count()
+            confirmed_count = Booking.query.filter(Booking.user_id == s.id, Booking.status.in_(CONFIRMED_STATUSES)).count()
             pending_count = Booking.query.filter_by(user_id=s.id, status='angefragt').count()
             student_data.append({
                 'user': s,
