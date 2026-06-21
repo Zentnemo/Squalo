@@ -4,6 +4,53 @@
     <h2>Coach Panel 🔐</h2>
   </div>
 
+  {# ── Website-Aktivität ── #}
+  <div class="activity-stats">
+    <h3 class="activity-title">🌐 Website-Aktivität</h3>
+    <div class="activity-grid">
+      <div class="activity-card">
+        <span class="activity-number">{{ active_sessions }}</span>
+        <span class="activity-label">Aktive Sessions</span>
+      </div>
+      <div class="activity-card">
+        <span class="activity-number">{{ visitors_today }}</span>
+        <span class="activity-label">Besucher heute</span>
+      </div>
+      <div class="activity-card">
+        <span class="activity-number">{{ logged_in_online }}</span>
+        <span class="activity-label">Eingeloggte Nutzer</span>
+      </div>
+    </div>
+    {% if recent_visitors %}
+      <div class="activity-visitors">
+        <div class="activity-visitors-title">Letzte Aktivität</div>
+        {% for v in recent_visitors %}
+          <div class="activity-visitor">
+            <span class="activity-visitor-icon">{% if v.is_authenticated %}👤{% else %}🌐{% endif %}</span>
+            <span class="activity-visitor-label">
+              {% if v.is_authenticated and v.user %}
+                {{ v.user.name }}
+              {% else %}
+                Gast
+              {% endif %}
+            </span>
+            <span class="activity-visitor-time">
+              {% set diff = (now - v.last_seen).total_seconds()|int %}
+              {% if diff < 60 %}
+                gerade aktiv
+              {% elif diff < 3600 %}
+                vor {{ (diff / 60)|int }} Min
+              {% else %}
+                vor {{ (diff / 3600)|int }} Std
+              {% endif %}
+            </span>
+            <span class="activity-visitor-path">{{ v.last_path }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
   {# ── Tab Navigation ── #}
   <div class="admin-tabs">
     <button class="admin-tab active" data-tab="wochenplan">📅 Wochenplan</button>

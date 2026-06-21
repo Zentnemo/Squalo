@@ -1871,6 +1871,129 @@ main {
   }
 }
 
+/* ══════════════════════════════════════════════════════════
+   ACTIVITY STATS (Coach Panel)
+   ══════════════════════════════════════════════════════════ */
+.activity-stats {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.activity-title {
+  font-family: 'Righteous', cursive;
+  font-size: 16px;
+  color: var(--dark-blue);
+  margin: 0 0 14px 0;
+}
+
+.activity-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.activity-card {
+  flex: 1;
+  min-width: 120px;
+  background: linear-gradient(135deg, rgba(0,168,204,0.06), rgba(102,224,255,0.1));
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid rgba(0,168,204,0.12);
+}
+
+.activity-number {
+  display: block;
+  font-family: 'Righteous', cursive;
+  font-size: 32px;
+  color: var(--turquoise);
+  line-height: 1.1;
+}
+
+.activity-label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.activity-visitors {
+  margin-top: 14px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  padding-top: 12px;
+}
+
+.activity-visitors-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.activity-visitor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+.activity-visitor:last-child {
+  border-bottom: none;
+}
+
+.activity-visitor-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.activity-visitor-label {
+  font-weight: 600;
+  color: var(--text-dark);
+  min-width: 80px;
+}
+
+.activity-visitor-time {
+  color: var(--text-light);
+  font-size: 12px;
+  min-width: 100px;
+}
+
+.activity-visitor-path {
+  color: var(--turquoise);
+  font-family: monospace;
+  font-size: 12px;
+}
+
+/* Mobile: activity stats */
+@media (max-width: 768px) {
+  .activity-grid {
+    gap: 10px;
+  }
+  .activity-card {
+    min-width: 90px;
+    padding: 12px;
+  }
+  .activity-number {
+    font-size: 24px;
+  }
+  .activity-visitor {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .activity-visitor-time,
+  .activity-visitor-path {
+    font-size: 11px;
+  }
+}
+
 /* Sections */
 .locations-section,
 .info-section,

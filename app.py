@@ -11,14 +11,14 @@ from datetime import datetime, date, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from zoneinfo import ZoneInfo
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, Response
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, Response, session
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from pathlib import Path
 
 from config import Config
-from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview
+from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview, SiteSession
 from location_status import compute_location_status
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
@@ -298,6 +298,59 @@ def create_app() -> Flask:
             return User.query.get(int(user_id))
         except Exception:
             return None
+
+    # ── Session tracking (privacy-respecting) ─────────────────────
+    import uuid as _uuid
+    from datetime import datetime as _dt, timedelta as _td
+
+    @app.before_request
+    def track_visitor():
+        """Track anonymous/authenticated sessions for coach panel stats."""
+        # Skip static files and API endpoints
+        if request.path.startswith('/static/') or request.path.endswith('.ics'):
+            return
+        try:
+            # Get or create session ID
+            if '_sid' not in session:
+                session['_sid'] = _uuid.uuid4().hex[:16]
+            sid = session['_sid']
+
+            now = _dt.utcnow()
+            record = SiteSession.query.filter_by(session_id=sid).first()
+
+            if record:
+                record.last_seen = now
+                record.last_path = request.path
+                if current_user.is_authenticated:
+                    record.user_id = current_user.id
+                    record.is_authenticated = True
+                    record.role = getattr(current_user, 'role', 'student')
+                else:
+                    record.user_id = None
+                    record.is_authenticated = False
+                    record.role = 'guest'
+            else:
+                user_id = current_user.id if current_user.is_authenticated else None
+                role = 'guest'
+                if current_user.is_authenticated:
+                    role = getattr(current_user, 'role', 'student')
+                record = SiteSession(
+                    session_id=sid,
+                    user_id=user_id,
+                    is_authenticated=current_user.is_authenticated,
+                    role=role,
+                    last_path=request.path,
+                    first_seen=now,
+                    last_seen=now,
+                )
+                db.session.add(record)
+            db.session.commit()
+        except Exception:
+            # Never crash the app because of tracking
+            try:
+                db.session.rollback()
+            except Exception:
+                pass
 
     # Initialize database and seed data if needed
     with app.app_context():
@@ -982,6 +1035,32 @@ def create_app() -> Flask:
                 'is_today': d == today,
             })
 
+        # ── Website-Aktivität (Session-Tracking) ──────────────────
+        now = datetime.utcnow()
+        five_min_ago = now - timedelta(minutes=5)
+        today_start = datetime.combine(now.date(), datetime.min.time())
+
+        try:
+            active_sessions = SiteSession.query.filter(
+                SiteSession.last_seen >= five_min_ago
+            ).count()
+            visitors_today = SiteSession.query.filter(
+                SiteSession.first_seen >= today_start
+            ).count()
+            logged_in_online = SiteSession.query.filter(
+                SiteSession.last_seen >= five_min_ago,
+                SiteSession.is_authenticated == True
+            ).count()
+            # Last 5 recent visitors (anonymized)
+            recent_visitors = SiteSession.query.filter(
+                SiteSession.last_seen >= five_min_ago
+            ).order_by(SiteSession.last_seen.desc()).limit(10).all()
+        except Exception:
+            active_sessions = 0
+            visitors_today = 0
+            logged_in_online = 0
+            recent_visitors = []
+
         return render_template("admin.html",
                                week_days=week_days,
                                week_start=week_start,
@@ -989,7 +1068,12 @@ def create_app() -> Flask:
                                bookings_pending=bookings_pending,
                                bookings=bookings,
                                coaches=coaches,
-                               students=students)
+                               students=students,
+                               active_sessions=active_sessions,
+                               visitors_today=visitors_today,
+                               logged_in_online=logged_in_online,
+                               recent_visitors=recent_visitors,
+                               now=now)
 
     @app.route("/admin/booking/<int:booking_id>/confirm", methods=["POST"])
     @login_required

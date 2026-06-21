@@ -176,3 +176,24 @@ class AppSetting(db.Model):
             db.session.add(s)
         db.session.commit()
 
+
+class SiteSession(db.Model):
+    """Lightweight visitor session tracker for the coach panel dashboard.
+
+    Stores minimal, privacy-respecting data:
+    - anonymous session ID (from Flask session)
+    - user ID (only if logged in)
+    - first_seen / last_seen timestamps
+    - last visited path
+    - role hint (student / admin)
+    """
+    __tablename__ = 'site_session'
+    id = db.Column(db.Integer, primary_key=True)
+    session_id = db.Column(db.String(64), unique=True, nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    is_authenticated = db.Column(db.Boolean, default=False)
+    role = db.Column(db.String(32), default='guest')  # guest / student / admin
+    last_path = db.Column(db.String(256), default='/')
+    first_seen = db.Column(db.DateTime, default=datetime.utcnow)
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
