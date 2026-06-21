@@ -393,6 +393,15 @@ def create_app() -> Flask:
 
     # Initialize database and seed data if needed
     with app.app_context():
+        # ── Log which database is in use (never log full URL/password) ──
+        db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+        if db_uri.startswith('postgresql'):
+            print("[DB] Database: PostgreSQL via DATABASE_URL")
+        elif db_uri.startswith('sqlite'):
+            print("[DB] Database: local SQLite fallback")
+        else:
+            print("[DB] Database: custom URI")
+
         db.create_all()
         
         # ── Migration: Neue Spalten für Booking (duration, pricing) ──
