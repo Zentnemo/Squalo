@@ -4,6 +4,7 @@ Provides small runnable Flask app that re-uses project's models and templates.
 Includes minimal auth (register/login), required pages and CLI helpers.
 """
 
+import io
 import os
 import smtplib
 import time as time_mod
@@ -11,14 +12,14 @@ from datetime import datetime, date, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from zoneinfo import ZoneInfo
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, Response, session
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, send_file, Response, session
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from pathlib import Path
 
 from config import Config
-from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview, SiteSession
+from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview, SiteSession, Invoice
 from location_status import compute_location_status
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
@@ -1388,6 +1389,128 @@ def create_app() -> Flask:
                 'pending_count': pending_count,
             })
         return render_template("admin_students.html", student_data=student_data)
+
+    # ── Student profile / Schülermappe ──────────────────────────
+    @app.route("/admin/students/<int:user_id>")
+    @login_required
+    def admin_student_profile(user_id):
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+
+        student = User.query.get_or_404(user_id)
+        if student.role == 'admin' and student.id != current_user.id:
+            flash("Zugriff verweigert", "danger")
+            return redirect(url_for("admin_students"))
+
+        bookings = Booking.query.filter_by(user_id=student.id).order_by(
+            Booking.confirmed_date.desc().nullslast(),
+            Booking.date_option_1.desc().nullslast(),
+            Booking.created_at.desc()
+        ).all()
+
+        # Pre-resolve locations and coaches for template
+        all_locations = Location.query.all()
+        all_coaches = Coach.query.all()
+        loc_map = {l.id: l.name for l in all_locations}
+        coach_map = {c.id: c.display_name for c in all_coaches}
+
+        # Attach invoice info and resolved data to each booking
+        bookings_with_invoices = []
+        for b in bookings:
+            inv = Invoice.query.filter_by(booking_id=b.id).first()
+            eff_date = b.confirmed_date or b.date_option_1 or (
+                b.requested_start.date() if b.requested_start else None
+            )
+            eff_time = b.confirmed_time or b.time_option_1 or (
+                b.requested_start.time() if b.requested_start else None
+            )
+            end_time = None
+            if eff_time:
+                from datetime import timedelta as _td
+                total_min = eff_time.hour * 60 + eff_time.minute + (b.duration_minutes or 60)
+                end_time = (datetime.min + _td(minutes=total_min)).time()
+            loc_name = loc_map.get(b.confirmed_location_id) or loc_map.get(b.preferred_location_1_id) or '–'
+            coach_name = coach_map.get(b.preferred_coach_id, 'Moritz Zentner')
+            bookings_with_invoices.append({
+                'booking': b,
+                'invoice': inv,
+                'eff_date': eff_date,
+                'eff_time': eff_time,
+                'end_time': end_time,
+                'loc_name': loc_name,
+                'coach_name': coach_name,
+            })
+
+        return render_template("student_profile.html",
+                               student=student,
+                               bookings_with_invoices=bookings_with_invoices)
+
+    # ── Invoice PDF generation ───────────────────────────────────
+    @app.route("/admin/students/<int:user_id>/bookings/<int:booking_id>/invoice.pdf")
+    @login_required
+    def admin_invoice_pdf(user_id, booking_id):
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+
+        student = User.query.get_or_404(user_id)
+        booking = Booking.query.get_or_404(booking_id)
+
+        # Security: booking must belong to this student
+        if booking.user_id != student.id:
+            flash("Buchung gehört nicht zu diesem Schüler.", "danger")
+            return redirect(url_for("admin_student_profile", user_id=user_id))
+
+        # Check if invoice already exists for this booking
+        existing = Invoice.query.filter_by(booking_id=booking.id).first()
+        if existing:
+            invoice = existing
+        else:
+            # Create new invoice
+            invoice = Invoice(
+                invoice_number=Invoice.next_number(),
+                user_id=student.id,
+                booking_id=booking.id,
+                amount=booking.estimated_price or 50.0,
+                currency='EUR',
+                status='issued',
+            )
+            db.session.add(invoice)
+            db.session.commit()
+
+        # Resolve coach name
+        coach_name = 'Moritz Zentner'
+        if booking.preferred_coach_id:
+            coach = Coach.query.get(booking.preferred_coach_id)
+            if coach:
+                coach_name = coach.display_name
+
+        # Generate PDF
+        from invoice_generator import generate_invoice_pdf
+        try:
+            pdf_bytes = generate_invoice_pdf(
+                invoice=invoice,
+                booking=booking,
+                user=student,
+                coach_name=coach_name,
+            )
+        except Exception as e:
+            flash(f'Fehler bei der PDF-Erstellung: {e}', 'danger')
+            return redirect(url_for('admin_student_profile', user_id=user_id))
+
+        # Update pdf_generated_at
+        from datetime import datetime as _dt
+        invoice.pdf_generated_at = _dt.utcnow()
+        db.session.commit()
+
+        filename = f'Rechnung_{invoice.invoice_number}.pdf'
+        return send_file(
+            io.BytesIO(pdf_bytes),
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=filename,
+        )
 
     @app.route("/uploads/<path:filename>")
     def uploaded_file(filename):

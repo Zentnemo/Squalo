@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="dashboard-header">
+    <h2>👤 Schülermappe: {{ student.name }}</h2>
+    <div class="cta-buttons">
+      <a href="{{ url_for('admin_students') }}" class="btn btn-secondary">← Zurück zur Schülerliste</a>
+    </div>
+  </div>
+
+  {# ── Contact info ── #}
+  <section class="admin-section">
+    <h3>Kontaktdaten</h3>
+    <div class="bookings-table">
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Name</strong></td>
+            <td>{{ student.name }}</td>
+          </tr>
+          <tr>
+            <td><strong>E-Mail</strong></td>
+            <td>{{ student.email }}</td>
+          </tr>
+          <tr>
+            <td><strong>Rolle</strong></td>
+            <td><span class="status-badge">{{ student.role or 'user' }}</span></td>
+          </tr>
+          <tr>
+            <td><strong>Registriert</strong></td>
+            <td>{{ student.created_at.strftime('%d.%m.%Y %H:%M') if student.created_at else '–' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {# ── Bookings / Stunden ── #}
+  <section class="admin-section">
+    <h3>📚 Gebuchte Stunden ({{ bookings_with_invoices|length }})</h3>
+    {% if bookings_with_invoices %}
+      <div class="bookings-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Uhrzeit</th>
+              <th>Ort</th>
+              <th>Dauer</th>
+              <th>Status</th>
+              <th>Coach</th>
+              <th>Preis</th>
+              <th>Rechnung</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% set all_confirmed = ['bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen'] %}
+            {% for item in bookings_with_invoices %}
+              {% set b = item.booking %}
+              {% set inv = item.invoice %}
+              <tr>
+                <td>{{ item.eff_date.strftime('%d.%m.%Y') if item.eff_date else '–' }}</td>
+                <td>
+                  {% if item.eff_time %}
+                    {{ item.eff_time.strftime('%H:%M') }}–{{ item.end_time.strftime('%H:%M') if item.end_time else '–' }}
+                  {% else %}
+                    –
+                  {% endif %}
+                </td>
+                <td>{{ item.loc_name }}</td>
+                <td>{{ b.duration_minutes or 60 }} Min</td>
+                <td>
+                  {% if b.status in all_confirmed %}
+                    <span class="badge badge-active">Bestätigt</span>
+                  {% elif b.status == 'angefragt' %}
+                    <span class="badge badge-pending">Angefragt</span>
+                  {% elif b.status in ['abgelehnt', 'rejected'] %}
+                    <span class="badge" style="background:#dc3545;color:#fff;">Abgelehnt</span>
+                  {% else %}
+                    <span class="status-badge">{{ b.status }}</span>
+                  {% endif %}
+                </td>
+                <td>{{ item.coach_name }}</td>
+                <td>{{ '%.2f €'|format(b.estimated_price or 50.0) }}</td>
+                <td>
+                  {% if inv %}
+                    <a href="{{ url_for('admin_invoice_pdf', user_id=student.id, booking_id=b.id) }}"
+                       class="btn btn-secondary" style="font-size:0.8em;padding:4px 10px;text-decoration:none;">
+                      📄 Rechnung herunterladen
+                    </a>
+                    <br><small style="color:#999;">{{ inv.invoice_number }}</small>
+                  {% else %}
+                    <a href="{{ url_for('admin_invoice_pdf', user_id=student.id, booking_id=b.id) }}"
+                       class="btn btn-primary" style="font-size:0.8em;padding:4px 10px;text-decoration:none;">
+                      🧾 Rechnung erstellen
+                    </a>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {# ── Summary ── #}
+      <div style="margin-top:12px;color:var(--text-muted);font-size:0.9em;">
+        <strong>Gesamt:</strong> {{ bookings_with_invoices|length }} Stunde(n)
+        · Summe:
+        {% set ns = namespace(total=0.0) %}
+        {% for item in bookings_with_invoices %}
+          {% set ns.total = ns.total + (item.booking.estimated_price or 50.0) %}
+        {% endfor %}
+        {{ '%.2f €'|format(ns.total) }}
+      </div>
+    {% else %}
+      <p style="color:var(--text-muted);">Noch keine Buchungen vorhanden.</p>
+    {% endif %}
+  </section>
+{% endblock %}

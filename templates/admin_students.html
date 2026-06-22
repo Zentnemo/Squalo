@@ -26,7 +26,7 @@
           <tbody>
             {% for item in student_data %}
               <tr>
-                <td><strong>{{ item.user.name }}</strong></td>
+                <td><a href="{{ url_for('admin_student_profile', user_id=item.user.id) }}" style="color:var(--dark-blue);font-weight:bold;text-decoration:none;">{{ item.user.name }}</a></td>
                 <td>{{ item.user.email }}</td>
                 <td>
                   <span class="status-badge">{{ item.user.role or 'user' }}</span>

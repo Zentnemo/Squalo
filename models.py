@@ -177,6 +177,41 @@ class AppSetting(db.Model):
         db.session.commit()
 
 
+class Invoice(db.Model):
+    """A single invoice for one booked swimming session."""
+    id = db.Column(db.Integer, primary_key=True)
+    invoice_number = db.Column(db.String(32), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    booking_id = db.Column(db.Integer, db.ForeignKey('booking.id'), nullable=False)
+    amount = db.Column(db.Float, default=50.0)
+    currency = db.Column(db.String(8), default='EUR')
+    status = db.Column(db.String(32), default='issued')  # issued / paid / void
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    issued_at = db.Column(db.DateTime, default=datetime.utcnow)
+    pdf_generated_at = db.Column(db.DateTime, nullable=True)
+
+    user = db.relationship('User', backref='invoices')
+    booking = db.relationship('Booking', backref='invoices')
+
+    @staticmethod
+    def next_number(year=None):
+        """Generate next sequential invoice number: SQ-YYYY-NNNN"""
+        if year is None:
+            year = datetime.utcnow().year
+        prefix = f'SQ-{year}-'
+        last = Invoice.query.filter(
+            Invoice.invoice_number.like(f'{prefix}%')
+        ).order_by(Invoice.invoice_number.desc()).first()
+        if last:
+            try:
+                num = int(last.invoice_number.split('-')[-1]) + 1
+            except (ValueError, IndexError):
+                num = 1
+        else:
+            num = 1
+        return f'{prefix}{num:04d}'
+
+
 class SiteSession(db.Model):
     """Lightweight visitor session tracker for the coach panel dashboard.
 

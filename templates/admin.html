@@ -376,7 +376,7 @@
               {% set all_confirmed = ['bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen'] %}
               {% for s in students %}
                 <tr>
-                  <td><strong>{{ s.name }}</strong></td>
+                  <td><a href="{{ url_for('admin_student_profile', user_id=s.id) }}" style="color:var(--dark-blue);font-weight:bold;text-decoration:none;">{{ s.name }}</a></td>
                   <td>{{ s.email }}</td>
                   <td>{{ s.bookings|length }}</td>
                   <td>
