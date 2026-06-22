@@ -181,32 +181,104 @@ def send_booking_notification(booking):
     send_email(subject, admin_email, body)
 
 
-def send_customer_confirmation_email(booking):
-    """Send customer email when a booking is confirmed."""
+def send_customer_confirmation_email(booking, force=False):
+    """Send customer email when a booking is confirmed.
+
+    Tracks confirmation_email_sent_at to prevent duplicate sends.
+    Use force=True to resend (not yet exposed in UI, but safe if called).
+    Returns True if email was sent (or already sent), False on failure.
+    """
+    # ── Duplicate protection ──
+    if booking.confirmation_email_sent_at and not force:
+        print(f"[MAIL] Bestaetigungsmail fuer Booking #{booking.id} bereits gesendet "
+              f"({booking.confirmation_email_sent_at.strftime('%d.%m.%Y %H:%M')}). "
+              f"Ueberspringe.")
+        return True
+
     user = User.query.get(booking.user_id)
     if not user or not user.email:
-        return
+        print(f"[MAIL] Booking #{booking.id}: Kein gueltiger User/E-Mail gefunden. "
+              f"Ueberspringe.")
+        return False
 
-    subject = AppSetting.get('tpl_confirm_subject', 'Dein Squalo Schwimmtraining wurde bestätigt')
+    # ── Resolve effective date/time/location ──
+    eff_date = booking.confirmed_date or booking.date_option_1 or (
+        booking.requested_start.date() if booking.requested_start else None
+    )
+    eff_time = booking.confirmed_time or booking.time_option_1 or (
+        booking.requested_start.time() if booking.requested_start else None
+    )
+    eff_location = None
+    if booking.confirmed_location_id:
+        loc = Location.query.get(booking.confirmed_location_id)
+        if loc:
+            eff_location = loc.name
+    if not eff_location and booking.preferred_location_1_id:
+        loc = Location.query.get(booking.preferred_location_1_id)
+        if loc:
+            eff_location = loc.name
 
-    date_str = booking.confirmed_date.strftime('%d.%m.%Y') if booking.confirmed_date else 'TBD'
-    time_str = booking.confirmed_time.strftime('%H:%M') if booking.confirmed_time else 'TBD'
-    loc_name = booking.confirmed_location.name if booking.confirmed_location else 'TBD'
-    coach_name = booking.preferred_coach.name if booking.preferred_coach else 'Moritz'
-    duration_map = {30: "30 Min", 60: "1 Std", 90: "1,5 Std", 120: "2 Std",
-                    180: "3 Std", 240: "4 Std", 300: "5 Std"}
-    duration_str = duration_map.get(booking.duration_minutes, f"{booking.duration_minutes} Min")
+    coach_name = 'Moritz'
+    if booking.preferred_coach_id:
+        coach = Coach.query.get(booking.preferred_coach_id)
+        if coach:
+            coach_name = coach.display_name
+
+    # ── Format duration ──
+    duration_map = {30: "30 Minuten", 60: "1 Stunde", 90: "1,5 Stunden",
+                    120: "2 Stunden", 180: "3 Stunden", 240: "4 Stunden",
+                    300: "5 Stunden"}
+    duration_str = duration_map.get(booking.duration_minutes,
+                                    f"{booking.duration_minutes} Minuten")
+
+    # ── Extract first name ──
+    first_name = user.name.split()[0] if user.name else 'Hallo'
+
+    # ── Build dashboard URL ──
+    try:
+        from flask import request as _req
+        base_url = _req.host_url.rstrip('/')
+    except Exception:
+        base_url = 'https://squalo.onrender.com'
+    dashboard_url = f"{base_url}/dashboard"
+
+    subject = AppSetting.get('tpl_confirm_subject',
+                             'Dein Squalo Schwimmtraining wurde bestaetigt')
 
     body = _render_template_from_settings('tpl_confirm_body',
         name=user.name,
-        datum=date_str,
-        uhrzeit=time_str,
-        ort=loc_name,
+        first_name=first_name,
+        datum=eff_date.strftime('%d.%m.%Y') if eff_date else 'TBD',
+        uhrzeit=eff_time.strftime('%H:%M') if eff_time else 'TBD',
+        ort=eff_location or 'TBD',
         coach=coach_name,
         dauer=duration_str,
-    ) or _default_tpl_confirm().replace('{{name}}', user.name)
+        training_goal=booking.training_goal or '',
+        customer_note=booking.user_note or '',
+        dashboard_url=dashboard_url,
+    ) or _build_confirm_email(
+        first_name=first_name,
+        date_str=eff_date.strftime('%d.%m.%Y') if eff_date else 'TBD',
+        time_str=eff_time.strftime('%H:%M') if eff_time else 'TBD',
+        location=eff_location or 'TBD',
+        duration=duration_str,
+        coach=coach_name,
+        training_goal=booking.training_goal,
+        customer_note=booking.user_note,
+        dashboard_url=dashboard_url,
+    )
 
-    send_email(subject, user.email, body)
+    success = send_email(subject, user.email, body)
+
+    # ── Track send time to prevent duplicates ──
+    if success:
+        booking.confirmation_email_sent_at = datetime.utcnow()
+        db.session.commit()
+        print(f"[MAIL] Bestaetigungsmail gesendet an {user.email} fuer Booking #{booking.id}")
+    else:
+        print(f"[MAIL-FEHLER] Bestaetigungsmail fehlgeschlagen fuer Booking #{booking.id}")
+
+    return success
 
 
 def send_customer_rejection_email(booking, admin_note=None):
@@ -254,25 +326,28 @@ Viele Grüße
 Squalo Benachrichtigungssystem"""
 
 def _default_tpl_confirm():
-    return """Hallo {{name}},
+    return """Hallo {{first_name}},
 
-gute Nachrichten: Dein Squalo Schwimmtraining wurde bestätigt!
+super, ich freue mich auf unser gemeinsames Schwimmtraining.
+
+Dein Termin ist bestätigt:
 
 Datum:     {{datum}}
 Uhrzeit:   {{uhrzeit}}
 Ort:       {{ort}}
-Coach:     {{coach}}
 Dauer:     {{dauer}}
+Coach:     {{coach}}
 
-Du kannst den Termin direkt in deinen Kalender übernehmen:
-- Öffne dein Dashboard unter /dashboard
-- Klicke bei bestätigten Terminen auf "In Kalender speichern"
-- Die .ics-Datei funktioniert auf iPhone, Android und Desktop
+Bitte bring, falls vorhanden, eine gut sitzende Schwimmbrille mit.
+Wenn du hast, sind kurze Schwimmflossen und ein Pullbuoy ebenfalls hilfreich.
+Wenn du diese Sachen noch nicht hast, ist das aber kein Problem – wir können auch ohne Zusatzmaterial starten.
 
-Wir freuen uns auf dich!
+Du findest den Termin auch in deinem Squalo-Dashboard. Dort kannst du ihn direkt in deinen Kalender exportieren.
 
-Viele Grüße
-Dein Squalo-Team"""
+Bis bald im Wasser!
+
+Moritz
+Squalo Schwimmcoaching"""
 
 def _default_tpl_reject():
     return """Hallo {{name}},
@@ -314,6 +389,63 @@ def _render_template_from_settings(tpl_key, **kwargs):
     for key, val in kwargs.items():
         tpl_text = tpl_text.replace("{{" + key + "}}", str(val))
     return tpl_text
+
+
+def _build_confirm_email(first_name, date_str, time_str, location, duration,
+                         coach, training_goal=None, customer_note=None,
+                         dashboard_url=None):
+    """Build the rich customer confirmation email body (default text)."""
+    if not dashboard_url:
+        dashboard_url = '/dashboard'
+
+    lines = [
+        f"Hallo {first_name},",
+        "",
+        "super, ich freue mich auf unser gemeinsames Schwimmtraining.",
+        "",
+        "Dein Termin ist bestätigt:",
+        "",
+        f"Datum:     {date_str}",
+        f"Uhrzeit:   {time_str}",
+        f"Ort:       {location}",
+        f"Dauer:     {duration}",
+        f"Coach:     {coach}",
+    ]
+
+    # Optional: training goal
+    if training_goal and training_goal.strip():
+        lines.extend([
+            "",
+            f"Ich habe gesehen, dass du besonders an folgendem Thema arbeiten möchtest:",
+            f"{training_goal.strip()}",
+        ])
+
+    # Optional: customer note
+    if customer_note and customer_note.strip():
+        lines.extend([
+            "",
+            f"Falls du zusätzlich eine Notiz angegeben hast, berücksichtigen wir das im Training:",
+            f"{customer_note.strip()}",
+        ])
+
+    lines.extend([
+        "",
+        "Bitte bring, falls vorhanden, eine gut sitzende Schwimmbrille mit.",
+        "Wenn du hast, sind kurze Schwimmflossen und ein Pullbuoy ebenfalls hilfreich.",
+        "Wenn du diese Sachen noch nicht hast, ist das aber kein Problem –",
+        "wir können auch ohne Zusatzmaterial starten.",
+        "",
+        "Du findest den Termin auch in deinem Squalo-Dashboard.",
+        "Dort kannst du ihn direkt in deinen Kalender exportieren.",
+        f"Dashboard: {dashboard_url}",
+        "",
+        "Bis bald im Wasser!",
+        "",
+        "Moritz",
+        "Squalo Schwimmcoaching",
+    ])
+
+    return "\n".join(lines)
 
 
 def create_app() -> Flask:
@@ -457,7 +589,22 @@ def create_app() -> Flask:
                     print(f"[MIGRATION] Coach-Spalten hinzugefügt: {added}")
         except Exception as e:
             print(f"[MIGRATION] Coach-Spalten (ignoriert): {e}")
-        
+
+        # ── Migration: confirmation_email_sent_at on booking ─────
+        try:
+            with db.engine.connect() as conn:
+                import sqlalchemy as sa
+                inspector = sa.inspect(db.engine)
+                columns = [c['name'] for c in inspector.get_columns('booking')]
+                if 'confirmation_email_sent_at' not in columns:
+                    conn.execute(sa.text(
+                        "ALTER TABLE booking ADD COLUMN confirmation_email_sent_at TIMESTAMP"
+                    ))
+                    conn.commit()
+                    print("[MIGRATION] Spalte confirmation_email_sent_at hinzugefuegt")
+        except Exception as e:
+            print(f"[MIGRATION] confirmation_email_sent_at (ignoriert): {e}")
+
         # ── Migration: Fix default notification email ─────────────
         try:
             current_email_val = AppSetting.get("booking_notification_email")

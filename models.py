@@ -80,6 +80,7 @@ class Booking(db.Model):
     # Coach preference
     preferred_coach_id = db.Column(db.Integer, db.ForeignKey('coach.id'), nullable=True)
     status = db.Column(db.String(32), default='angefragt')
+    confirmation_email_sent_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
