@@ -21,3 +21,8 @@ class Config:
         SQLALCHEMY_DATABASE_URI = 'sqlite:///' + str(Path(basedir) / 'instance' / 'squalo.db')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # ── Public base URL for absolute links (emails, SEO, calendar) ──
+    # Set on Render to e.g. https://squalo-schwimmcoaching.com
+    # Locally: leave unset, falls back to request.host_url
+    PUBLIC_BASE_URL = os.environ.get('PUBLIC_BASE_URL', '').rstrip('/')

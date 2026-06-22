@@ -18,6 +18,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from pathlib import Path
 
+from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
 from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview, SiteSession, Invoice
 from location_status import compute_location_status
@@ -235,11 +236,7 @@ def send_customer_confirmation_email(booking, force=False):
     first_name = user.name.split()[0] if user.name else 'Hallo'
 
     # ── Build dashboard URL ──
-    try:
-        from flask import request as _req
-        base_url = _req.host_url.rstrip('/')
-    except Exception:
-        base_url = 'https://squalo.onrender.com'
+    base_url = get_public_base_url()
     dashboard_url = f"{base_url}/dashboard"
 
     subject = AppSetting.get('tpl_confirm_subject',
@@ -448,9 +445,30 @@ def _build_confirm_email(first_name, date_str, time_str, location, duration,
     return "\n".join(lines)
 
 
+def get_public_base_url():
+    """Return the public base URL for absolute links.
+
+    Priority: PUBLIC_BASE_URL env var → request.host_url → fallback.
+    Always returns without trailing slash.
+    """
+    configured = os.environ.get('PUBLIC_BASE_URL', '').rstrip('/')
+    if configured:
+        return configured
+    try:
+        from flask import request
+        return request.host_url.rstrip('/')
+    except RuntimeError:
+        return 'http://127.0.0.1:5000'
+
+
 def create_app() -> Flask:
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(Config)
+
+    # ── ProxyFix: trust Render's reverse proxy for correct host_url ──
+    # Only enable in production (behind Render proxy)
+    if os.environ.get('FLASK_ENV') == 'production' or os.environ.get('RENDER'):
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 
     # Ensure instance directory exists for SQLite database
     Path(app.instance_path).mkdir(parents=True, exist_ok=True)
@@ -459,6 +477,11 @@ def create_app() -> Flask:
     os.makedirs(uploads_path, exist_ok=True)
 
     db.init_app(app)
+
+    # ── Make get_public_base_url available in all templates ──
+    @app.context_processor
+    def inject_public_base_url():
+        return dict(get_public_base_url=get_public_base_url)
 
     login_manager = LoginManager()
     login_manager.login_view = "login"
@@ -1780,6 +1803,42 @@ def create_app() -> Flask:
     @app.route("/impressum")
     def impressum():
         return render_template("impressum.html")
+
+    # ── robots.txt ──────────────────────────────────────────────
+    @app.route("/robots.txt")
+    def robots_txt():
+        base = get_public_base_url()
+        content = (
+            "User-agent: *\n"
+            "Allow: /\n"
+            "Disallow: /admin\n"
+            "Disallow: /dashboard\n"
+            "Disallow: /feed\n"
+            f"\nSitemap: {base}/sitemap.xml\n"
+        )
+        return Response(content, mimetype='text/plain')
+
+    # ── sitemap.xml ─────────────────────────────────────────────
+    @app.route("/sitemap.xml")
+    def sitemap_xml():
+        base = get_public_base_url()
+        pages = [
+            ('/', '1.0', 'daily'),
+            ('/coaches', '0.8', 'weekly'),
+            ('/shop', '0.6', 'weekly'),
+            ('/booking', '0.5', 'monthly'),
+            ('/impressum', '0.3', 'monthly'),
+        ]
+        xml_parts = ['<?xml version="1.0" encoding="UTF-8"?>']
+        xml_parts.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+        for path, priority, changefreq in pages:
+            xml_parts.append('  <url>')
+            xml_parts.append(f'    <loc>{base}{path}</loc>')
+            xml_parts.append(f'    <changefreq>{changefreq}</changefreq>')
+            xml_parts.append(f'    <priority>{priority}</priority>')
+            xml_parts.append('  </url>')
+        xml_parts.append('</urlset>')
+        return Response('\n'.join(xml_parts), mimetype='application/xml')
 
     return app
 

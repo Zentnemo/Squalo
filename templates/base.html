@@ -3,10 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Squalo Schwimmcoaching Berlin</title>
+    <title>{% block title %}Squalo Schwimmcoaching Berlin{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Persönliches Schwimmcoaching in Berlin. Individuelles Training für Anfänger und Fortgeschrittene. Schwimmen, Triathlon, Technik.{% endblock %}">
+    {% set public_base = get_public_base_url() if get_public_base_url is defined else 'https://squalo-schwimmcoaching.com' %}
+    <link rel="canonical" href="{{ public_base }}{{ request.path }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block og_title %}Squalo Schwimmcoaching Berlin{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Persönliches Schwimmcoaching in Berlin.{% endblock %}">
+    <meta property="og:url" content="{{ public_base }}{{ request.path }}">
+    <meta property="og:site_name" content="Squalo Schwimmcoaching">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=21">
     <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
 </head>
 <body>
