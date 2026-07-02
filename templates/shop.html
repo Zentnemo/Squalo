@@ -1,12 +1,121 @@
 {% extends "base.html" %}
 
+{% block title %}Squalo Shop – Schwimm-Equipment{% endblock %}
+
 {% block content %}
-<div class="shop-coming-soon">
-    <h1>Squalo Shop</h1>
-    <p class="shop-lead">Der Squalo Shop wird gerade vorbereitet.</p>
-    <p>Bald findest du hier ausgewählte Basics für dein Schwimmtraining:<br>
-       Schwimmbrillen, kurze Trainingsflossen, Handtücher und Squalo Merch.</p>
-    <p>Bis dahin kannst du Empfehlungen direkt im Training oder per Nachricht bei Moritz anfragen.</p>
-    <a href="{{ url_for('booking') }}" class="btn btn-primary">Termin anfragen</a>
+<div class="shop-page">
+  <div class="shop-header">
+    <h2>Squalo Shop</h2>
+    <p class="shop-subtitle">Empfohlenes Equipment für dein Schwimmtraining</p>
+  </div>
+
+  <div class="shop-intro">
+    <p>Du möchtest passendes Equipment für dein Training? Wähle unten die Produkte aus, die du dir zur nächsten Schwimmstunde mitbringen lassen möchtest. Ich schaue dann gemeinsam mit dir, ob sie gut zu deinem Level passen.</p>
+  </div>
+
+  <form method="POST" action="{{ url_for('shop') }}" id="shop-form">
+    {# ── Product categories ── #}
+    {% for cat_name, products in categories.items() %}
+    <div class="shop-category">
+      <h3 class="shop-category-title">{{ cat_name }}</h3>
+      <div class="shop-products">
+        {% for p in products %}
+        <div class="shop-card" data-product-id="{{ p.id }}">
+          <div class="shop-card-icon">
+            {% if 'Flosse' in cat_name or 'flosse' in p.id %}
+              🦶
+            {% elif 'Brille' in cat_name or 'brille' in p.id %}
+              🥽
+            {% else %}
+              🏊
+            {% endif %}
+          </div>
+          <div class="shop-card-body">
+            <h4 class="shop-card-name">{{ p.name }}</h4>
+            <p class="shop-card-desc">{{ p.description }}</p>
+            {% if p.note %}
+              <p class="shop-card-note">ℹ️ {{ p.note }}</p>
+            {% endif %}
+            <div class="shop-card-footer">
+              <span class="shop-price-hint">Preis wird im Training bestätigt</span>
+              {% if p.link %}
+                <a href="{{ p.link }}" target="_blank" rel="noopener noreferrer" class="shop-link-extern">Produkt ansehen ↗</a>
+              {% endif %}
+            </div>
+          </div>
+          <label class="shop-card-check" for="prod-{{ p.id }}">
+            <input type="checkbox" name="selected_products" value="{{ p.id }}" id="prod-{{ p.id }}" class="shop-checkbox">
+            <span class="shop-check-label">Auswählen</span>
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+
+    {# ── Selection summary (sticky bottom) ── #}
+    <div class="shop-cart" id="shop-cart">
+      <div class="shop-cart-inner">
+        <div class="shop-cart-info">
+          <span class="shop-cart-icon">🛒</span>
+          <span id="shop-cart-count">0</span> Produkte ausgewählt
+        </div>
+        <button type="submit" class="btn btn-primary shop-submit-btn" id="shop-submit-btn" disabled>
+          Auswahl bestätigen
+        </button>
+      </div>
+    </div>
+
+    {# ── Customer data ── #}
+    <div class="shop-customer-section" id="shop-customer-section">
+      <h3>Kontaktdaten</h3>
+      {% if current_user.is_authenticated %}
+        <p class="shop-customer-info">
+          <strong>{{ current_user.name }}</strong> · {{ current_user.email }}
+          <input type="hidden" name="customer_name" value="{{ current_user.name }}">
+          <input type="hidden" name="customer_email" value="{{ current_user.email }}">
+        </p>
+      {% else %}
+        <div class="shop-form-row">
+          <label for="customer_name">Name</label>
+          <input type="text" name="customer_name" id="customer_name" required placeholder="Dein Name" class="shop-input">
+        </div>
+        <div class="shop-form-row">
+          <label for="customer_email">E-Mail</label>
+          <input type="email" name="customer_email" id="customer_email" required placeholder="deine@email.de" class="shop-input">
+        </div>
+      {% endif %}
+      <div class="shop-form-row">
+        <label for="note">Nachricht (optional)</label>
+        <textarea name="note" id="note" rows="2" placeholder="z.B. Ich brauche die Flossen in Größe M..." class="shop-input"></textarea>
+      </div>
+    </div>
+  </form>
 </div>
+
+<script>
+(function() {
+  const checkboxes = document.querySelectorAll('.shop-checkbox');
+  const countEl = document.getElementById('shop-cart-count');
+  const submitBtn = document.getElementById('shop-submit-btn');
+
+  function updateCart() {
+    let count = 0;
+    checkboxes.forEach(cb => { if (cb.checked) count++; });
+    countEl.textContent = count;
+    submitBtn.disabled = count === 0;
+
+    checkboxes.forEach(cb => {
+      const card = cb.closest('.shop-card');
+      if (cb.checked) {
+        card.classList.add('selected');
+      } else {
+        card.classList.remove('selected');
+      }
+    });
+  }
+
+  checkboxes.forEach(cb => cb.addEventListener('change', updateCart));
+})();
+</script>
 {% endblock %}

@@ -20,10 +20,66 @@ from pathlib import Path
 
 from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
-from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview, SiteSession, Invoice
+from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview, SiteSession, Invoice, ShopOrder, ShopOrderItem
 from location_status import compute_location_status
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
+
+
+# ── Shop products (MVP – hardcoded for now) ───────────────────────
+SHOP_PRODUCTS = [
+    # Flossen
+    {
+        "id": "flossen-silifins",
+        "name": "Schwimmflossen Silifins",
+        "category": "Flossen",
+        "description": "Kurze Schwimmflossen für Techniktraining, Beinschlag und Wasserlage. Gut geeignet für Kraultechnik und erste Technikübungen im Training.",
+        "link": "https://www.decathlon.de/p/schwimmflossen-silifins-blau-gelb/122646/c209c86c132m8574328",
+        "note": "",
+    },
+    {
+        "id": "flossen-handpaddles",
+        "name": "Handpaddles / Handflossen",
+        "category": "Flossen",
+        "description": "Trainingshilfe für Wassergefühl, Armzug und Druckphase. Nur nach Absprache im Training verwenden.",
+        "link": "",
+        "note": "Link wird ergänzt",
+    },
+    # Trainingsausrüstung
+    {
+        "id": "trainig-pullbuoy",
+        "name": "Pull Buoy 500",
+        "category": "Trainingsausrüstung",
+        "description": "Poolboje/Pullbuoy für Techniktraining, Wasserlage und isoliertes Armtraining. Besonders hilfreich für Kraultechnik und Triathlontraining.",
+        "link": "https://www.decathlon.de/p/pull-buoy-grosse-m-500-schwarz-gelb/336080/c382c132m8666065",
+        "note": "",
+    },
+    {
+        "id": "trainig-schwimmbrett",
+        "name": "Schwimmbrett blau",
+        "category": "Trainingsausrüstung",
+        "description": "Klassisches Schwimmbrett für Beinschlagtraining, Technikübungen und Wasserlage.",
+        "link": "https://www.decathlon.de/p/schwimmbrett-blau/351550/c195m8853957",
+        "note": "",
+    },
+    # Schwimmbrillen
+    {
+        "id": "brille-speedo-biofuse",
+        "name": "Speedo Biofuse 2.0 Schwimmbrille",
+        "category": "Schwimmbrillen",
+        "description": "Komfortable Schwimmbrille mit getönten Gläsern. Gute Allround-Option für regelmäßiges Training.",
+        "link": "https://www.decathlon.de/p/schwimmbrille-speedo-getont-biofuse-2-0-schwarz/X8815095/c1m8815095",
+        "note": "",
+    },
+    {
+        "id": "brille-arena-cobra",
+        "name": "Arena Cobra Swipe Gold",
+        "category": "Schwimmbrillen",
+        "description": "Hochwertige verspiegelte Schwimmbrille für ambitioniertes Training, Techniktraining und sportliches Schwimmen.",
+        "link": "https://www.decathlon.de/p/schwimmbrille-verspiegelt-arena-cobra-swipe-gold/X8653040/c1m8653040",
+        "note": "",
+    },
+]
 
 
 # ── Confirmed-status helpers ──────────────────────────────────────
@@ -296,6 +352,62 @@ def send_customer_rejection_email(booking, admin_note=None):
     ) or _default_tpl_reject().replace('{{name}}', user.name).replace('{{notiz}}', note_line)
 
     send_email(subject, user.email, body)
+
+
+# ── Shop order emails ─────────────────────────────────────────────
+def _send_shop_customer_email(order, products):
+    """Send confirmation email to customer after shop order."""
+    first_name = order.customer_name.split()[0] if order.customer_name else 'Hallo'
+    product_lines = "\n".join(f"- {p['name']} ({p['category']})" for p in products)
+    product_list = "\n".join(f"  - {p['name']}" for p in products)
+
+    body = (
+        f"Hallo {first_name},\n"
+        f"\n"
+        f"deine Produktauswahl für das nächste Schwimmtraining wurde gespeichert.\n"
+        f"\n"
+        f"Ausgewählte Produkte:\n"
+        f"{product_list}\n"
+        f"\n"
+        f"Ich bringe dir die ausgewählten Produkte zur nächsten passenden Schwimmstunde mit. "
+        f"Wir schauen dann gemeinsam, ob sie gut zu deinem Training und deinem Level passen.\n"
+        f"\n"
+        f"Falls du noch Fragen zum Equipment hast, kannst du einfach auf diese Mail antworten.\n"
+        f"\n"
+        f"Bis bald im Wasser!\n"
+        f"\n"
+        f"Moritz\n"
+        f"Squalo Schwimmcoaching"
+    )
+
+    subject = "Deine Squalo Produktauswahl wurde gespeichert"
+    send_email(subject, order.customer_email, body)
+
+
+def _send_shop_admin_email(order, products):
+    """Send notification to admin/coach about new shop order."""
+    admin_email = get_admin_email()
+    product_list = "\n".join(f"  - {p['name']} ({p['category']})" for p in products)
+    now_str = order.created_at.strftime('%d.%m.%Y %H:%M') if order.created_at else '–'
+
+    body = (
+        f"Neue Shop-Bestellung eingegangen.\n"
+        f"\n"
+        f"Kunde: {order.customer_name}\n"
+        f"E-Mail: {order.customer_email}\n"
+        f"Zeitpunkt: {now_str}\n"
+        f"\n"
+        f"Ausgewählte Produkte:\n"
+        f"{product_list}\n"
+        f"\n"
+        f"Hinweis: Zum nächsten Training mitbringen.\n"
+    )
+
+    if order.note:
+        body += f"\nNachricht des Kunden: {order.note}\n"
+
+    subject = "Neue Squalo Shop-Auswahl"
+    send_email(subject, admin_email, body)
 
 
 # ── Default mail templates (fallback when AppSetting is empty) ───────
@@ -1215,9 +1327,75 @@ def create_app() -> Flask:
         coaches = Coach.query.filter_by(is_active=True).all()
         return render_template("booking.html", locations=locations, coaches=coaches)
 
-    @app.route("/shop")
+    @app.route("/shop", methods=["GET", "POST"])
     def shop():
-        return render_template("shop.html")
+        if request.method == "POST":
+            # ── Process shop order ──
+            selected_ids = request.form.getlist("selected_products")
+            if not selected_ids:
+                flash("Bitte wähle mindestens ein Produkt aus.", "warning")
+                return redirect(url_for("shop"))
+
+            # Resolve product objects
+            selected = [p for p in SHOP_PRODUCTS if p["id"] in selected_ids]
+            if not selected:
+                flash("Ungültige Produktauswahl.", "danger")
+                return redirect(url_for("shop"))
+
+            # Customer data
+            customer_name = ""
+            customer_email = ""
+            note = request.form.get("note", "").strip()
+            if current_user.is_authenticated:
+                customer_name = current_user.name
+                customer_email = current_user.email
+            else:
+                customer_name = request.form.get("customer_name", "").strip()
+                customer_email = request.form.get("customer_email", "").strip()
+
+            if not customer_name or not customer_email:
+                flash("Bitte Name und E-Mail angeben.", "danger")
+                return redirect(url_for("shop"))
+
+            # Create order
+            order = ShopOrder(
+                user_id=current_user.id if current_user.is_authenticated else None,
+                customer_name=customer_name,
+                customer_email=customer_email,
+                status="requested",
+                note=note if note else None,
+            )
+            db.session.add(order)
+            db.session.flush()  # get order.id
+
+            for p in selected:
+                item = ShopOrderItem(
+                    order_id=order.id,
+                    product_name=p["name"],
+                    product_category=p["category"],
+                    product_link=p["link"] or None,
+                    quantity=1,
+                )
+                db.session.add(item)
+
+            db.session.commit()
+
+            # Send emails
+            _send_shop_customer_email(order, selected)
+            _send_shop_admin_email(order, selected)
+
+            flash("Deine Produktauswahl wurde gespeichert! Ich bringe die Produkte zur nächsten Schwimmstunde mit.", "success")
+            return redirect(url_for("shop"))
+
+        # GET: group products by category
+        categories = {}
+        for p in SHOP_PRODUCTS:
+            cat = p["category"]
+            if cat not in categories:
+                categories[cat] = []
+            categories[cat].append(p)
+
+        return render_template("shop.html", categories=categories)
 
     @app.route("/admin")
     @login_required
@@ -1389,6 +1567,15 @@ def create_app() -> Flask:
             Booking.status.in_(list(CONFIRMED_STATUSES) + ['angefragt'])
         ).order_by(Booking.created_at.desc()).all()
         return render_template("admin_week.html", bookings=bookings)
+
+    @app.route("/admin/shop-orders")
+    @login_required
+    def admin_shop_orders():
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+        orders = ShopOrder.query.order_by(ShopOrder.created_at.desc()).all()
+        return render_template("admin_shop_orders.html", orders=orders)
 
     @app.route("/admin/settings", methods=["GET", "POST"])
     @login_required

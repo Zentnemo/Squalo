@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Shop-Bestellungen – Coach Panel{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:900px;margin:2rem auto;padding:0 20px;">
+  <h2 style="font-family:'Righteous',cursive;color:var(--dark-blue);">🛒 Shop-Bestellungen</h2>
+  <p style="color:var(--text-light);margin-bottom:1.5rem;">
+    <a href="{{ url_for('admin') }}" style="color:var(--turquoise);text-decoration:none;">← Zurück zum Coach Panel</a>
+  </p>
+
+  {% if orders %}
+    {% for order in orders %}
+    <div style="background:var(--white);border-radius:12px;padding:1.2rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.8rem;">
+        <div>
+          <strong style="color:var(--dark-blue);font-size:16px;">{{ order.customer_name }}</strong>
+          <span style="color:var(--text-light);font-size:14px;margin-left:0.5rem;">{{ order.customer_email }}</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <span style="font-size:12px;padding:3px 10px;border-radius:20px;
+            {% if order.status == 'requested' %}background:#fff3cd;color:#856404;
+            {% elif order.status == 'confirmed' %}background:#d4edda;color:#155724;
+            {% elif order.status == 'brought_to_training' %}background:#cce5ff;color:#004085;
+            {% else %}background:#f8d7da;color:#721c24;{% endif %}
+            font-weight:600;">
+            {{ order.status }}
+          </span>
+          <span style="font-size:12px;color:var(--text-light);">
+            {{ order.created_at.strftime('%d.%m.%Y %H:%M') if order.created_at else '–' }}
+          </span>
+        </div>
+      </div>
+
+      <div style="font-size:14px;color:var(--text-dark);margin-bottom:0.5rem;">
+        <strong>Produkte:</strong>
+        <ul style="margin:0.3rem 0 0;padding-left:1.2rem;">
+          {% for item in order.items %}
+            <li>
+              {{ item.product_name }}
+              {% if item.product_category %}<span style="color:var(--text-light);">({{ item.product_category }})</span>{% endif %}
+              {% if item.product_link %}
+                <a href="{{ item.product_link }}" target="_blank" rel="noopener noreferrer" style="color:var(--turquoise);font-size:12px;">Link ↗</a>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      {% if order.note %}
+        <div style="font-size:13px;color:var(--text-light);font-style:italic;margin-top:0.4rem;">
+          📝 {{ order.note }}
+        </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  {% else %}
+    <div style="text-align:center;padding:3rem;color:var(--text-light);font-size:16px;">
+      Noch keine Shop-Bestellungen vorhanden.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
