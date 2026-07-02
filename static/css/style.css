@@ -2693,6 +2693,107 @@ main {
   min-width: 120px;
 }
 
+/* ── Booking History ── */
+.history-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 1.5rem 0 1rem;
+}
+
+.history-stat {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 0.8rem 1.2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  text-align: center;
+  min-width: 80px;
+}
+
+.history-stat-number {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--dark-blue);
+  font-family: 'Righteous', cursive;
+}
+
+.history-stat-label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.history-stat-pending .history-stat-number { color: #e67e22; }
+.history-stat-confirmed .history-stat-number { color: #27ae60; }
+.history-stat-past .history-stat-number { color: #95a5a6; }
+.history-stat-future .history-stat-number { color: var(--turquoise); }
+
+.history-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.history-filter {
+  background: var(--white);
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-dark);
+}
+
+.history-filter:hover {
+  border-color: var(--turquoise);
+  color: var(--turquoise);
+}
+
+.history-filter.active {
+  background: var(--turquoise);
+  border-color: var(--turquoise);
+  color: var(--white);
+}
+
+.history-status {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.history-status-confirmed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.history-status-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.history-status-declined {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.history-status-alternative {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.history-status-unknown {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
 /* Footer */
 .site-footer {
   background: var(--dark-blue);

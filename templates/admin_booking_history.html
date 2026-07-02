@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="dashboard-header">
+  <h2>📋 Buchungshistorie</h2>
+  <div class="cta-buttons">
+    <a href="{{ url_for('admin') }}" class="btn btn-secondary">← Zurück zum Coach Panel</a>
+  </div>
+</div>
+
+{# ── Kennzahlen ── #}
+<div class="history-stats">
+  <div class="history-stat">
+    <span class="history-stat-number">{{ total }}</span>
+    <span class="history-stat-label">Gesamt</span>
+  </div>
+  <div class="history-stat history-stat-pending">
+    <span class="history-stat-number">{{ open_count }}</span>
+    <span class="history-stat-label">Offen</span>
+  </div>
+  <div class="history-stat history-stat-confirmed">
+    <span class="history-stat-number">{{ confirmed_count }}</span>
+    <span class="history-stat-label">Bestätigt</span>
+  </div>
+  <div class="history-stat history-stat-past">
+    <span class="history-stat-number">{{ past_count }}</span>
+    <span class="history-stat-label">Vergangen</span>
+  </div>
+  <div class="history-stat history-stat-future">
+    <span class="history-stat-number">{{ future_count }}</span>
+    <span class="history-stat-label">Zukünftig</span>
+  </div>
+  {% if last_booking_at %}
+  <div class="history-stat">
+    <span class="history-stat-number" style="font-size:13px;">{{ last_booking_at.strftime('%d.%m.%Y %H:%M') }}</span>
+    <span class="history-stat-label">Letzte Anfrage</span>
+  </div>
+  {% endif %}
+</div>
+
+{# ── Filter tabs ── #}
+<div class="history-filters" id="history-filters">
+  <button class="history-filter active" data-filter="all">Alle ({{ total }})</button>
+  <button class="history-filter" data-filter="pending">Offen ({{ open_count }})</button>
+  <button class="history-filter" data-filter="confirmed">Bestätigt ({{ confirmed_count }})</button>
+  <button class="history-filter" data-filter="past">Vergangen ({{ past_count }})</button>
+  <button class="history-filter" data-filter="future">Zukünftig ({{ future_count }})</button>
+</div>
+
+{# ── Tabelle ── #}
+<section class="admin-section">
+  {% if bookings_data %}
+    <div class="bookings-table" style="overflow-x:auto;">
+      <table id="history-table">
+        <thead>
+          <tr>
+            <th>Eingang</th>
+            <th>Status</th>
+            <th>Schüler</th>
+            <th>E-Mail</th>
+            <th>Telefon</th>
+            <th>Gewünscht</th>
+            <th>Bestätigt</th>
+            <th>Ort</th>
+            <th>Dauer</th>
+            <th>Coach</th>
+            <th>Trainingsziel</th>
+            <th>Notiz</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for bd in bookings_data %}
+            {% set b = bd.booking %}
+            {# ── Determine row class for filtering ── #}
+            {% set is_pending = b.status|lower in ['angefragt', 'pending', 'open', 'requested'] %}
+            {% set is_confirmed = b.status|lower in ['bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen'] %}
+            {% set is_declined = b.status|lower in ['abgelehnt', 'declined', 'cancelled', 'storniert'] %}
+            {% set is_alternative = b.status|lower in ['alternative', 'alternativvorschlag'] %}
+            <tr class="booking-row history-row"
+                data-filter-type="{% if is_pending %}pending{% elif is_confirmed %}confirmed{% endif %}"
+                data-is-past="{{ 'true' if bd.is_past else 'false' }}"
+                data-is-future="{{ 'true' if bd.is_future else 'false' }}">
+
+              {# Eingang #}
+              <td style="white-space:nowrap;font-size:13px;">
+                {{ b.created_at.strftime('%d.%m.%Y') if b.created_at else '–' }}
+                {% if b.created_at %}<br><span style="color:var(--text-light);font-size:11px;">{{ b.created_at.strftime('%H:%M') }}</span>{% endif %}
+              </td>
+
+              {# Status #}
+              <td>
+                <span class="history-status
+                  {% if is_confirmed %}history-status-confirmed
+                  {% elif is_pending %}history-status-pending
+                  {% elif is_declined %}history-status-declined
+                  {% elif is_alternative %}history-status-alternative
+                  {% else %}history-status-unknown{% endif %}">
+                  {% if is_confirmed %}Bestätigt
+                  {% elif is_pending %}Offen
+                  {% elif b.status|lower == 'abgelehnt' or b.status|lower == 'declined' %}Abgelehnt
+                  {% elif b.status|lower == 'cancelled' or b.status|lower == 'storniert' %}Storniert
+                  {% elif is_alternative %}Alternativ
+                  {% else %}{{ b.status or 'Unbekannt' }}{% endif %}
+                </span>
+              </td>
+
+              {# Schülername #}
+              <td><strong>{{ b.user.name if b.user else '–' }}</strong></td>
+
+              {# E-Mail #}
+              <td style="font-size:12px;">{{ b.user.email if b.user else '–' }}</td>
+
+              {# Telefon (not in model, show dash) #}
+              <td style="font-size:12px;">–</td>
+
+              {# Gewünschtes Datum/Uhrzeit #}
+              <td style="white-space:nowrap;font-size:13px;">
+                {% if b.date_option_1 %}
+                  {{ b.date_option_1.strftime('%d.%m.%Y') }}
+                  {% if b.time_option_1 %} {{ b.time_option_1.strftime('%H:%M') }}{% endif %}
+                  {% if b.date_option_2 %}<br><span style="font-size:11px;color:var(--text-light);">+ {{ b.date_option_2.strftime('%d.%m') }}{% if b.time_option_2 %} {{ b.time_option_2.strftime('%H:%M') }}{% endif %}</span>{% endif %}
+                  {% if b.date_option_3 %}<br><span style="font-size:11px;color:var(--text-light);">+ {{ b.date_option_3.strftime('%d.%m') }}{% if b.time_option_3 %} {{ b.time_option_3.strftime('%H:%M') }}{% endif %}</span>{% endif %}
+                {% elif b.requested_start %}
+                  {{ b.requested_start.strftime('%d.%m.%Y %H:%M') }}
+                {% else %}
+                  –
+                {% endif %}
+              </td>
+
+              {# Bestätigtes Datum/Uhrzeit #}
+              <td style="white-space:nowrap;font-size:13px;">
+                {% if b.confirmed_date %}
+                  {{ b.confirmed_date.strftime('%d.%m.%Y') }}
+                  {% if b.confirmed_time %} {{ b.confirmed_time.strftime('%H:%M') }}{% endif %}
+                {% else %}
+                  –
+                {% endif %}
+              </td>
+
+              {# Ort #}
+              <td style="font-size:12px;">
+                {% if b.confirmed_location %}
+                  {{ b.confirmed_location.name }}
+                {% elif b.preferred_location_1 %}
+                  {{ b.preferred_location_1.name|truncate(25) }} (Wunsch)
+                {% else %}
+                  –
+                {% endif %}
+              </td>
+
+              {# Dauer #}
+              <td style="font-size:12px;">{{ b.duration_minutes or 60 }} Min</td>
+
+              {# Coach #}
+              <td style="font-size:12px;">{{ b.preferred_coach.name if b.preferred_coach else '–' }}</td>
+
+              {# Trainingsziel #}
+              <td style="font-size:12px;">{{ b.training_goal or '–' }}</td>
+
+              {# Kunden-Notiz #}
+              <td style="font-size:12px;">{{ b.user_note or '–' }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div style="text-align:center;padding:3rem;color:var(--text-light);font-size:16px;">
+      Noch keine Buchungen vorhanden.
+    </div>
+  {% endif %}
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const filters = document.querySelectorAll('.history-filter');
+  const rows = document.querySelectorAll('.history-row');
+  const today = new Date('{{ today.isoformat() }}');
+
+  filters.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      filters.forEach(function(f) { f.classList.remove('active'); });
+      btn.classList.add('active');
+      const filter = btn.getAttribute('data-filter');
+
+      rows.forEach(function(row) {
+        const isPast = row.getAttribute('data-is-past') === 'true';
+        const isFuture = row.getAttribute('data-is-future') === 'true';
+        const type = row.getAttribute('data-filter-type');
+        let show = false;
+
+        if (filter === 'all') {
+          show = true;
+        } else if (filter === 'pending') {
+          show = (type === 'pending');
+        } else if (filter === 'confirmed') {
+          show = (type === 'confirmed');
+        } else if (filter === 'past') {
+          show = isPast;
+        } else if (filter === 'future') {
+          show = isFuture;
+        }
+
+        row.style.display = show ? '' : 'none';
+      });
+    });
+  });
+});
+</script>
+
+{% endblock %}

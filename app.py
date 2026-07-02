@@ -1568,6 +1568,63 @@ def create_app() -> Flask:
         ).order_by(Booking.created_at.desc()).all()
         return render_template("admin_week.html", bookings=bookings)
 
+    @app.route("/admin/booking-history")
+    @login_required
+    def admin_booking_history():
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+
+        today = date.today()
+
+        # ── Normalize all bookings into a unified list ──
+        all_bookings = Booking.query.order_by(Booking.created_at.desc()).all()
+
+        # ── Compute per-booking display fields ──
+        bookings_data = []
+        for b in all_bookings:
+            eff_date = get_effective_date(b)
+            eff_time = get_effective_time(b)
+
+            # Is it past or future?
+            is_past = False
+            is_future = False
+            if eff_date:
+                is_past = eff_date < today
+                is_future = eff_date > today
+
+            bookings_data.append({
+                'booking': b,
+                'eff_date': eff_date,
+                'eff_time': eff_time,
+                'is_past': is_past,
+                'is_future': is_future,
+            })
+
+        # ── Compute stats ──
+        total = len(all_bookings)
+        pending_statuses = ['angefragt', 'pending', 'open', 'requested']
+        confirmed_statuses_list = list(CONFIRMED_STATUSES)
+        open_count = sum(1 for b in all_bookings if (b.status or '').lower() in pending_statuses)
+        confirmed_count = sum(1 for b in all_bookings if (b.status or '').lower() in confirmed_statuses_list)
+        past_count = sum(1 for bd in bookings_data if bd['is_past'])
+        future_count = sum(1 for bd in bookings_data if bd['is_future'])
+
+        # Last booking
+        last_booking_at = all_bookings[0].created_at if all_bookings else None
+
+        return render_template(
+            "admin_booking_history.html",
+            bookings_data=bookings_data,
+            total=total,
+            open_count=open_count,
+            confirmed_count=confirmed_count,
+            past_count=past_count,
+            future_count=future_count,
+            last_booking_at=last_booking_at,
+            today=today,
+        )
+
     @app.route("/admin/shop-orders")
     @login_required
     def admin_shop_orders():
