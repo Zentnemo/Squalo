@@ -391,7 +391,11 @@ def _render_template_from_settings(tpl_key, **kwargs):
 def _build_confirm_email(first_name, date_str, time_str, location, duration,
                          coach, training_goal=None, customer_note=None,
                          dashboard_url=None):
-    """Build the rich customer confirmation email body (default text)."""
+    """Build the customer confirmation email body (default text).
+
+    This is the primary confirmation email text. It is used when no custom
+    template is stored in AppSettings (tpl_confirm_body).
+    """
     if not dashboard_url:
         dashboard_url = '/dashboard'
 
@@ -413,26 +417,37 @@ def _build_confirm_email(first_name, date_str, time_str, location, duration,
     if training_goal and training_goal.strip():
         lines.extend([
             "",
-            f"Ich habe gesehen, dass du besonders an folgendem Thema arbeiten möchtest:",
-            f"{training_goal.strip()}",
+            "Ich habe gesehen, dass du besonders an folgendem Thema arbeiten möchtest:",
+            training_goal.strip(),
         ])
 
     # Optional: customer note
     if customer_note and customer_note.strip():
         lines.extend([
             "",
-            f"Falls du zusätzlich eine Notiz angegeben hast, berücksichtigen wir das im Training:",
-            f"{customer_note.strip()}",
+            "Deine zusätzliche Notiz habe ich ebenfalls gesehen und berücksichtige sie im Training:",
+            customer_note.strip(),
         ])
 
     lines.extend([
         "",
-        "Bitte bring, falls vorhanden, eine gut sitzende Schwimmbrille mit.",
-        "Wenn du hast, sind kurze Schwimmflossen und ein Pullbuoy ebenfalls hilfreich.",
-        "Wenn du diese Sachen noch nicht hast, ist das aber kein Problem –",
-        "wir können auch ohne Zusatzmaterial starten.",
+        "Für die erste Stunde brauchst du dich beim Equipment nicht zu stressen.",
+        "Ich bringe immer Basisequipment mit, damit wir direkt starten können.",
         "",
-        "Du findest den Termin auch in deinem Squalo-Dashboard.",
+        "Wenn du eigenes Material hast, bring es gerne mit.",
+        "Am besten geeignet sind:",
+        "- eine gut sitzende Schwimmbrille",
+        "- kurze Schwimmflossen",
+        "- ein Pullbuoy / eine Poolboje",
+        "",
+        "Wenn du noch nichts davon hast, ist das überhaupt kein Problem.",
+        "Du kannst das Equipment auch direkt über unseren Squalo-Shop bestellen.",
+        "Ich habe die empfohlenen Produkte vorrätig und kann sie dir",
+        "dann direkt zur nächsten Stunde mitbringen.",
+        "Alternativ kannst du dir das Material natürlich auch",
+        "selbst bis zur nächsten Stunde organisieren.",
+        "",
+        "Du findest deinen Termin auch in deinem Squalo-Dashboard.",
         "Dort kannst du ihn direkt in deinen Kalender exportieren.",
         f"Dashboard: {dashboard_url}",
         "",
