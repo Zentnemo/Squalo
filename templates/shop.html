@@ -3,15 +3,29 @@
 {% block title %}Squalo Shop – Schwimm-Equipment{% endblock %}
 
 {% block content %}
-<div class="shop-page">
-  <div class="shop-header">
-    <h2>Squalo Shop</h2>
-    <p class="shop-subtitle">Empfohlenes Equipment für dein Schwimmtraining</p>
+{# ── Shop Hero Slideshow ── #}
+<div class="shop-hero">
+  <div class="shop-hero-media">
+    <video class="shop-hero-video" autoplay muted loop playsinline>
+      <source src="{{ url_for('static', filename='images/shop-hero.mp4') }}" type="video/mp4">
+    </video>
+    <div class="shop-hero-slides">
+      <div class="shop-hero-slide active" style="background-image:url('{{ url_for('static', filename='images/hero-bg.jpg') }}')"></div>
+      <div class="shop-hero-slide" style="background-image:url('{{ url_for('static', filename='images/hero-option-1.jpg') }}')"></div>
+      <div class="shop-hero-slide" style="background-image:url('{{ url_for('static', filename='images/hero-option-3.jpg') }}')"></div>
+      <div class="shop-hero-slide" style="background-image:url('{{ url_for('static', filename='images/hero-option-4.jpg') }}')"></div>
+      <div class="shop-hero-slide" style="background-image:url('{{ url_for('static', filename='images/hero-option-5.jpg') }}')"></div>
+    </div>
+    <div class="shop-hero-overlay"></div>
   </div>
+  <div class="shop-hero-content">
+    <h1 class="shop-hero-title">Squalo Shop</h1>
+    <p class="shop-hero-subtitle">Empfohlenes Equipment für dein Schwimmtraining</p>
+    <p class="shop-hero-desc">Wähle passendes Equipment aus – ich bringe es zur nächsten Schwimmstunde mit.</p>
+  </div>
+</div>
 
-  <div class="shop-intro">
-    <p>Du möchtest passendes Equipment für dein Training? Wähle unten die Produkte aus, die du dir zur nächsten Schwimmstunde mitbringen lassen möchtest. Ich schaue dann gemeinsam mit dir, ob sie gut zu deinem Level passen.</p>
-  </div>
+<div class="shop-page">
 
   <form method="POST" action="{{ url_for('shop') }}" id="shop-form">
     {# ── Product categories ── #}
@@ -116,6 +130,42 @@
   }
 
   checkboxes.forEach(cb => cb.addEventListener('change', updateCart));
+})();
+</script>
+
+<script>
+/* ── Shop Hero Slideshow ── */
+(function() {
+  const slides = document.querySelectorAll('.shop-hero-slide');
+  const video = document.querySelector('.shop-hero-video');
+  let current = 0;
+
+  /* Only run the slideshow if the video source fails to load */
+  function initSlideshow() {
+    if (slides.length <= 1) return;
+    setInterval(() => {
+      slides[current].classList.remove('active');
+      current = (current + 1) % slides.length;
+      slides[current].classList.add('active');
+    }, 5000);
+  }
+
+  if (video) {
+    video.addEventListener('error', function() {
+      /* Video failed — fade it out and start image slideshow */
+      video.style.display = 'none';
+      initSlideshow();
+    });
+    /* If video hasn't loaded within 1s, start slideshow anyway */
+    setTimeout(() => {
+      if (video.readyState < 2) {
+        video.style.display = 'none';
+        initSlideshow();
+      }
+    }, 1000);
+  } else {
+    initSlideshow();
+  }
 })();
 </script>
 {% endblock %}
