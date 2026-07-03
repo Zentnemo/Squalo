@@ -4657,10 +4657,36 @@ main {
 }
 
 .coaches-hero {
+  position: relative;
   background: linear-gradient(135deg, var(--dark-blue), #006070);
   padding: 48px 0 36px;
   text-align: center;
   margin-bottom: 40px;
+  overflow: hidden;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.coaches-hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 30%;
+  z-index: 0;
+}
+
+.coaches-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 61, 77, 0.5) 0%,
+    rgba(0, 61, 77, 0.65) 50%,
+    rgba(0, 61, 77, 0.8) 100%
+  );
+  z-index: 1;
 }
 
 .coaches-hero-title {
