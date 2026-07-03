@@ -23,32 +23,98 @@
 
   <div class="container">
   <div class="map-area">
-    <aside class="community-feed">
-      <h3>🏊 Community</h3>
-      {% if current_user.is_authenticated %}
-        <form method="POST" action="{{ url_for('feed_post') }}" class="feed-input">
-          <textarea name="text" class="feed-textarea" placeholder="Wie ist die Lage an deinem Schwimmort?" rows="3" required></textarea>
-          <button type="submit" class="btn btn-small btn-primary">Update posten</button>
-        </form>
-      {% else %}
-        <p class="feed-login-hint">Logge dich ein, um Updates aus der Community zu posten.</p>
-      {% endif %}
-      <div class="feed-items">
-        {% if feed_posts %}
-          {% for post in feed_posts %}
-            <div class="feed-item">
-              <span class="feed-author">{{ post.user.name }}</span>
-              <span class="feed-text">{{ post.text }}</span>
-              <span class="feed-time">{{ post.created_at.strftime('%d.%m. %H:%M') }}</span>
-            </div>
-          {% endfor %}
+    <div class="left-column">
+      <aside class="community-feed">
+        <h3>🏊 Community</h3>
+        {% if current_user.is_authenticated %}
+          <form method="POST" action="{{ url_for('feed_post') }}" class="feed-input">
+            <textarea name="text" class="feed-textarea" placeholder="Wie ist die Lage an deinem Schwimmort?" rows="3" required></textarea>
+            <button type="submit" class="btn btn-small btn-primary">Update posten</button>
+          </form>
         {% else %}
-          <div class="feed-empty">
-            Noch keine Community-Updates. Sei die/der Erste! 🏊
-          </div>
+          <p class="feed-login-hint">Logge dich ein, um Updates aus der Community zu posten.</p>
         {% endif %}
-      </div>
-    </aside>
+        <div class="feed-items">
+          {% if feed_posts %}
+            {% for post in feed_posts %}
+              <div class="feed-item">
+                <span class="feed-author">{{ post.user.name }}</span>
+                <span class="feed-text">{{ post.text }}</span>
+                <span class="feed-time">{{ post.created_at.strftime('%d.%m. %H:%M') }}</span>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="feed-empty">
+              Noch keine Community-Updates. Sei die/der Erste! 🏊
+            </div>
+          {% endif %}
+        </div>
+      </aside>
+
+      {# ── Schwimmwissen / Warum Schwimmen? (Slideshow) ── #}
+      <section class="swim-knowledge" aria-label="Schwimmwissen">
+        <h3>Warum Schwimmen?</h3>
+        <div class="swim-slideshow" id="swim-slideshow">
+          <div class="swim-slide active" data-index="0">
+            <div class="swim-slide-icon">🏊</div>
+            <h4>Gelenkschonend trainieren</h4>
+            <p>Schwimmen stärkt Ausdauer und Muskulatur, ohne die Gelenke unnötig zu belasten. Ideal, wenn du fitter werden willst, aber deinen Körper sauber aufbauen möchtest.</p>
+          </div>
+          <div class="swim-slide" data-index="1">
+            <div class="swim-slide-icon">🎯</div>
+            <h4>Technik vor Tempo</h4>
+            <p>Eine bessere Wasserlage, ruhige Atmung und ein effizienter Armzug bringen oft mehr als reine Kraft. Wir arbeiten an den Details, die dein Schwimmen leichter machen.</p>
+          </div>
+          <div class="swim-slide" data-index="2">
+            <div class="swim-slide-icon">💧</div>
+            <h4>Kraulen lernen</h4>
+            <p>Kraulen wird einfach, wenn man es Schritt für Schritt aufbaut: Atmung, Armzug, Beinschlag und Rotation werden einzeln trainiert und sauber verbunden.</p>
+          </div>
+          <div class="swim-slide" data-index="3">
+            <div class="swim-slide-icon">🏅</div>
+            <h4>Triathlon vorbereiten</h4>
+            <p>Effizientes Schwimmen spart Energie für Rad und Lauf. Wir verbessern Orientierung, Rhythmus und Wasserlage für einen ruhigeren Start in den Wettkampf.</p>
+          </div>
+          <div class="swim-slide" data-index="4">
+            <div class="swim-slide-icon">📈</div>
+            <h4>Für jedes Level</h4>
+            <p>Du musst nicht perfekt starten. Anfänger, Wiedereinsteiger und Fortgeschrittene trainieren bei Squalo genau auf ihrem aktuellen Niveau.</p>
+          </div>
+          <div class="swim-slide" data-index="5">
+            <div class="swim-slide-icon">🛡️</div>
+            <h4>Mehr Sicherheit im Wasser</h4>
+            <p>Wer Atmung, Lage und Orientierung besser kontrolliert, fühlt sich im Wasser ruhiger. Gute Technik bedeutet auch mehr Sicherheit.</p>
+          </div>
+          <div class="swim-slide" data-index="6">
+            <div class="swim-slide-icon">👤</div>
+            <h4>Persönliches Coaching</h4>
+            <p>Statt Standardkurs bekommst du individuelles Feedback. Dein Coach sieht deine Bewegung genau an und passt Übungen an dein Ziel an.</p>
+          </div>
+          <div class="swim-slide" data-index="7">
+            <div class="swim-slide-icon">❤️</div>
+            <h4>Ausdauer im Wasser</h4>
+            <p>Schwimmen trainiert Herz, Atmung und Rumpf gleichzeitig. Es ist ein starkes Ausdauertraining mit sauberer Technik als Grundlage.</p>
+          </div>
+          <div class="swim-dots" id="swim-dots">
+            <button class="swim-dot active" data-index="0" aria-label="Slide 1"></button>
+            <button class="swim-dot" data-index="1" aria-label="Slide 2"></button>
+            <button class="swim-dot" data-index="2" aria-label="Slide 3"></button>
+            <button class="swim-dot" data-index="3" aria-label="Slide 4"></button>
+            <button class="swim-dot" data-index="4" aria-label="Slide 5"></button>
+            <button class="swim-dot" data-index="5" aria-label="Slide 6"></button>
+            <button class="swim-dot" data-index="6" aria-label="Slide 7"></button>
+            <button class="swim-dot" data-index="7" aria-label="Slide 8"></button>
+          </div>
+        </div>
+        {# SEO: All slide content stays in DOM as noscript fallback #}
+        <noscript>
+          <div class="swim-slide" style="display:block;">
+            <h4>Gelenkschonend trainieren</h4>
+            <p>Schwimmen stärkt Ausdauer und Muskulatur, ohne die Gelenke unnötig zu belasten. Ideal, wenn du fitter werden willst, aber deinen Körper sauber aufbauen möchtest.</p>
+          </div>
+        </noscript>
+      </section>
+    </div>
 
     <section class="map-section">
       <h2 class="baywatch-title">🏖️ Squalo Baywatch</h2>
@@ -84,7 +150,58 @@
       <div class="promo-content">
         <div class="promo-icon">🦈</div>
         <h3><span class="promo-squalo">Squalo</span> <span class="promo-premium">Premium</span></h3>
-        <p>Bald verfügbar: Trainingspläne, Produkte &amp; exklusive Badesee-Updates.</p>
+        <p>Community-Events, exklusive Trainingspläne und zusätzliche Coaching-Inhalte.</p>
+      </div>
+      <div class="promo-features" id="promo-slideshow">
+        <div class="promo-slide active" data-index="0">
+          <div class="promo-feature-item">
+            <span class="promo-feature-icon">📋</span>
+            <span>Exklusive Trainingspläne</span>
+          </div>
+          <div class="promo-feature-item">
+            <span class="promo-feature-icon">🏊‍♂️</span>
+            <span>Community-Events</span>
+          </div>
+        </div>
+        <div class="promo-slide" data-index="1">
+          <div class="promo-feature-item">
+            <span class="promo-feature-icon">📊</span>
+            <span>Fortschrittsanalysen</span>
+          </div>
+          <div class="promo-feature-item">
+            <span class="promo-feature-icon">🎯</span>
+            <span>Persönliche Technikziele</span>
+          </div>
+        </div>
+        <div class="promo-slide" data-index="2">
+          <div class="promo-feature-item">
+            <span class="promo-feature-icon">🎥</span>
+            <span>Videoanalyse deiner Technik</span>
+          </div>
+          <div class="promo-feature-item">
+            <span class="promo-feature-icon">🔔</span>
+            <span>Badesee-Updates &amp; Tipps</span>
+          </div>
+        </div>
+        <div class="promo-slide" data-index="3">
+          <div class="promo-feature-item">
+            <span class="promo-feature-icon">💪</span>
+            <span>Equipment-Empfehlungen</span>
+          </div>
+          <div class="promo-feature-item">
+            <span class="promo-feature-icon">🦈</span>
+            <span>Premium-Coach-Feedback</span>
+          </div>
+        </div>
+        <div class="promo-dots" id="promo-dots">
+          <button class="promo-dot active" data-index="0" aria-label="Vorteil 1"></button>
+          <button class="promo-dot" data-index="1" aria-label="Vorteil 2"></button>
+          <button class="promo-dot" data-index="2" aria-label="Vorteil 3"></button>
+          <button class="promo-dot" data-index="3" aria-label="Vorteil 4"></button>
+        </div>
+      </div>
+      <div class="promo-cta">
+        <span class="promo-coming-soon">Bald verfügbar</span>
       </div>
       <div class="promo-fishes">
         <span class="small-fish fish-1">🐟</span>
@@ -514,6 +631,112 @@
                 Math.sin(dLng/2) * Math.sin(dLng/2);
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
+
+    // ══════════════════════════════════════
+    // SWIM KNOWLEDGE SLIDESHOW
+    // ══════════════════════════════════════
+    (function() {
+      const container = document.getElementById('swim-slideshow');
+      if (!container) return;
+      const slides = container.querySelectorAll('.swim-slide');
+      const dots = container.querySelectorAll('.swim-dot');
+      if (slides.length === 0) return;
+
+      let current = 0;
+      let interval = null;
+      const DELAY = 6000; // 6 seconds per slide
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function showSlide(index) {
+        slides.forEach(s => s.classList.remove('active'));
+        dots.forEach(d => d.classList.remove('active'));
+        slides[index].classList.add('active');
+        dots[index].classList.add('active');
+        current = index;
+      }
+
+      function nextSlide() {
+        showSlide((current + 1) % slides.length);
+      }
+
+      function startAuto() {
+        if (prefersReduced || interval) return;
+        interval = setInterval(nextSlide, DELAY);
+      }
+
+      function stopAuto() {
+        if (interval) { clearInterval(interval); interval = null; }
+      }
+
+      // Dot click navigation
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          stopAuto();
+          showSlide(parseInt(dot.dataset.index));
+          startAuto();
+        });
+      });
+
+      // Pause on hover
+      container.addEventListener('mouseenter', stopAuto);
+      container.addEventListener('mouseleave', startAuto);
+
+      // Start
+      if (!prefersReduced) startAuto();
+    })();
+
+    // ══════════════════════════════════════
+    // PREMIUM FEATURE SLIDESHOW
+    // ══════════════════════════════════════
+    (function() {
+      const container = document.getElementById('promo-slideshow');
+      if (!container) return;
+      const slides = container.querySelectorAll('.promo-slide');
+      const dots = container.querySelectorAll('.promo-dot');
+      if (slides.length === 0) return;
+
+      let current = 0;
+      let interval = null;
+      const DELAY = 5000; // 5 seconds per slide
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function showSlide(index) {
+        slides.forEach(s => s.classList.remove('active'));
+        dots.forEach(d => d.classList.remove('active'));
+        slides[index].classList.add('active');
+        dots[index].classList.add('active');
+        current = index;
+      }
+
+      function nextSlide() {
+        showSlide((current + 1) % slides.length);
+      }
+
+      function startAuto() {
+        if (prefersReduced || interval) return;
+        interval = setInterval(nextSlide, DELAY);
+      }
+
+      function stopAuto() {
+        if (interval) { clearInterval(interval); interval = null; }
+      }
+
+      // Dot click navigation
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          stopAuto();
+          showSlide(parseInt(dot.dataset.index));
+          startAuto();
+        });
+      });
+
+      // Pause on hover
+      container.addEventListener('mouseenter', stopAuto);
+      container.addEventListener('mouseleave', startAuto);
+
+      // Start
+      if (!prefersReduced) startAuto();
+    })();
 
     // ── Init: show Berlin by default ──
     setRegion('Berlin');
