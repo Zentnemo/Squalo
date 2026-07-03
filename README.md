@@ -269,17 +269,17 @@ In Namecheap → Domain → **Advanced DNS** → **Host Records**:
 
 | Typ | Host | Value | TTL |
 |---|---|---|---|
-| CNAME | `@` | `squalo-webapp.onrender.com` | Automatic |
-| CNAME | `www` | `squalo-webapp.onrender.com` | Automatic |
+| CNAME | `@` | `squalo-schwimmcoaching.com` | Automatic |
+| CNAME | `www` | `squalo-schwimmcoaching.com` | Automatic |
 
-> Render gibt dir nach dem ersten Deployment die exakte URL (z.B. `squalo-webapp.onrender.com`).
+> Die konkreten Werte werden vom Hosting-Anbieter vorgegeben. Setze auf Render die Custom Domain `squalo-schwimmcoaching.com` in den App-Einstellungen.
 
 ### Option B: Framer auf Hauptdomain, Flask auf Subdomain
 
 | Typ | Host | Value | TTL |
 |---|---|---|---|
 | A | `@` | (Framer IP) | Automatic |
-| CNAME | `app` | `squalo-webapp.onrender.com` | Automatic |
+| CNAME | `app` | `squalo-schwimmcoaching.com` | Automatic |
 
 Dann läuft die Flask-App unter `https://app.squalo-schwimmcoaching.com`.
 
