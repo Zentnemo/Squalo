@@ -934,6 +934,132 @@ def create_app() -> Flask:
             db.session.add(coach)
             print(f"[OK] Coach neu angelegt: {coach.name}")
         
+        # ── Coach seeden: Freiburg Coach ─────────────────────────
+        coach_slug_fb = "anna-platzhalter"
+        existing_coach_fb = Coach.query.filter_by(slug=coach_slug_fb).first()
+        if existing_coach_fb:
+            existing_coach_fb.name = "Anna Platzhalter"
+            existing_coach_fb.first_name = "Anna"
+            existing_coach_fb.last_name = "Platzhalter"
+            existing_coach_fb.title = "Schwimmtrainerin in Freiburg \u2013 Trainerlizenz B, Rettungsschwimmerin, Medizin & Biomechanik"
+            existing_coach_fb.bio = (
+                "Anna ist Schwimmtrainerin in Freiburg und verbindet langj\u00e4hrige "
+                "Schwimmerfahrung mit Trainerlizenz B, Rettungsschwimmer-Qualifikation "
+                "sowie einem Hintergrund in Biomechanik und Medizin. Sie unterst\u00fctzt "
+                "Anf\u00e4nger, Wiedereinsteiger, Kinder, Erwachsene und fortgeschrittene "
+                "Schwimmer dabei, ihre Technik, Wasserlage, Atmung und Sicherheit im "
+                "Wasser gezielt zu verbessern."
+            )
+            existing_coach_fb.strengths = (
+                "\u2022 Rund 20 Jahre Schwimmerfahrung\n"
+                "\u2022 5 Jahre Coaching-Erfahrung im Einzel- und Gruppentraining\n"
+                "\u2022 Trainerlizenz B Schwimmen\n"
+                "\u2022 Rettungsschwimmerin\n"
+                "\u2022 Hintergrund in Biomechanik und Medizin\n"
+                "\u2022 Ruhige, geduldige Anleitung in individuellem Tempo\n"
+                "\u2022 Gezielte Technikverbesserung: Wasserlage, Atmung, Bewegungs\u00f6konomie\n"
+                "\u2022 Flexible Trainingsorte in Freiburg und Umgebung\n"
+                "\u2022 Individuelle Trainingspl\u00e4ne auch au\u00dferhalb der Stunden\n"
+                "\u2022 \u00dcber 100 erfolgreich trainierte Sch\u00fcler"
+            )
+            existing_coach_fb.swim_style = (
+                "Mein Coaching verbindet ruhige Anleitung mit einem genauen Blick f\u00fcr "
+                "Bewegungsabl\u00e4ufe. Durch meinen biomechanischen und medizinischen "
+                "Hintergrund analysiere ich deine Technik pr\u00e4zise und erkl\u00e4re dir "
+                "verst\u00e4ndlich, woran wir arbeiten. Dabei geht es nicht darum, m\u00f6glichst "
+                "schnell m\u00f6glichst viel zu schwimmen, sondern deine Technik so zu "
+                "verbessern, dass du effizienter, entspannter und sicherer durchs Wasser "
+                "kommst.\n\n"
+                "Wir passen das Training an dein Level und dein Ziel an: Kraulen lernen, "
+                "Wasserlage verbessern, Atmung koordinieren, Technikfehler reduzieren, "
+                "sicherer werden oder deine Schwimmleistung f\u00fcr Fitness und Triathlon "
+                "verbessern. Wenn du zus\u00e4tzlich au\u00dferhalb unserer Stunden trainieren "
+                "m\u00f6chtest, kann ich dir passende \u00dcbungen und Trainingspl\u00e4ne mitgeben."
+            )
+            existing_coach_fb.experience = (
+                "\U0001F3C5 Rund 20 Jahre Schwimmerfahrung\n"
+                "\U0001F3C5 5 Jahre Erfahrung als Schwimmtrainerin\n"
+                "\U0001F3C5 Einzel- und Gruppentraining\n"
+                "\U0001F3C5 Trainerlizenz B Schwimmen\n"
+                "\U0001F3C5 Rettungsschwimmerin\n"
+                "\U0001F3C5 Studium der Biomechanik\n"
+                "\U0001F3C5 Medizinstudium\n"
+                "\U0001F3C5 \u00dcber 100 erfolgreich trainierte Sch\u00fcler\n"
+                "\U0001F4CD Verf\u00fcgbar in Freiburg und Umgebung"
+            )
+            existing_coach_fb.specialization = (
+                "Schwimmtechnik, Kraultechnik, Wasserlage, Atmung, Kinder- und "
+                "Erwachsenentraining, Techniktraining, medizinisch/biomechanisch "
+                "fundierte Bewegungsanalyse"
+            )
+            existing_coach_fb.cities_served = "Freiburg,Freiburg und Umgebung"
+            existing_coach_fb.image_url = "/static/images/squalo-logo.png"
+            existing_coach_fb.is_active = True
+            print(f"[OK] Coach aktualisiert: {existing_coach_fb.name}")
+        else:
+            coach_fb = Coach(
+                name="Anna Platzhalter",
+                slug=coach_slug_fb,
+                first_name="Anna",
+                last_name="Platzhalter",
+                title="Schwimmtrainerin in Freiburg \u2013 Trainerlizenz B, Rettungsschwimmerin, Medizin & Biomechanik",
+                bio=(
+                    "Anna ist Schwimmtrainerin in Freiburg und verbindet langj\u00e4hrige "
+                    "Schwimmerfahrung mit Trainerlizenz B, Rettungsschwimmer-Qualifikation "
+                    "sowie einem Hintergrund in Biomechanik und Medizin. Sie unterst\u00fctzt "
+                    "Anf\u00e4nger, Wiedereinsteiger, Kinder, Erwachsene und fortgeschrittene "
+                    "Schwimmer dabei, ihre Technik, Wasserlage, Atmung und Sicherheit im "
+                    "Wasser gezielt zu verbessern."
+                ),
+                strengths=(
+                    "\u2022 Rund 20 Jahre Schwimmerfahrung\n"
+                    "\u2022 5 Jahre Coaching-Erfahrung im Einzel- und Gruppentraining\n"
+                    "\u2022 Trainerlizenz B Schwimmen\n"
+                    "\u2022 Rettungsschwimmerin\n"
+                    "\u2022 Hintergrund in Biomechanik und Medizin\n"
+                    "\u2022 Ruhige, geduldige Anleitung in individuellem Tempo\n"
+                    "\u2022 Gezielte Technikverbesserung: Wasserlage, Atmung, Bewegungs\u00f6konomie\n"
+                    "\u2022 Flexible Trainingsorte in Freiburg und Umgebung\n"
+                    "\u2022 Individuelle Trainingspl\u00e4ne auch au\u00dferhalb der Stunden\n"
+                    "\u2022 \u00dcber 100 erfolgreich trainierte Sch\u00fcler"
+                ),
+                swim_style=(
+                    "Mein Coaching verbindet ruhige Anleitung mit einem genauen Blick f\u00fcr "
+                    "Bewegungsabl\u00e4ufe. Durch meinen biomechanischen und medizinischen "
+                    "Hintergrund analysiere ich deine Technik pr\u00e4zise und erkl\u00e4re dir "
+                    "verst\u00e4ndlich, woran wir arbeiten. Dabei geht es nicht darum, m\u00f6glichst "
+                    "schnell m\u00f6glichst viel zu schwimmen, sondern deine Technik so zu "
+                    "verbessern, dass du effizienter, entspannter und sicherer durchs Wasser "
+                    "kommst.\n\n"
+                    "Wir passen das Training an dein Level und dein Ziel an: Kraulen lernen, "
+                    "Wasserlage verbessern, Atmung koordinieren, Technikfehler reduzieren, "
+                    "sicherer werden oder deine Schwimmleistung f\u00fcr Fitness und Triathlon "
+                    "verbessern. Wenn du zus\u00e4tzlich au\u00dferhalb unserer Stunden trainieren "
+                    "m\u00f6chtest, kann ich dir passende \u00dcbungen und Trainingspl\u00e4ne mitgeben."
+                ),
+                experience=(
+                    "\U0001F3C5 Rund 20 Jahre Schwimmerfahrung\n"
+                    "\U0001F3C5 5 Jahre Erfahrung als Schwimmtrainerin\n"
+                    "\U0001F3C5 Einzel- und Gruppentraining\n"
+                    "\U0001F3C5 Trainerlizenz B Schwimmen\n"
+                    "\U0001F3C5 Rettungsschwimmerin\n"
+                    "\U0001F3C5 Studium der Biomechanik\n"
+                    "\U0001F3C5 Medizinstudium\n"
+                    "\U0001F3C5 \u00dcber 100 erfolgreich trainierte Sch\u00fcler\n"
+                    "\U0001F4CD Verf\u00fcgbar in Freiburg und Umgebung"
+                ),
+                specialization=(
+                    "Schwimmtechnik, Kraultechnik, Wasserlage, Atmung, Kinder- und "
+                    "Erwachsenentraining, Techniktraining, medizinisch/biomechanisch "
+                    "fundierte Bewegungsanalyse"
+                ),
+                cities_served="Freiburg,Freiburg und Umgebung",
+                image_url="/static/images/squalo-logo.png",
+                is_active=True,
+            )
+            db.session.add(coach_fb)
+            print(f"[OK] Coach neu angelegt: {coach_fb.name}")
+        
         db.session.commit()
 
         # ── Bewertungen seeden (idempotent) ────────────────────────

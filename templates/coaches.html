@@ -28,6 +28,9 @@
 
           <div class="coach-info">
             <h2 class="coach-name">{{ coach.name }}</h2>
+            {% if coach.cities_served %}
+              <p class="coach-location">📍 {{ coach.cities_list|join(' · ') }}</p>
+            {% endif %}
             {% if coach.title %}
               <p class="coach-title">{{ coach.title }}</p>
             {% endif %}
