@@ -4648,6 +4648,12 @@ main {
   border: 3px solid #ffffff;
 }
 
+.squalo-marker-therme {
+  background: #66e0ff;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.95), 0 0 0 5px #ff4444, 0 4px 12px rgba(0,0,0,0.35);
+}
+
 /* ══════════════════════════════════════
    COACHES PAGE STYLES
    ══════════════════════════════════════ */

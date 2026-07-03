@@ -4,8 +4,8 @@
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <h1 class="hero-title hero-anim hero-anim-sunrise">SQUALO SCHWIMMCOACHING</h1>
-      <p class="hero-tagline hero-anim hero-anim-fog">Trainiere in den besten Schwimmbädern Berlins</p>
-      <p class="hero-description hero-anim hero-anim-fog">{{ locations|length }} Berliner Schwimmlocations – Buche dein persönliches Training an deinem Wunschort</p>
+      <p class="hero-tagline hero-anim hero-anim-fog">Trainiere in den besten Schwimmbädern Berlins &amp; Freiburgs</p>
+      <p class="hero-description hero-anim hero-anim-fog">{{ locations|length }} Schwimmlocations – Buche dein persönliches Training an deinem Wunschort</p>
 
       {% if not current_user.is_authenticated %}
         <div class="cta-buttons hero-anim hero-anim-buoy">
@@ -52,7 +52,7 @@
 
     <section class="map-section">
       <h2 class="baywatch-title">🏖️ Squalo Baywatch</h2>
-      <p>Entdecke Berliner Schwimmbäder, Seen und Badestellen für dein nächstes Training.</p>
+      <p>Entdecke Schwimmbäder, Seen und Badestellen in Berlin und Freiburg für dein nächstes Training.</p>
       <div id="map"></div>
       <div class="map-legend">
         <strong>Legende</strong>
@@ -60,6 +60,7 @@
         <div class="legend-row"><span class="legend-dot" style="background:#063b7a;border-color:#ffd43b;"></span> Strandbad</div>
         <div class="legend-row"><span class="legend-dot" style="background:#66e0ff;border-color:#ffd43b;"></span> Sommerbad / Freibad</div>
         <div class="legend-row"><span class="legend-dot" style="background:#66e0ff;border-color:#ffffff;"></span> Schwimmbad / Hallenbad</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#66e0ff;border-color:#ff4444;"></span> Therme / Thermalbad</div>
       </div>
     </section>
 
@@ -139,7 +140,7 @@
 
   {# ── SEO: Warum Squalo? ── #}
   <section class="seo-section">
-    <h2>Schwimmtraining in Berlin – individuell, technikorientiert & an deinem Lieblingsort</h2>
+    <h2>Schwimmtraining in Berlin &amp; Freiburg – individuell, technikorientiert &amp; an deinem Lieblingsort</h2>
     <div class="seo-grid">
       <div class="seo-card">
         <h3>🏊 Technik & Kraulen</h3>
@@ -151,7 +152,7 @@
       </div>
       <div class="seo-card">
         <h3>🏖️ Training an Top-Locations</h3>
-        <p>Wähle aus über 30 Berliner Schwimmlocations: vom Hallenbad bis zum Badesee. Sommerbad Kreuzberg, Arena Badeschiff, Stadtbad Tiergarten – dein Training dort, wo du dich am wohlsten fühlst.</p>
+        <p>Wähle aus über 40 Schwimmlocations in Berlin und Freiburg: vom Hallenbad bis zum Badesee. Sommerbad Kreuzberg, Arena Badeschiff, Stadtbad Tiergarten, Westbad Freiburg – dein Training dort, wo du dich am wohlsten fühlst.</p>
       </div>
       <div class="seo-card">
         <h3>👤 Persönliches Coaching</h3>
@@ -161,7 +162,7 @@
   </section>
 
   <section class="locations-section">
-    <h2>Alle Berliner Schwimmorte</h2>
+    <h2>Alle Schwimmorte</h2>
     <p>Übersicht aller verfügbaren Trainings-Locations</p>
     
     {% if locations %}
@@ -265,6 +266,7 @@
       if (t === 'see' || t === 'badestelle') return 'squalo-marker-lake';
       if (t === 'strandbad') return 'squalo-marker-beach';
       if (t === 'sommerbad' || t === 'outdoor') return 'squalo-marker-summer';
+      if (t === 'therme' || t === 'thermalbad') return 'squalo-marker-therme';
       // Schwimmbad, Kombibad, Hallenbad, default
       return 'squalo-marker-indoor';
     }

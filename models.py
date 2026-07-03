@@ -21,6 +21,7 @@ class Location(db.Model):
     location_type = db.Column(db.String(64))
     address = db.Column(db.String(256))
     district = db.Column(db.String(128))
+    city = db.Column(db.String(128), default='Berlin')
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     official_status = db.Column(db.String(64))

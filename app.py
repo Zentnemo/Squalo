@@ -755,6 +755,25 @@ def create_app() -> Flask:
         except Exception as e:
             print(f"[MIGRATION] confirmation_email_sent_at (ignoriert): {e}")
 
+        # ── Migration: Location city column ─────────────────────────
+        try:
+            import sqlalchemy as sa
+            with db.engine.connect() as conn:
+                inspector = sa.inspect(db.engine)
+                columns = [c['name'] for c in inspector.get_columns('location')]
+                if 'city' not in columns:
+                    conn.execute(sa.text("ALTER TABLE location ADD COLUMN city VARCHAR(128) DEFAULT 'Berlin'"))
+                    conn.commit()
+                    print("[MIGRATION] Spalte city zu Location hinzugefuegt")
+                    # Set city='Berlin' for all existing locations without city
+                    conn.execute(sa.text("UPDATE location SET city = 'Berlin' WHERE city IS NULL"))
+                    conn.commit()
+                    print("[MIGRATION] Alle vorhandenen Locations auf city='Berlin' gesetzt")
+                else:
+                    print("[MIGRATION] Location city existiert bereits")
+        except Exception as e:
+            print(f"[MIGRATION] Location city (ignoriert): {e}")
+
         # ── Migration: Fix default notification email ─────────────
         try:
             current_email_val = AppSetting.get("booking_notification_email")
@@ -812,7 +831,8 @@ def create_app() -> Flask:
                 # Update existing location
                 changed = False
                 for field in ["location_type", "district", "address", "latitude", "longitude",
-                              "official_status", "verified_status", "water_temperature", "crowd_level", "maps_url"]:
+                              "official_status", "verified_status", "water_temperature", "crowd_level",
+                              "maps_url", "city"]:
                     val = data.get(field)
                     if val is not None and getattr(existing, field) != val:
                         setattr(existing, field, val)
@@ -824,6 +844,7 @@ def create_app() -> Flask:
                     name=data["name"],
                     location_type=data["location_type"],
                     district=data["district"],
+                    city=data.get("city", "Berlin"),
                     address=data.get("address", ""),
                     latitude=data.get("latitude"),
                     longitude=data.get("longitude"),
@@ -884,6 +905,7 @@ def create_app() -> Flask:
                 "🏅 5,0 ⭐ Bewertungen (8 Bewertungen)"
             )
             existing_coach.external_profile_url = "https://www.superprof.de/jahre-schwimmerfahrung-rettungschwimmer-und-viel-geduld-mit-mir-lernst-deinem-individuellen-tempo-deine-technik.html"
+            existing_coach.cities_served = "Berlin"
             existing_coach.image_url = "/static/images/moritz-zentner.jpg"
             existing_coach.is_active = True
             print(f"[OK] Coach aktualisiert: {existing_coach.name}")
@@ -934,21 +956,30 @@ def create_app() -> Flask:
             db.session.add(coach)
             print(f"[OK] Coach neu angelegt: {coach.name}")
         
-        # ── Coach seeden: Freiburg Coach ─────────────────────────
-        coach_slug_fb = "anna-platzhalter"
+        # ── Coach seeden: Clara Zentner (Freiburg) ──────────────
+        coach_slug_fb = "clara-zentner"
         existing_coach_fb = Coach.query.filter_by(slug=coach_slug_fb).first()
+        # Also check for old slug to migrate
+        if not existing_coach_fb:
+            old_fb = Coach.query.filter_by(slug="anna-platzhalter").first()
+            if old_fb:
+                old_fb.slug = coach_slug_fb
+                existing_coach_fb = old_fb
+                print("[OK] Anna Platzhalter Slug zu clara-zentner migriert")
         if existing_coach_fb:
-            existing_coach_fb.name = "Anna Platzhalter"
-            existing_coach_fb.first_name = "Anna"
-            existing_coach_fb.last_name = "Platzhalter"
+            existing_coach_fb.name = "Clara Zentner"
+            existing_coach_fb.slug = coach_slug_fb
+            existing_coach_fb.first_name = "Clara"
+            existing_coach_fb.last_name = "Zentner"
             existing_coach_fb.title = "Schwimmtrainerin in Freiburg \u2013 Trainerlizenz B, Rettungsschwimmerin, Medizin & Biomechanik"
             existing_coach_fb.bio = (
-                "Anna ist Schwimmtrainerin in Freiburg und verbindet langj\u00e4hrige "
-                "Schwimmerfahrung mit Trainerlizenz B, Rettungsschwimmer-Qualifikation "
-                "sowie einem Hintergrund in Biomechanik und Medizin. Sie unterst\u00fctzt "
-                "Anf\u00e4nger, Wiedereinsteiger, Kinder, Erwachsene und fortgeschrittene "
-                "Schwimmer dabei, ihre Technik, Wasserlage, Atmung und Sicherheit im "
-                "Wasser gezielt zu verbessern."
+                "Clara Zentner ist Schwimmtrainerin in Freiburg und Umgebung. "
+                "Sie verbindet langj\u00e4hrige Schwimmerfahrung mit Trainerlizenz B, "
+                "Rettungsschwimmer-Qualifikation sowie einem Hintergrund in "
+                "Biomechanik und Medizin. Sie unterst\u00fctzt Anf\u00e4nger, "
+                "Wiedereinsteiger, Kinder, Erwachsene und fortgeschrittene Schwimmer "
+                "dabei, ihre Wasserlage, Atmung, Technik und Sicherheit im Wasser "
+                "gezielt zu verbessern."
             )
             existing_coach_fb.strengths = (
                 "\u2022 Rund 20 Jahre Schwimmerfahrung\n"
@@ -992,24 +1023,25 @@ def create_app() -> Flask:
                 "Erwachsenentraining, Techniktraining, medizinisch/biomechanisch "
                 "fundierte Bewegungsanalyse"
             )
-            existing_coach_fb.cities_served = "Freiburg,Freiburg und Umgebung"
+            existing_coach_fb.cities_served = "Freiburg,Merzhausen,Gundelfingen,Denzlingen,Emmendingen,Teningen,Bad Krozingen"
             existing_coach_fb.image_url = "/static/images/squalo-logo.png"
             existing_coach_fb.is_active = True
             print(f"[OK] Coach aktualisiert: {existing_coach_fb.name}")
         else:
             coach_fb = Coach(
-                name="Anna Platzhalter",
+                name="Clara Zentner",
                 slug=coach_slug_fb,
-                first_name="Anna",
-                last_name="Platzhalter",
+                first_name="Clara",
+                last_name="Zentner",
                 title="Schwimmtrainerin in Freiburg \u2013 Trainerlizenz B, Rettungsschwimmerin, Medizin & Biomechanik",
                 bio=(
-                    "Anna ist Schwimmtrainerin in Freiburg und verbindet langj\u00e4hrige "
-                    "Schwimmerfahrung mit Trainerlizenz B, Rettungsschwimmer-Qualifikation "
-                    "sowie einem Hintergrund in Biomechanik und Medizin. Sie unterst\u00fctzt "
-                    "Anf\u00e4nger, Wiedereinsteiger, Kinder, Erwachsene und fortgeschrittene "
-                    "Schwimmer dabei, ihre Technik, Wasserlage, Atmung und Sicherheit im "
-                    "Wasser gezielt zu verbessern."
+                    "Clara Zentner ist Schwimmtrainerin in Freiburg und Umgebung. "
+                    "Sie verbindet langj\u00e4hrige Schwimmerfahrung mit Trainerlizenz B, "
+                    "Rettungsschwimmer-Qualifikation sowie einem Hintergrund in "
+                    "Biomechanik und Medizin. Sie unterst\u00fctzt Anf\u00e4nger, "
+                    "Wiedereinsteiger, Kinder, Erwachsene und fortgeschrittene Schwimmer "
+                    "dabei, ihre Wasserlage, Atmung, Technik und Sicherheit im Wasser "
+                    "gezielt zu verbessern."
                 ),
                 strengths=(
                     "\u2022 Rund 20 Jahre Schwimmerfahrung\n"
@@ -1053,7 +1085,7 @@ def create_app() -> Flask:
                     "Erwachsenentraining, Techniktraining, medizinisch/biomechanisch "
                     "fundierte Bewegungsanalyse"
                 ),
-                cities_served="Freiburg,Freiburg und Umgebung",
+                cities_served="Freiburg,Merzhausen,Gundelfingen,Denzlingen,Emmendingen,Teningen,Bad Krozingen",
                 image_url="/static/images/squalo-logo.png",
                 is_active=True,
             )
@@ -1144,6 +1176,7 @@ def create_app() -> Flask:
                     "name": loc.name,
                     "location_type": loc.location_type,
                     "district": loc.district,
+                    "city": loc.city or "Berlin",
                     "address": loc.address,
                     "latitude": float(loc.latitude),
                     "longitude": float(loc.longitude),

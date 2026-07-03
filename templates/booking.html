@@ -74,30 +74,30 @@
 
         <div class="form-group">
           <label for="preferred_location_1">Ort 1 (Pflicht) *</label>
-          <select id="preferred_location_1" name="preferred_location_1" required>
+          <select id="preferred_location_1" name="preferred_location_1" required onchange="filterCoachesByLocation()">
             <option value="">-- Bitte wählen --</option>
             {% for loc in locations %}
-              <option value="{{ loc.id }}">{{ loc.name }} ({{ loc.district }})</option>
+              <option value="{{ loc.id }}" data-city="{{ loc.city or 'Berlin' }}">{{ loc.name }} ({{ loc.district }})</option>
             {% endfor %}
           </select>
         </div>
 
         <div class="form-group">
           <label for="preferred_location_2">Ort 2 (optional)</label>
-          <select id="preferred_location_2" name="preferred_location_2">
+          <select id="preferred_location_2" name="preferred_location_2" onchange="filterCoachesByLocation()">
             <option value="">-- Optional --</option>
             {% for loc in locations %}
-              <option value="{{ loc.id }}">{{ loc.name }} ({{ loc.district }})</option>
+              <option value="{{ loc.id }}" data-city="{{ loc.city or 'Berlin' }}">{{ loc.name }} ({{ loc.district }})</option>
             {% endfor %}
           </select>
         </div>
 
         <div class="form-group">
           <label for="preferred_location_3">Ort 3 (optional)</label>
-          <select id="preferred_location_3" name="preferred_location_3">
+          <select id="preferred_location_3" name="preferred_location_3" onchange="filterCoachesByLocation()">
             <option value="">-- Optional --</option>
             {% for loc in locations %}
-              <option value="{{ loc.id }}">{{ loc.name }} ({{ loc.district }})</option>
+              <option value="{{ loc.id }}" data-city="{{ loc.city or 'Berlin' }}">{{ loc.name }} ({{ loc.district }})</option>
             {% endfor %}
           </select>
         </div>
@@ -110,9 +110,10 @@
           <select id="preferred_coach_id" name="preferred_coach_id">
             <option value="">-- Egal --</option>
             {% for coach in coaches %}
-              <option value="{{ coach.id }}" {% if request.args.get('coach_id')|string == coach.id|string %}selected{% endif %}>{{ coach.name }} – {{ coach.title or 'Schwimmcoach' }}</option>
+              <option value="{{ coach.id }}" data-cities="{{ coach.cities_served or '' }}" {% if request.args.get('coach_id')|string == coach.id|string %}selected{% endif %}>{{ coach.name }} – {{ coach.title or 'Schwimmcoach' }}</option>
             {% endfor %}
           </select>
+          <p id="coach-filter-hint" style="display:none;font-size:13px;color:#888;margin-top:6px;">📍 Coach-Auswahl wird nach Ort gefiltert</p>
         </div>
       </fieldset>
 
@@ -163,5 +164,71 @@ function updatePricePreview() {
     noteEl.style.display = 'none';
   }
 }
+
+// ── Coach filtering by selected location city ──
+function filterCoachesByLocation() {
+  const loc1 = document.getElementById('preferred_location_1');
+  const loc2 = document.getElementById('preferred_location_2');
+  const loc3 = document.getElementById('preferred_location_3');
+  const coachSelect = document.getElementById('preferred_coach_id');
+  const hint = document.getElementById('coach-filter-hint');
+
+  // Determine the city of the first selected location
+  let selectedCity = '';
+  if (loc1 && loc1.value) {
+    const opt = loc1.options[loc1.selectedIndex];
+    selectedCity = opt.getAttribute('data-city') || 'Berlin';
+  } else if (loc2 && loc2.value) {
+    const opt = loc2.options[loc2.selectedIndex];
+    selectedCity = opt.getAttribute('data-city') || 'Berlin';
+  } else if (loc3 && loc3.value) {
+    const opt = loc3.options[loc3.selectedIndex];
+    selectedCity = opt.getAttribute('data-city') || 'Berlin';
+  }
+
+  if (!selectedCity) {
+    // No location selected: show all coaches
+    for (let i = 0; i < coachSelect.options.length; i++) {
+      coachSelect.options[i].style.display = '';
+    }
+    hint.style.display = 'none';
+    return;
+  }
+
+  // Map city to keyword for matching against cities_served
+  const cityKeywords = [selectedCity.toLowerCase()];
+  if (selectedCity === 'Freiburg') {
+    cityKeywords.push('freiburg und umgebung');
+  }
+
+  let firstVisible = null;
+  let visibleCount = 0;
+  for (let i = 1; i < coachSelect.options.length; i++) {
+    const opt = coachSelect.options[i];
+    const citiesServed = (opt.getAttribute('data-cities') || '').toLowerCase();
+    const matches = cityKeywords.some(kw => citiesServed.includes(kw));
+    opt.style.display = matches ? '' : 'none';
+    if (matches && !firstVisible) firstVisible = opt;
+    if (matches) visibleCount++;
+  }
+
+  // Auto-select if only one coach matches
+  if (visibleCount === 1 && firstVisible) {
+    coachSelect.value = firstVisible.value;
+  } else if (visibleCount > 1) {
+    // Keep current selection if it's still visible
+    const currentOpt = coachSelect.options[coachSelect.selectedIndex];
+    if (currentOpt && currentOpt.value && currentOpt.style.display === 'none') {
+      coachSelect.value = '';
+    }
+  } else {
+    coachSelect.value = '';
+  }
+
+  hint.style.display = visibleCount < coachSelect.options.length - 1 ? 'block' : 'none';
+}
+
+// Run on page load if a location is pre-selected
+document.addEventListener('DOMContentLoaded', filterCoachesByLocation);
 </script>
 {% endblock %}
