@@ -8,15 +8,25 @@ Nach jedem 5er-Batch:
 2. Auf Bestätigung des Users warten
 3. Erst danach weitermachen
 
-## Berliner Locations – Erster Batch (offen)
+## Berliner Locations – Erster Batch (bearbeitet)
+
+| # | Location | Alt Lat | Alt Lng | Neu Lat | Neu Lng | Status |
+|---|----------|---------|---------|---------|---------|--------|
+| 1 | Stadtbad Tiergarten | 52.5043 | 13.3428 | **52.5247** | **13.3374** | ✅ korrigiert – war ~2.3km zu südlich |
+| 2 | Kombibad Seestraße | 52.5458 | 13.3478 | 52.5458 | 13.3478 | ✅ unverändert – korrekt |
+| 3 | Steingarten am Plötzensee | 52.5410 | 13.3320 | 52.5410 | 13.3320 | ✅ unverändert – korrekt |
+| 4 | Strandbad Plötzensee | 52.5435 | 13.3270 | **52.5450** | **13.3230** | ⚠️ needs_review – leicht korrigiert |
+| 5 | Strandbad Wannsee | 52.4277 | 13.1775 | 52.4277 | 13.1775 | ✅ unverändert – korrekt |
+
+## Nächster Batch (offen)
 
 | # | Location | Status |
 |---|----------|--------|
-| 1 | Stadtbad Tiergarten | ⏳ Koordinaten prüfen |
-| 2 | Kombibad Seestraße | ⏳ Koordinaten prüfen |
-| 3 | Steingarten am Plötzensee | ⏳ Koordinaten prüfen |
-| 4 | Strandbad Plötzensee | ⏳ Koordinaten prüfen |
-| 5 | Strandbad Wannsee | ⏳ Koordinaten prüfen |
+| 6 | Sommerbad Neukölln | ⏳ prüfen |
+| 7 | Schwimm- und Sprunghalle im Europasportpark | ⏳ prüfen |
+| 8 | Prinzenbad | ⏳ prüfen |
+| 9 | Stadtbad Charlottenburg – Alte Halle | ⏳ prüfen |
+| 10 | Flughafensee | ⏳ prüfen |
 
 ## Freiburg Locations – Koordinaten-Status
 

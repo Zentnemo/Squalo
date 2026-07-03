@@ -681,6 +681,78 @@ main {
   font-size: 15px;
 }
 
+/* ── Region Filter Bar ── */
+.region-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.region-btn {
+  padding: 8px 16px;
+  border: 2px solid rgba(0, 109, 143, 0.2);
+  border-radius: 20px;
+  background: #fff;
+  color: var(--squalo-deep-blue, #003d4d);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.region-btn:hover {
+  border-color: var(--turquoise, #00a8cc);
+  background: rgba(0, 168, 204, 0.08);
+}
+
+.region-btn.active {
+  background: var(--turquoise, #00a8cc);
+  color: #fff;
+  border-color: var(--turquoise, #00a8cc);
+}
+
+.region-btn-locate {
+  background: rgba(76, 175, 80, 0.08);
+  border-color: rgba(76, 175, 80, 0.3);
+  color: #2e7d32;
+}
+
+.region-btn-locate:hover {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: #4CAF50;
+}
+
+/* ── Map Status Bar ── */
+.map-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  margin-bottom: 10px;
+  background: rgba(76, 175, 80, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #2e7d32;
+}
+
+.map-status-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #2e7d32;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+/* ── User Location Marker ── */
+.squalo-marker-user {
+  background: #4CAF50;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px #4CAF50, 0 4px 12px rgba(0,0,0,0.3);
+}
+
 #map {
   width: 100%;
   height: 550px;
@@ -3678,6 +3750,22 @@ main {
   .map-legend {
     font-size: 11px;
     padding: 8px 10px;
+  }
+
+  /* ── Region Filter (Mobile) ── */
+  .region-filter-bar {
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .region-btn {
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+
+  .region-btn-locate {
+    width: 100%;
+    text-align: center;
   }
 
   /* ── Leaflet Popup (Mobile) ── */

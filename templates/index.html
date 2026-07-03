@@ -52,8 +52,22 @@
 
     <section class="map-section">
       <h2 class="baywatch-title">🏖️ Squalo Baywatch</h2>
-      <p>Entdecke Schwimmbäder, Seen und Badestellen in Berlin und Freiburg für dein nächstes Training.</p>
+      <p id="map-subtitle">Entdecke Schwimmbäder, Seen und Badestellen in Berlin und Freiburg für dein nächstes Training.</p>
+
+      <div class="region-filter-bar">
+        <button class="region-btn active" data-region="Berlin" onclick="setRegion('Berlin')">🏊 Berlin</button>
+        <button class="region-btn" data-region="Freiburg" onclick="setRegion('Freiburg')">🏊 Freiburg</button>
+        <button class="region-btn" data-region="all" onclick="setRegion('all')">🌍 Alle Regionen</button>
+        <button class="region-btn region-btn-locate" onclick="requestGeolocation()">📍 Standort in meiner Nähe</button>
+      </div>
+
       <div id="map"></div>
+
+      <div class="map-status-bar" id="map-status-bar" style="display:none;">
+        <span id="map-status-text"></span>
+        <button class="map-status-close" onclick="clearGeolocation()">×</button>
+      </div>
+
       <div class="map-legend">
         <strong>Legende</strong>
         <div class="legend-row"><span class="legend-dot" style="background:#063b7a;border-color:#28c76f;"></span> See / Badestelle</div>
@@ -61,6 +75,7 @@
         <div class="legend-row"><span class="legend-dot" style="background:#66e0ff;border-color:#ffd43b;"></span> Sommerbad / Freibad</div>
         <div class="legend-row"><span class="legend-dot" style="background:#66e0ff;border-color:#ffffff;"></span> Schwimmbad / Hallenbad</div>
         <div class="legend-row"><span class="legend-dot" style="background:#66e0ff;border-color:#ff4444;"></span> Therme / Thermalbad</div>
+        <div class="legend-row" id="legend-user" style="display:none;"><span class="legend-dot" style="background:#4CAF50;border-color:#ffffff;border-width:3px;"></span> Dein Standort</div>
       </div>
     </section>
 
@@ -162,19 +177,19 @@
   </section>
 
   <section class="locations-section">
-    <h2>Alle Schwimmorte</h2>
-    <p>Übersicht aller verfügbaren Trainings-Locations</p>
+    <h2 id="locations-heading">Schwimmorte in Berlin</h2>
+    <p id="locations-subtitle">Übersicht aller verfügbaren Trainings-Locations</p>
     
     {% if locations %}
       <div class="locations-grid" id="locations-grid">
         {% for loc in locations %}
-          <div class="location-card{% if loop.index > 6 %} location-hidden{% endif %}">
+          <div class="location-card{% if loop.index > 6 %} location-hidden{% endif %}" data-region="{{ loc.city or 'Berlin' }}">
             <div class="location-header">
               <h3>{{ loc.name }}</h3>
               <span class="location-type">{{ loc.location_type }}</span>
             </div>
             <div class="location-body">
-              <p><strong>Bezirk:</strong> {{ loc.district }}</p>
+              <p><strong>Ort:</strong> {{ loc.district }}, {{ loc.city or 'Berlin' }}</p>
               <p><strong>Adresse:</strong> {{ loc.address or '–' }}</p>
               <p><strong>Status:</strong> 
                 <span class="status-badge status-{{ loc._opening_class }}">
@@ -196,22 +211,9 @@
           </div>
         {% endfor %}
       </div>
-      {% if locations|length > 6 %}
-        <div class="locations-toggle">
-          <button id="toggle-locations" class="btn btn-secondary" onclick="
-            const grid = document.getElementById('locations-grid');
-            const hidden = grid.querySelectorAll('.location-hidden');
-            const btn = this;
-            if (hidden.length > 0) {
-              hidden.forEach(c => c.classList.remove('location-hidden'));
-              btn.textContent = 'Weniger anzeigen';
-            } else {
-              grid.querySelectorAll('.location-card').forEach((c, i) => { if (i >= 6) c.classList.add('location-hidden'); });
-              btn.textContent = 'Alle {{ locations|length }} Schwimmorte anzeigen';
-            }
-          ">Alle {{ locations|length }} Schwimmorte anzeigen</button>
-        </div>
-      {% endif %}
+      <div class="locations-toggle">
+        <button id="toggle-locations" class="btn btn-secondary" onclick="toggleLocations()">Alle {{ locations|length }} Schwimmorte anzeigen</button>
+      </div>
     {% else %}
       <p>Keine Schwimmorte verfügbar.</p>
     {% endif %}
@@ -219,24 +221,35 @@
   </div>
 
   <script>
-    // Initialize Leaflet Map – Berlin centered
+    // ── Config ──
+    const REGION_CENTERS = {
+      'Berlin':   { lat: 52.5200, lng: 13.4050, zoom: 11 },
+      'Freiburg': { lat: 47.9950, lng: 7.8500, zoom: 12 },
+      'all':      { lat: 50.5000, lng: 12.0000, zoom: 6 }
+    };
+    let currentRegion = 'Berlin';
+    let allMarkers = [];
+    let userMarker = null;
+    let userCircle = null;
+
+    // ── Initialize Leaflet Map ──
     const map = L.map('map', {
       zoomControl: true,
       scrollWheelZoom: true
-    }).setView([52.5200, 13.4050], 11);
+    }).setView([REGION_CENTERS.Berlin.lat, REGION_CENTERS.Berlin.lng], REGION_CENTERS.Berlin.zoom);
 
-    // Orange-tinted map tiles via CartoDB Voyager + CSS filter on #map
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+      attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
       subdomains: 'abcd',
       maxZoom: 19
     }).addTo(map);
 
-    // ── Berlin District Boundaries ──
+    // ── Berlin District Boundaries (only load for Berlin view) ──
+    let berlinGeojsonLayer = null;
     fetch("{{ url_for('static', filename='data/berlin_districts.geojson') }}")
       .then(r => r.json())
       .then(geojson => {
-        L.geoJSON(geojson, {
+        berlinGeojsonLayer = L.geoJSON(geojson, {
           style: {
             color: '#ff6a00',
             weight: 2,
@@ -246,107 +259,263 @@
           },
           onEachFeature: function (feature, layer) {
             const name = feature.properties.name || feature.properties.BEZIRK || '';
-            layer.bindTooltip(name, {
-              permanent: false,
-              direction: 'center',
-              className: 'district-label'
-            });
+            layer.bindTooltip(name, { permanent: false, direction: 'center', className: 'district-label' });
           }
-        }).addTo(map);
+        });
       })
       .catch(err => console.warn('District GeoJSON failed to load:', err));
 
-    // ── Swimming Locations ──
+    // ── Swimming Locations Data ──
     const locations = {{ locations_for_map|tojson }};
-    console.log("Squalo locations geladen:", locations.length, locations);
+    console.log("Squalo locations geladen:", locations.length);
 
-    // ── Marker icons by location type (CSS-Klassen) ──
+    // ── Marker icons by location type ──
     function getMarkerClass(locationType) {
       const t = (locationType || '').toLowerCase();
       if (t === 'see' || t === 'badestelle') return 'squalo-marker-lake';
       if (t === 'strandbad') return 'squalo-marker-beach';
       if (t === 'sommerbad' || t === 'outdoor') return 'squalo-marker-summer';
       if (t === 'therme' || t === 'thermalbad') return 'squalo-marker-therme';
-      // Schwimmbad, Kombibad, Hallenbad, default
       return 'squalo-marker-indoor';
     }
 
     function getMarkerIcon(locationType) {
-      const cls = getMarkerClass(locationType);
       return L.divIcon({
-        className: 'squalo-marker ' + cls,
+        className: 'squalo-marker ' + getMarkerClass(locationType),
         iconSize: [22, 22],
         iconAnchor: [11, 11],
         popupAnchor: [0, -14]
       });
     }
 
-    // Helper: crowd color class (fallback)
-    function crowdClass(crowd) {
-      if (!crowd) return '';
-      const c = crowd.toLowerCase().trim();
-      if (c === 'niedrig') return 'crowd-low';
-      if (c === 'mittel')  return 'crowd-mid';
-      if (c === 'hoch')    return 'crowd-high';
-      return '';
-    }
-
-    // Add markers for each location
-    locations.forEach(function(loc) {
-      if (!loc.latitude || !loc.longitude) return;  // skip if no coordinates
-
-      const marker = L.marker([loc.latitude, loc.longitude], { icon: getMarkerIcon(loc.location_type) }).addTo(map);
-
-      // ── Use pre-computed status from the server ──
+    // ── Create markers ──
+    function createMarker(loc) {
+      if (!loc.latitude || !loc.longitude) return null;
+      const marker = L.marker([loc.latitude, loc.longitude], { icon: getMarkerIcon(loc.location_type) });
       const openingStatus = loc._opening_status_short || loc._opening_status || 'unbekannt';
       const openingClass  = loc._opening_class || 'open';
-      const waterTemp     = loc._water_temperature_label || '–';
+      const waterTemp     = loc._water_temperature_label || '\u2013';
       const crowdLabel    = loc._crowd_level_label || 'unbekannt';
       const crowdCss      = loc._crowd_class ? 'crowd-badge crowd-' + loc._crowd_class : '';
-
-      const popup = `
+      marker.bindPopup(`
         <div class="popup-card">
           <h4 class="popup-title">${loc.name}</h4>
           <div class="popup-meta">
             <span class="popup-type">${loc.location_type}</span>
-            <span class="popup-district">${loc.district}</span>
+            <span class="popup-district">${loc.district}, ${loc.city || 'Berlin'}</span>
           </div>
           <table class="popup-table">
-            <tr>
-              <td>Status</td>
-              <td><span class="status-badge status-${openingClass}">${openingStatus}</span></td>
-            </tr>
-            <tr>
-              <td>Wassertemperatur</td>
-              <td>${waterTemp}</td>
-            </tr>
-            <tr>
-              <td>Auslastung</td>
-              <td><span class="${crowdCss}">${crowdLabel}</span></td>
-            </tr>
+            <tr><td>Status</td><td><span class="status-badge status-${openingClass}">${openingStatus}</span></td></tr>
+            <tr><td>Wassertemperatur</td><td>${waterTemp}</td></tr>
+            <tr><td>Auslastung</td><td><span class="${crowdCss}">${crowdLabel}</span></td></tr>
           </table>
           <div class="popup-actions">
             <a href="${loc.maps_url}" target="_blank" class="popup-route">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               Route
             </a>
             <a href="${loc.booking_url}" class="popup-book">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
-              </svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               Termin buchen
             </a>
           </div>
         </div>
-      `;
-      marker.bindPopup(popup, { maxWidth: 300 });
-    });
+      `, { maxWidth: 300 });
+      return marker;
+    }
 
+    // ── Filter markers by region ──
+    function filterMarkers(region) {
+      // Remove existing markers
+      allMarkers.forEach(m => map.removeLayer(m));
+      allMarkers = [];
+
+      const filtered = region === 'all'
+        ? locations
+        : locations.filter(l => (l.city || 'Berlin') === region);
+
+      filtered.forEach(loc => {
+        const m = createMarker(loc);
+        if (m) {
+          m.addTo(map);
+          allMarkers.push(m);
+        }
+      });
+
+      // Berlin district boundaries: show only for Berlin/all
+      if (berlinGeojsonLayer) {
+        if (region === 'Berlin' || region === 'all') {
+          berlinGeojsonLayer.addTo(map);
+        } else {
+          map.removeLayer(berlinGeojsonLayer);
+        }
+      }
+    }
+
+    // ── Region filter ──
+    function setRegion(region) {
+      currentRegion = region;
+
+      // Update button active state
+      document.querySelectorAll('.region-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.region === region);
+      });
+
+      // Fly to region center
+      const center = REGION_CENTERS[region];
+      if (center) {
+        map.flyTo([center.lat, center.lng], center.zoom, { duration: 1.2 });
+      }
+
+      // Update markers
+      filterMarkers(region);
+
+      // Update location list
+      filterLocationCards(region);
+
+      // Update headings
+      updateHeadings(region);
+    }
+
+    function updateHeadings(region) {
+      const heading = document.getElementById('locations-heading');
+      const subtitle = document.getElementById('locations-subtitle');
+      const mapSub = document.getElementById('map-subtitle');
+      if (region === 'all') {
+        heading.textContent = 'Alle Schwimmorte';
+        subtitle.textContent = 'Übersicht aller verfügbaren Trainings-Locations';
+        mapSub.textContent = 'Entdecke Schwimmbäder, Seen und Badestellen in Berlin und Freiburg für dein nächstes Training.';
+      } else {
+        heading.textContent = 'Schwimmorte in ' + region;
+        subtitle.textContent = 'Übersicht aller verfügbaren Trainings-Locations in ' + region;
+        mapSub.textContent = 'Entdecke Schwimmbäder, Seen und Badestellen in ' + region + ' für dein nächstes Training.';
+      }
+    }
+
+    // ── Location card filtering ──
+    function filterLocationCards(region) {
+      const cards = document.querySelectorAll('.location-card');
+      let visibleCount = 0;
+      cards.forEach(card => {
+        const cardRegion = card.dataset.region || 'Berlin';
+        const show = region === 'all' || cardRegion === region;
+        card.style.display = show ? '' : 'none';
+        if (show) visibleCount++;
+      });
+      // Reset toggle button
+      const toggleBtn = document.getElementById('toggle-locations');
+      if (toggleBtn) {
+        toggleBtn.textContent = visibleCount + ' Schwimmorte anzeigen';
+      }
+    }
+
+    // ── Toggle show all location cards ──
+    function toggleLocations() {
+      const grid = document.getElementById('locations-grid');
+      const hidden = grid.querySelectorAll('.location-hidden');
+      const btn = document.getElementById('toggle-locations');
+      if (hidden.length > 0) {
+        hidden.forEach(c => c.classList.remove('location-hidden'));
+        btn.textContent = 'Weniger anzeigen';
+      } else {
+        grid.querySelectorAll('.location-card').forEach((c, i) => {
+          if (i >= 6 && c.style.display !== 'none') c.classList.add('location-hidden');
+        });
+        btn.textContent = document.getElementById('locations-heading').textContent + ' anzeigen';
+      }
+    }
+
+    // ── Geolocation ──
+    function requestGeolocation() {
+      if (!navigator.geolocation) {
+        alert('Dein Browser unterstützt keine Standortfreigabe.');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(onGeoSuccess, onGeoError, {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 300000
+      });
+    }
+
+    function onGeoSuccess(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const accuracy = position.coords.accuracy || 5000;
+
+      // Add user marker
+      if (userMarker) map.removeLayer(userMarker);
+      if (userCircle) map.removeLayer(userCircle);
+
+      userMarker = L.marker([lat, lng], {
+        icon: L.divIcon({
+          className: 'squalo-marker squalo-marker-user',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10],
+          popupAnchor: [0, -12]
+        })
+      }).addTo(map);
+      userMarker.bindPopup('<strong>Du bist ungefähr hier</strong>', { closeOnClick: true });
+
+      userCircle = L.circle([lat, lng], {
+        radius: 6000,
+        color: '#4CAF50',
+        fillColor: '#4CAF50',
+        fillOpacity: 0.08,
+        weight: 1,
+        dashArray: '6 4'
+      }).addTo(map);
+
+      // Show user legend
+      document.getElementById('legend-user').style.display = '';
+
+      // Show status bar
+      const statusBar = document.getElementById('map-status-bar');
+      statusBar.style.display = 'flex';
+      document.getElementById('map-status-text').textContent = 'Standort erkannt – Schwimmorte in deiner Nähe';
+
+      // Determine closest region
+      const distBerlin = getDistance(lat, lng, 52.52, 13.405);
+      const distFreiburg = getDistance(lat, lng, 47.995, 7.85);
+      const nearestRegion = distFreiburg < distBerlin ? 'Freiburg' : 'Berlin';
+
+      // If user is within 50km of a region center, switch to that region
+      const minDist = Math.min(distBerlin, distFreiburg);
+      if (minDist < 50) {
+        setRegion(nearestRegion);
+        map.flyTo([lat, lng], 13, { duration: 1.5 });
+      } else {
+        // Show all and zoom to user
+        setRegion('all');
+        map.flyTo([lat, lng], 11, { duration: 1.5 });
+      }
+    }
+
+    function onGeoError(error) {
+      // Silent fallback – no error message
+      console.log('Geolocation nicht verfügbar oder abgelehnt:', error.message);
+    }
+
+    function clearGeolocation() {
+      if (userMarker) { map.removeLayer(userMarker); userMarker = null; }
+      if (userCircle) { map.removeLayer(userCircle); userCircle = null; }
+      document.getElementById('legend-user').style.display = 'none';
+      document.getElementById('map-status-bar').style.display = 'none';
+      setRegion(currentRegion);
+    }
+
+    // ── Haversine distance (km) ──
+    function getDistance(lat1, lng1, lat2, lng2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLng = (lng2 - lng1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLng/2) * Math.sin(dLng/2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    // ── Init: show Berlin by default ──
+    setRegion('Berlin');
   </script>
 {% endblock %}
