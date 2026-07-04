@@ -4697,20 +4697,22 @@ main {
 
 .shop-card-image {
   flex-shrink: 0;
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   border-radius: 10px;
   overflow: hidden;
-  background: var(--light-gray);
+  background: #f0f4f7;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid rgba(0,109,143,0.08);
 }
 
 .shop-card-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 4px;
   display: block;
 }
 
