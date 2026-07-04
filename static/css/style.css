@@ -4697,8 +4697,8 @@ main {
 
 .shop-card-image {
   flex-shrink: 0;
-  width: 100px;
-  height: 100px;
+  width: 96px;
+  height: 96px;
   border-radius: 10px;
   overflow: hidden;
   background: #f0f4f7;
@@ -4712,7 +4712,7 @@ main {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 4px;
+  padding: 6px;
   display: block;
 }
 
