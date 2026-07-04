@@ -28,55 +28,67 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
 # ── Shop products (MVP – hardcoded for now) ───────────────────────
 SHOP_PRODUCTS = [
-    # Flossen
+    # ── Schwimmbrillen ──
     {
-        "id": "flossen-silifins",
-        "name": "Schwimmflossen Silifins",
-        "category": "Flossen",
-        "description": "Kurze Schwimmflossen für Techniktraining, Beinschlag und Wasserlage. Gut geeignet für Kraultechnik und erste Technikübungen im Training.",
-        "link": "https://www.decathlon.de/p/schwimmflossen-silifins-blau-gelb/122646/c209c86c132m8574328",
+        "id": "brille-arena-cobra",
+        "name": "Arena Cobra Swipe Gold",
+        "category": "Schwimmbrillen",
+        "description": "Premium verspiegelte Wettkampfbrille für ambitioniertes und sportliches Schwimmen. Hervorragende Sicht unter Wasser.",
+        "link": "https://www.decathlon.de/p/schwimmbrille-verspiegelt-arena-cobra-swipe-gold/X8653040/c1m8653040",
+        "image": "images/shop/brille-arena-cobra-gold.png",
+        "price": 45.0,
         "note": "",
     },
-    {
-        "id": "flossen-handpaddles",
-        "name": "Handpaddles / Handflossen",
-        "category": "Flossen",
-        "description": "Trainingshilfe für Wassergefühl, Armzug und Druckphase. Nur nach Absprache im Training verwenden.",
-        "link": "",
-        "note": "Link wird ergänzt",
-    },
-    # Trainingsausrüstung
-    {
-        "id": "trainig-pullbuoy",
-        "name": "Pull Buoy 500",
-        "category": "Trainingsausrüstung",
-        "description": "Poolboje/Pullbuoy für Techniktraining, Wasserlage und isoliertes Armtraining. Besonders hilfreich für Kraultechnik und Triathlontraining.",
-        "link": "https://www.decathlon.de/p/pull-buoy-grosse-m-500-schwarz-gelb/336080/c382c132m8666065",
-        "note": "",
-    },
-    {
-        "id": "trainig-schwimmbrett",
-        "name": "Schwimmbrett blau",
-        "category": "Trainingsausrüstung",
-        "description": "Klassisches Schwimmbrett für Beinschlagtraining, Technikübungen und Wasserlage.",
-        "link": "https://www.decathlon.de/p/schwimmbrett-blau/351550/c195m8853957",
-        "note": "",
-    },
-    # Schwimmbrillen
     {
         "id": "brille-speedo-biofuse",
         "name": "Speedo Biofuse 2.0 Schwimmbrille",
         "category": "Schwimmbrillen",
         "description": "Komfortable Schwimmbrille mit getönten Gläsern. Gute Allround-Option für regelmäßiges Training.",
         "link": "https://www.decathlon.de/p/schwimmbrille-speedo-getont-biofuse-2-0-schwarz/X8815095/c1m8815095",
+        "image": "images/shop/brille-speedo-biofuse-black.png",
+        "price": 25.0,
+        "note": "",
+    },
+    # ── Flossen & Handpaddles ──
+    {
+        "id": "flossen-silifins",
+        "name": "Schwimmflossen",
+        "category": "Flossen & Handpaddles",
+        "description": "Kurze Schwimmflossen für Techniktraining, Beinschlag und Wasserlage. Gut geeignet für Kraultechnik und erste Technikübungen im Training.",
+        "link": "https://www.decathlon.de/p/schwimmflossen-silifins-blau-gelb/122646/c209c86c132m8574328",
+        "image": "images/shop/flossen-black.png",
+        "price": 25.0,
         "note": "",
     },
     {
-        "id": "brille-arena-cobra",
-        "name": "Arena Cobra Swipe Gold",
-        "category": "Schwimmbrillen",
-        "description": "Hochwertige verspiegelte Schwimmbrille für ambitioniertes Training, Techniktraining und sportliches Schwimmen.",
-        "link": "https://www.decathlon.de/p/schwimmbrille-verspiegelt-arena-cobra-swipe-gold/X8653040/c1m8653040",
+        "id": "flossen-handpaddles",
+        "name": "Handpaddles",
+        "category": "Flossen & Handpaddles",
+        "description": "Trainingshilfe für Wassergefühl, Armzug und Druckphase. Nur nach Absprache im Training verwenden.",
+        "link": "",
+        "image": "images/shop/handpaddles-black.png",
+        "price": 30.0,
+        "note": "Link wird ergänzt",
+    },
+    # ── Trainingsausrüstung ──
+    {
+        "id": "trainig-pullbuoy",
+        "name": "Pullbuoy",
+        "category": "Trainingsausrüstung",
+        "description": "Pullbuoy für Techniktraining, Wasserlage und isoliertes Armtraining. Besonders hilfreich für Kraultechnik und Triathlontraining.",
+        "link": "https://www.decathlon.de/p/pull-buoy-grosse-m-500-schwarz-gelb/336080/c382c132m8666065",
+        "image": "images/shop/pullbuoy-black-yellow.png",
+        "price": 10.0,
+        "note": "",
+    },
+    {
+        "id": "trainig-schwimmbrett",
+        "name": "Schwimmbrett",
+        "category": "Trainingsausrüstung",
+        "description": "Klassisches Schwimmbrett für Beinschlagtraining, Technikübungen und Wasserlage.",
+        "link": "https://www.decathlon.de/p/schwimmbrett-blau/351550/c195m8853957",
+        "image": "images/shop/schwimmbrett-blue.png",
+        "price": 10.0,
         "note": "",
     },
 ]
@@ -358,8 +370,18 @@ def send_customer_rejection_email(booking, admin_note=None):
 def _send_shop_customer_email(order, products):
     """Send confirmation email to customer after shop order."""
     first_name = order.customer_name.split()[0] if order.customer_name else 'Hallo'
-    product_lines = "\n".join(f"- {p['name']} ({p['category']})" for p in products)
-    product_list = "\n".join(f"  - {p['name']}" for p in products)
+    product_lines = []
+    total = 0.0
+    for p in products:
+        price = p.get('price', 0)
+        total += price
+        line = f"- {p['name']} ({p['category']})"
+        if price:
+            line += f" – {price:.0f} €"
+        product_lines.append(line)
+    product_list = "\n".join(product_lines)
+
+    total_line = f"\nGesamtpreis (ca.): {total:.0f} €\n" if total > 0 else ""
 
     body = (
         f"Hallo {first_name},\n"
@@ -368,7 +390,7 @@ def _send_shop_customer_email(order, products):
         f"\n"
         f"Ausgewählte Produkte:\n"
         f"{product_list}\n"
-        f"\n"
+        f"{total_line}"
         f"Ich bringe dir die ausgewählten Produkte zur nächsten passenden Schwimmstunde mit. "
         f"Wir schauen dann gemeinsam, ob sie gut zu deinem Training und deinem Level passen.\n"
         f"\n"
@@ -387,7 +409,18 @@ def _send_shop_customer_email(order, products):
 def _send_shop_admin_email(order, products):
     """Send notification to admin/coach about new shop order."""
     admin_email = get_admin_email()
-    product_list = "\n".join(f"  - {p['name']} ({p['category']})" for p in products)
+    product_lines = []
+    total = 0.0
+    for p in products:
+        price = p.get('price', 0)
+        total += price
+        line = f"  - {p['name']} ({p['category']})"
+        if price:
+            line += f" – {price:.0f} €"
+        product_lines.append(line)
+    product_list = "\n".join(product_lines)
+
+    total_line = f"\nGesamtpreis (ca.): {total:.0f} €" if total > 0 else ""
     now_str = order.created_at.strftime('%d.%m.%Y %H:%M') if order.created_at else '–'
 
     body = (
@@ -399,8 +432,8 @@ def _send_shop_admin_email(order, products):
         f"\n"
         f"Ausgewählte Produkte:\n"
         f"{product_list}\n"
-        f"\n"
-        f"Hinweis: Zum nächsten Training mitbringen.\n"
+        f"{total_line}"
+        f"\nHinweis: Zum nächsten Training mitbringen.\n"
     )
 
     if order.note:
@@ -2232,6 +2265,8 @@ def create_app() -> Flask:
             "Disallow: /admin\n"
             "Disallow: /dashboard\n"
             "Disallow: /feed\n"
+            "Disallow: /login\n"
+            "Disallow: /register\n"
             f"\nSitemap: {base}/sitemap.xml\n"
         )
         return Response(content, mimetype='text/plain')

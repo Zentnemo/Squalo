@@ -7,7 +7,7 @@
     <meta name="description" content="{% block meta_description %}Personalisiertes Schwimmcoaching in Berlin. Buche dein Training an den besten Schwimmbädern und Badeseen Berlins. Technik, Kraulen, Triathlon und individuelle Trainingspläne.{% endblock %}">
     <meta name="keywords" content="Schwimmcoaching Berlin, Schwimmtrainer Berlin, Kraulen lernen Berlin, Triathlon Schwimmen Berlin, Personal Swimming Coach Berlin, Schwimmtraining Berlin">
     <meta name="author" content="Squalo Schwimmcoaching">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="{% block robots_meta %}index, follow{% endblock %}">
     {% set public_base = get_public_base_url() if get_public_base_url is defined else 'https://squalo-schwimmcoaching.com' %}
     <link rel="canonical" href="{{ public_base }}{{ request.path }}">
     {# ── Favicon ── #}
@@ -128,5 +128,7 @@
     <footer class="site-footer">
         <p>&copy; 2026 Squalo Schwimmcoaching Berlin · <a href="{{ url_for('impressum') }}">Impressum</a></p>
     </footer>
+
+    {% block json_ld %}{% endblock %}
 </body>
 </html>

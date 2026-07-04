@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+{% block title %}Squalo Schwimmcoaching Berlin &amp; Freiburg – Personal Schwimmtraining{% endblock %}
+{% block meta_description %}Individuelles Schwimmcoaching in Berlin und Freiburg: Techniktraining, Kraulen lernen, Triathlon-Vorbereitung und Personal Training an ausgewählten Schwimmbädern und Badeseen.{% endblock %}
+{% block og_title %}Squalo Schwimmcoaching Berlin &amp; Freiburg – Personal Schwimmtraining{% endblock %}
+{% block og_description %}Individuelles Schwimmcoaching in Berlin und Freiburg: Techniktraining, Kraulen lernen, Triathlon-Vorbereitung und Personal Training an ausgewählten Schwimmbädern und Badeseen.{% endblock %}
+{% block twitter_title %}Squalo Schwimmcoaching Berlin &amp; Freiburg – Personal Schwimmtraining{% endblock %}
+{% block twitter_description %}Individuelles Schwimmcoaching in Berlin und Freiburg: Techniktraining, Kraulen lernen, Triathlon-Vorbereitung und Personal Training an ausgewählten Schwimmbädern und Badeseen.{% endblock %}
 {% block content %}
   <section class="hero">
     <div class="hero-overlay"></div>
@@ -741,4 +747,18 @@
     // ── Init: show Berlin by default ──
     setRegion('Berlin');
   </script>
+{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SportsActivityLocation",
+  "name": "Squalo Schwimmcoaching",
+  "description": "Personal Schwimmtraining, Techniktraining und Triathlon-Coaching in Berlin und Freiburg.",
+  "url": "https://squalo-schwimmcoaching.com",
+  "areaServed": ["Berlin", "Freiburg"],
+  "sport": "Swimming"
+}
+</script>
 {% endblock %}
