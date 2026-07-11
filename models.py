@@ -260,3 +260,25 @@ class ShopOrderItem(db.Model):
     product_link = db.Column(db.String(512), nullable=True)
     quantity = db.Column(db.Integer, default=1)
 
+
+class StudentFile(db.Model):
+    """A file uploaded by a coach for a student – lesson log or training plan PDF."""
+    __tablename__ = 'student_file'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    booking_id = db.Column(db.Integer, db.ForeignKey('booking.id'), nullable=True, index=True)
+    file_type = db.Column(db.String(32), nullable=False)  # 'lesson_log' | 'training_plan'
+    title = db.Column(db.String(256), nullable=False)
+    topic = db.Column(db.String(512), nullable=True)
+    original_filename = db.Column(db.String(256), nullable=False)
+    mime_type = db.Column(db.String(64), nullable=False, default='application/pdf')
+    file_size = db.Column(db.Integer, nullable=False)
+    file_data = db.Column(db.LargeBinary, nullable=False)
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
+    uploaded_by_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    is_current_plan = db.Column(db.Boolean, default=False)
+
+    user = db.relationship('User', foreign_keys=[user_id], backref='student_files')
+    uploaded_by = db.relationship('User', foreign_keys=[uploaded_by_id])
+    booking = db.relationship('Booking', foreign_keys=[booking_id], backref='lesson_logs')
+

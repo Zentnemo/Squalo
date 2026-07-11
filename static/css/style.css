@@ -2836,6 +2836,11 @@ main {
   opacity: 0.75;
 }
 
+.card-current-plan {
+  border-left: 4px solid var(--squalo-neon-orange, #ff9f00);
+  background: linear-gradient(135deg, rgba(255,159,0,0.04), rgba(255,159,0,0.01));
+}
+
 /* ── Calendar Export Button ── */
 .btn-calendar {
   display: inline-flex;

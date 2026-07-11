@@ -20,7 +20,7 @@ from pathlib import Path
 
 from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
-from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview, SiteSession, Invoice, ShopOrder, ShopOrderItem
+from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview, SiteSession, Invoice, ShopOrder, ShopOrderItem, StudentFile
 from location_status import compute_location_status
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
@@ -1324,12 +1324,19 @@ def create_app() -> Flask:
         bookings_confirmed = [b for b in all_bookings if is_confirmed_status(b.status)]
         bookings_rejected = [b for b in all_bookings if b.status == 'abgelehnt']
         notes = TrainingNote.query.filter_by(user_id=current_user.id).order_by(TrainingNote.created_at.desc()).all()
+
+        # Student files (lesson logs + training plans)
+        lesson_logs = StudentFile.query.filter_by(user_id=current_user.id, file_type="lesson_log").all()
+        training_plans = StudentFile.query.filter_by(user_id=current_user.id, file_type="training_plan").order_by(StudentFile.uploaded_at.desc()).all()
+
         return render_template("dashboard.html",
                                bookings=all_bookings,
                                bookings_pending=bookings_pending,
                                bookings_confirmed=bookings_confirmed,
                                bookings_rejected=bookings_rejected,
-                               notes=notes)
+                               notes=notes,
+                               lesson_logs=lesson_logs,
+                               training_plans=training_plans)
 
     @app.route("/calendar/<int:booking_id>.ics")
     @login_required
@@ -2065,7 +2072,9 @@ def create_app() -> Flask:
 
         return render_template("student_profile.html",
                                student=student,
-                               bookings_with_invoices=bookings_with_invoices)
+                               bookings_with_invoices=bookings_with_invoices,
+                               lesson_logs=StudentFile.query.filter_by(user_id=student.id, file_type="lesson_log").all(),
+                               training_plans=StudentFile.query.filter_by(user_id=student.id, file_type="training_plan").order_by(StudentFile.uploaded_at.desc()).all())
 
     # ── Invoice PDF generation ───────────────────────────────────
     @app.route("/admin/students/<int:user_id>/bookings/<int:booking_id>/invoice.pdf")
@@ -2131,6 +2140,171 @@ def create_app() -> Flask:
             mimetype='application/pdf',
             as_attachment=True,
             download_name=filename,
+        )
+
+    # ── Student File Upload: Lesson Log ──────────────────────────
+    @app.route("/admin/students/<int:user_id>/bookings/<int:booking_id>/upload-lesson-log", methods=["POST"])
+    @login_required
+    def admin_upload_lesson_log(user_id, booking_id):
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+
+        student = User.query.get_or_404(user_id)
+        booking = Booking.query.get_or_404(booking_id)
+        if booking.user_id != student.id:
+            flash("Buchung gehört nicht zu diesem Schüler.", "danger")
+            return redirect(url_for("admin_student_profile", user_id=user_id))
+
+        # Validate upload
+        if "file" not in request.files:
+            flash("Keine Datei ausgewählt.", "warning")
+            return redirect(url_for("admin_student_profile", user_id=user_id))
+
+        file = request.files["file"]
+        if file.filename == "":
+            flash("Keine Datei ausgewählt.", "warning")
+            return redirect(url_for("admin_student_profile", user_id=user_id))
+
+        # Validate file type (only PDF)
+        if not file.filename.lower().endswith(".pdf"):
+            flash("Nur PDF-Dateien sind erlaubt.", "danger")
+            return redirect(url_for("admin_student_profile", user_id=user_id))
+
+        # Validate file size (max 10 MB)
+        MAX_SIZE = 10 * 1024 * 1024  # 10 MB
+        file.seek(0, os.SEEK_END)
+        size = file.tell()
+        file.seek(0)
+        if size > MAX_SIZE:
+            flash(f"Datei zu groß ({size / 1024 / 1024:.1f} MB). Maximal 10 MB erlaubt.", "danger")
+            return redirect(url_for("admin_student_profile", user_id=user_id))
+
+        title = request.form.get("title", "").strip() or "Stunden-Log"
+        topic = request.form.get("topic", "").strip() or None
+
+        from werkzeug.utils import secure_filename
+        safe_name = secure_filename(file.filename)
+        if not safe_name:
+            safe_name = f"lesson-log-{booking.id}.pdf"
+
+        file_data = file.read()
+
+        # Remove any existing lesson log for this booking
+        StudentFile.query.filter_by(user_id=student.id, booking_id=booking.id, file_type="lesson_log").delete()
+
+        sf = StudentFile(
+            user_id=student.id,
+            booking_id=booking.id,
+            file_type="lesson_log",
+            title=title,
+            topic=topic,
+            original_filename=safe_name,
+            mime_type="application/pdf",
+            file_size=len(file_data),
+            file_data=file_data,
+            uploaded_by_id=current_user.id,
+        )
+        db.session.add(sf)
+        db.session.commit()
+
+        flash(f"Stunden-Log „{title}” hochgeladen.", "success")
+        return redirect(url_for("admin_student_profile", user_id=user_id))
+
+    # ── Student File Upload: Training Plan ──────────────────────
+    @app.route("/admin/students/<int:user_id>/upload-training-plan", methods=["POST"])
+    @login_required
+    def admin_upload_training_plan(user_id):
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+
+        student = User.query.get_or_404(user_id)
+
+        if "file" not in request.files:
+            flash("Keine Datei ausgewählt.", "warning")
+            return redirect(url_for("admin_student_profile", user_id=user_id))
+
+        file = request.files["file"]
+        if file.filename == "":
+            flash("Keine Datei ausgewählt.", "warning")
+            return redirect(url_for("admin_student_profile", user_id=user_id))
+
+        if not file.filename.lower().endswith(".pdf"):
+            flash("Nur PDF-Dateien sind erlaubt.", "danger")
+            return redirect(url_for("admin_student_profile", user_id=user_id))
+
+        MAX_SIZE = 10 * 1024 * 1024
+        file.seek(0, os.SEEK_END)
+        size = file.tell()
+        file.seek(0)
+        if size > MAX_SIZE:
+            flash(f"Datei zu groß ({size / 1024 / 1024:.1f} MB). Maximal 10 MB erlaubt.", "danger")
+            return redirect(url_for("admin_student_profile", user_id=user_id))
+
+        title = request.form.get("title", "").strip() or "Trainingsplan"
+        topic = request.form.get("topic", "").strip() or None
+        mark_current = request.form.get("is_current_plan") == "on"
+
+        safe_name = secure_filename(file.filename)
+        if not safe_name:
+            safe_name = f"training-plan-{student.id}.pdf"
+
+        file_data = file.read()
+
+        # If marking as current, unmark all others
+        if mark_current:
+            StudentFile.query.filter_by(user_id=student.id, file_type="training_plan", is_current_plan=True).update({"is_current_plan": False})
+
+        sf = StudentFile(
+            user_id=student.id,
+            booking_id=None,
+            file_type="training_plan",
+            title=title,
+            topic=topic,
+            original_filename=safe_name,
+            mime_type="application/pdf",
+            file_size=len(file_data),
+            file_data=file_data,
+            uploaded_by_id=current_user.id,
+            is_current_plan=mark_current,
+        )
+        db.session.add(sf)
+        db.session.commit()
+
+        flash(f"Trainingsplan „{title}” hochgeladen.", "success")
+        return redirect(url_for("admin_student_profile", user_id=user_id))
+
+    # ── Student File Download: Admin ────────────────────────────
+    @app.route("/admin/student-files/<int:file_id>/download")
+    @login_required
+    def admin_download_student_file(file_id):
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+
+        sf = StudentFile.query.get_or_404(file_id)
+        return send_file(
+            io.BytesIO(sf.file_data),
+            mimetype=sf.mime_type or "application/pdf",
+            as_attachment=True,
+            download_name=sf.original_filename,
+        )
+
+    # ── Student File Download: Student ──────────────────────────
+    @app.route("/student/files/<int:file_id>/download")
+    @login_required
+    def student_download_file(file_id):
+        sf = StudentFile.query.get_or_404(file_id)
+        # Security: student can only download their own files
+        if sf.user_id != current_user.id:
+            flash("Zugriff verweigert – dieser Datei gehört dir nicht.", "danger")
+            return redirect(url_for("dashboard"))
+        return send_file(
+            io.BytesIO(sf.file_data),
+            mimetype=sf.mime_type or "application/pdf",
+            as_attachment=True,
+            download_name=sf.original_filename,
         )
 
     @app.route("/uploads/<path:filename>")

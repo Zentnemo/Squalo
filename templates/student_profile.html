@@ -50,6 +50,7 @@
               <th>Coach</th>
               <th>Preis</th>
               <th>Rechnung</th>
+              <th>Stunden-Log</th>
             </tr>
           </thead>
           <tbody>
@@ -95,6 +96,77 @@
                     </a>
                   {% endif %}
                 </td>
+                <td>
+                  {% set ns_log = namespace(existing_log=none) %}
+                  {% for log in lesson_logs %}
+                    {% if log.booking_id == b.id %}
+                      {% set ns_log.existing_log = log %}
+                    {% endif %}
+                  {% endfor %}
+
+                  {# ── Fall 1: Stunden-Log bereits vorhanden ── #}
+                  {% if ns_log.existing_log %}
+                    <div style="font-size:0.85em;">
+                      <span style="color:var(--success);font-weight:600;">✅ Stunden-Log vorhanden</span><br>
+                      <span style="color:var(--text-muted);font-size:0.85em;">
+                        {{ ns_log.existing_log.original_filename }}
+                        {% if ns_log.existing_log.title and ns_log.existing_log.title != 'Stunden-Log' %}
+                          · {{ ns_log.existing_log.title }}
+                        {% endif %}
+                      </span>
+                      <div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;">
+                        <a href="{{ url_for('admin_download_student_file', file_id=ns_log.existing_log.id) }}"
+                           class="btn btn-primary" style="font-size:0.75em;padding:4px 10px;text-decoration:none;">
+                          📄 Download
+                        </a>
+                        <button type="button" class="btn btn-secondary"
+                                style="font-size:0.75em;padding:4px 10px;cursor:pointer;"
+                                onclick="this.nextElementSibling.style.display='block';this.style.display='none'">
+                          ✏️ Ersetzen
+                        </button>
+                        <form action="{{ url_for('admin_upload_lesson_log', user_id=student.id, booking_id=b.id) }}"
+                              method="POST" enctype="multipart/form-data"
+                              style="display:none;">
+                          <input type="file" name="file" accept=".pdf,application/pdf" required
+                                 style="font-size:0.75em;width:100px;">
+                          <button type="submit" class="btn btn-primary"
+                                  style="font-size:0.75em;padding:4px 8px;">
+                            ↑ Upload
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+
+                  {# ── Fall 2: Bestätigte Stunde ohne Log → Upload anbieten ── #}
+                  {% elif b.status in all_confirmed %}
+                    <div style="font-size:0.85em;">
+                      <div style="font-weight:600;margin-bottom:4px;color:var(--dark-blue);">
+                        📋 Stunden-Log / Trainingstagebuch hochladen
+                      </div>
+                      <form action="{{ url_for('admin_upload_lesson_log', user_id=student.id, booking_id=b.id) }}"
+                            method="POST" enctype="multipart/form-data">
+                        <div style="display:flex;flex-direction:column;gap:4px;">
+                          <input type="text" name="title" placeholder="Titel (optional)"
+                                 style="padding:4px 6px;font-size:0.85em;border:1px solid #ccc;border-radius:3px;width:100%;max-width:200px;">
+                          <input type="text" name="topic" placeholder="Thema / Notiz (optional)"
+                                 style="padding:4px 6px;font-size:0.85em;border:1px solid #ccc;border-radius:3px;width:100%;max-width:200px;">
+                          <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+                            <input type="file" name="file" accept=".pdf,application/pdf" required
+                                   style="font-size:0.8em;width:130px;">
+                            <button type="submit" class="btn btn-primary"
+                                    style="font-size:0.8em;padding:4px 12px;">
+                              💾 Upload speichern
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+
+                  {# ── Fall 3: Nicht bestätigte Stunde ── #}
+                  {% else %}
+                    <span style="color:var(--text-muted);font-size:0.85em;">–</span>
+                  {% endif %}
+                </td>
               </tr>
             {% endfor %}
           </tbody>
@@ -113,6 +185,70 @@
       </div>
     {% else %}
       <p style="color:var(--text-muted);">Noch keine Buchungen vorhanden.</p>
+    {% endif %}
+  </section>
+
+  {# ── Training Plans ── #}
+  <section class="admin-section">
+    <h3>📋 Trainingspläne ({{ training_plans|length }})</h3>
+
+    {# Upload form #}
+    <form action="{{ url_for('admin_upload_training_plan', user_id=student.id) }}"
+          method="POST" enctype="multipart/form-data"
+          style="background:var(--card-bg, #f9f9f9);padding:16px;border-radius:8px;margin-bottom:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+      <input type="text" name="title" placeholder="Titel (z. B. Woche 12-16)" required
+             style="flex:1 1 140px;padding:6px 10px;font-size:0.9em;border:1px solid #ccc;border-radius:4px;">
+      <input type="text" name="topic" placeholder="Thema / Fokus"
+             style="flex:1 1 140px;padding:6px 10px;font-size:0.9em;border:1px solid #ccc;border-radius:4px;">
+      <input type="file" name="file" accept=".pdf,application/pdf" required
+             style="font-size:0.85em;padding:4px 0;">
+      <label style="font-size:0.85em;display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap;">
+        <input type="checkbox" name="is_current_plan" value="on">
+        ⭐ als aktuell markieren
+      </label>
+      <button type="submit" class="btn btn-primary" style="padding:6px 14px;">
+        ↑ Trainingsplan hochladen
+      </button>
+    </form>
+
+    {% if training_plans %}
+      <div class="bookings-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Titel</th>
+              <th>Thema</th>
+              <th>Hochgeladen</th>
+              <th>Datei</th>
+              <th>Aktuell</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tp in training_plans %}
+              <tr>
+                <td><strong>{{ tp.title }}</strong></td>
+                <td>{{ tp.topic or '–' }}</td>
+                <td>{{ tp.uploaded_at.strftime('%d.%m.%Y') if tp.uploaded_at else '–' }}</td>
+                <td>
+                  <a href="{{ url_for('admin_download_student_file', file_id=tp.id) }}"
+                     class="btn btn-secondary" style="font-size:0.8em;padding:4px 10px;text-decoration:none;">
+                    📄 {{ tp.original_filename }}
+                  </a>
+                </td>
+                <td>
+                  {% if tp.is_current_plan %}
+                    <span class="badge badge-active">⭐ Aktuell</span>
+                  {% else %}
+                    <span style="color:var(--text-muted);">–</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p style="color:var(--text-muted);">Noch keine Trainingspläne hochgeladen.</p>
     {% endif %}
   </section>
 {% endblock %}
