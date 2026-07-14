@@ -1749,6 +1749,9 @@ def create_app() -> Flask:
     @login_required
     def booking():
         locations = Location.query.order_by(Location.name.asc()).all()
+        selected_region = request.args.get('region', '') or request.form.get('region', '')
+        if selected_region not in ('berlin', 'freiburg'):
+            selected_region = ''
         if request.method == "POST":
             priority_type = request.form.get("priority_type", "balanced")
 
@@ -1803,7 +1806,8 @@ def create_app() -> Flask:
             # Validate
             if not d1 or not t1:
                 flash("Bitte mindestens einen Zeitwunsch (Datum + Uhrzeit) angeben.", "danger")
-                return render_template("booking.html", locations=locations)
+                coaches = Coach.query.filter_by(is_active=True).all()
+                return render_template("booking.html", locations=locations, coaches=coaches, selected_region=selected_region)
 
             # Build legacy requested_start from option 1
             requested_start = None
@@ -1838,7 +1842,7 @@ def create_app() -> Flask:
             flash("Deine Terminanfrage wurde gesendet! Ich prüfe deine Wunschzeiten und melde mich bei dir.", "success")
             return redirect(url_for("dashboard"))
         coaches = Coach.query.filter_by(is_active=True).all()
-        return render_template("booking.html", locations=locations, coaches=coaches)
+        return render_template("booking.html", locations=locations, coaches=coaches, selected_region=selected_region)
 
     @app.route("/shop", methods=["GET", "POST"])
     def shop():

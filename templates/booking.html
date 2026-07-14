@@ -76,7 +76,21 @@
       </fieldset>
 
       <fieldset class="form-fieldset">
-        <legend>🏊 Wunsch-Schwimmorte</legend>
+        <legend>📍 Region &amp; Schwimmorte</legend>
+
+        <div class="form-group">
+          <label>Trainingsregion</label>
+          <div class="radio-group" id="region-selector">
+            <label class="radio-label">
+              <input type="radio" name="region" value="berlin" onchange="filterLocationsByRegion('berlin')"
+                     {% if selected_region == 'berlin' or not selected_region %}checked{% endif %}> 🏊 Berlin
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="region" value="freiburg" onchange="filterLocationsByRegion('freiburg')"
+                     {% if selected_region == 'freiburg' %}checked{% endif %}> 🏊 Freiburg
+            </label>
+          </div>
+        </div>
 
         <div class="form-group">
           <label for="preferred_location_1">Ort 1 (Pflicht) *</label>
@@ -171,48 +185,70 @@ function updatePricePreview() {
   }
 }
 
-// ── Coach filtering by selected location city ──
-function filterCoachesByLocation() {
-  const loc1 = document.getElementById('preferred_location_1');
-  const loc2 = document.getElementById('preferred_location_2');
-  const loc3 = document.getElementById('preferred_location_3');
-  const coachSelect = document.getElementById('preferred_coach_id');
-  const hint = document.getElementById('coach-filter-hint');
+// ── Filter location dropdowns by region (Berlin/Freiburg) ──
+function filterLocationsByRegion(region) {
+  const selectIds = ['preferred_location_1', 'preferred_location_2', 'preferred_location_3'];
+  const regionCity = region === 'freiburg' ? 'Freiburg' : 'Berlin';
 
-  // Determine the city of the first selected location
-  let selectedCity = '';
-  if (loc1 && loc1.value) {
-    const opt = loc1.options[loc1.selectedIndex];
-    selectedCity = opt.getAttribute('data-city') || 'Berlin';
-  } else if (loc2 && loc2.value) {
-    const opt = loc2.options[loc2.selectedIndex];
-    selectedCity = opt.getAttribute('data-city') || 'Berlin';
-  } else if (loc3 && loc3.value) {
-    const opt = loc3.options[loc3.selectedIndex];
-    selectedCity = opt.getAttribute('data-city') || 'Berlin';
-  }
-
-  if (!selectedCity) {
-    // No location selected: show all coaches
-    for (let i = 0; i < coachSelect.options.length; i++) {
-      coachSelect.options[i].style.display = '';
+  selectIds.forEach(function(id) {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    // Remember current selection
+    const currentVal = sel.value;
+    for (let i = 0; i < sel.options.length; i++) {
+      const opt = sel.options[i];
+      if (!opt.value) continue; // keep placeholder
+      const city = (opt.getAttribute('data-city') || '').toLowerCase();
+      const isFreiburgRegion = regionCity.toLowerCase() === 'freiburg';
+      const match = isFreiburgRegion
+        ? city === 'freiburg'
+        : city === 'berlin';
+      opt.style.display = match ? '' : 'none';
     }
-    hint.style.display = 'none';
-    return;
-  }
+    // If current selection is now hidden, reset
+    const currOpt = sel.options[sel.selectedIndex];
+    if (currOpt && currOpt.style.display === 'none') {
+      sel.value = '';
+    }
+    // If first option placeholder is only visible option, auto-select
+    let visibleCount = 0;
+    let firstVisible = null;
+    for (let i = 1; i < sel.options.length; i++) {
+      if (sel.options[i].style.display !== 'none') {
+        visibleCount++;
+        if (!firstVisible) firstVisible = sel.options[i];
+      }
+    }
+    if (visibleCount === 0) {
+      // No options for this region
+      const placeholder = sel.options[0];
+      if (placeholder) placeholder.text = '-- Keine Orte in dieser Region --';
+    } else {
+      const placeholder = sel.options[0];
+      if (placeholder) placeholder.text = id === 'preferred_location_1' ? '-- Bitte wählen --' : '-- Optional --';
+    }
+  });
 
-  // Map city to keyword for matching against cities_served
-  const cityKeywords = [selectedCity.toLowerCase()];
-  if (selectedCity === 'Freiburg') {
-    cityKeywords.push('freiburg und umgebung');
-  }
+  // Also update coach filter
+  filterCoachesByRegion(regionCity);
+}
+
+// ── Filter coaches by region ──
+function filterCoachesByRegion(regionCity) {
+  const coachSelect = document.getElementById('preferred_coach_id');
+  if (!coachSelect) return;
+
+  const isFreiburg = regionCity === 'Freiburg';
 
   let firstVisible = null;
   let visibleCount = 0;
   for (let i = 1; i < coachSelect.options.length; i++) {
     const opt = coachSelect.options[i];
     const citiesServed = (opt.getAttribute('data-cities') || '').toLowerCase();
-    const matches = cityKeywords.some(kw => citiesServed.includes(kw));
+    // Berlin coach shows for Berlin, Freiburg coach shows for Freiburg
+    const matchesBerlin = !isFreiburg && (citiesServed.includes('berlin') || citiesServed === '');
+    const matchesFreiburg = isFreiburg && (citiesServed.includes('freiburg') || citiesServed.includes('freiburg und umgebung'));
+    const matches = isFreiburg ? matchesFreiburg : matchesBerlin;
     opt.style.display = matches ? '' : 'none';
     if (matches && !firstVisible) firstVisible = opt;
     if (matches) visibleCount++;
@@ -222,7 +258,6 @@ function filterCoachesByLocation() {
   if (visibleCount === 1 && firstVisible) {
     coachSelect.value = firstVisible.value;
   } else if (visibleCount > 1) {
-    // Keep current selection if it's still visible
     const currentOpt = coachSelect.options[coachSelect.selectedIndex];
     if (currentOpt && currentOpt.value && currentOpt.style.display === 'none') {
       coachSelect.value = '';
@@ -231,11 +266,41 @@ function filterCoachesByLocation() {
     coachSelect.value = '';
   }
 
-  hint.style.display = visibleCount < coachSelect.options.length - 1 ? 'block' : 'none';
+  const hint = document.getElementById('coach-filter-hint');
+  if (hint) hint.style.display = visibleCount < coachSelect.options.length - 1 ? 'block' : 'none';
 }
 
-// Run on page load if a location is pre-selected
-document.addEventListener('DOMContentLoaded', filterCoachesByLocation);
+// ── Legacy coach filter (triggered by location change, now delegates) ──
+function filterCoachesByLocation() {
+  // Determine region from first selected location
+  const loc1 = document.getElementById('preferred_location_1');
+  const loc2 = document.getElementById('preferred_location_2');
+  const loc3 = document.getElementById('preferred_location_3');
+  let regionCity = '';
+  for (const sel of [loc1, loc2, loc3]) {
+    if (sel && sel.value) {
+      const opt = sel.options[sel.selectedIndex];
+      regionCity = opt.getAttribute('data-city') || '';
+      break;
+    }
+  }
+  if (regionCity) {
+    filterCoachesByRegion(regionCity);
+  }
+}
+
+// ── Initialize on page load ──
+document.addEventListener('DOMContentLoaded', function() {
+  const regionRadios = document.querySelectorAll('input[name="region"]');
+  let activeRegion = 'berlin';
+  for (const r of regionRadios) {
+    if (r.checked) {
+      activeRegion = r.value;
+      break;
+    }
+  }
+  filterLocationsByRegion(activeRegion);
+});
 </script>
 
 <div class="booking-seo-links" style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(0,168,204,0.1);text-align:center;">

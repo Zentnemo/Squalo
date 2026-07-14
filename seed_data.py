@@ -716,4 +716,34 @@ SWIM_LOCATIONS = [
         "crowd_level": "low",
         "maps_url": "https://maps.google.com/?q=Opfinger+See+Freiburg"
     },
+    # ── Neu: Sommerbad Wuhlheide ──
+    {
+        "name": "Sommerbad Wuhlheide",
+        "location_type": "Sommerbad",
+        "district": "Treptow-Köpenick",
+        "city": "Berlin",
+        "address": "Treskowallee 211, 12459 Berlin",
+        "latitude": 52.4704336,
+        "longitude": 13.5197167,
+        "official_status": "open",
+        "verified_status": "verified",
+        "water_temperature": "22°C",
+        "crowd_level": "medium",
+        "maps_url": "https://maps.google.com/?q=Sommerbad+Wuhlheide+Berlin"
+    },
+    # ── Neu: Schwimmhalle Ernst-Thälmann-Park ──
+    {
+        "name": "Schwimmhalle Ernst-Thälmann-Park",
+        "location_type": "Schwimmbad",
+        "district": "Pankow",
+        "city": "Berlin",
+        "address": "Lilli-Henoch-Straße 20, 10405 Berlin",
+        "latitude": 52.5408,
+        "longitude": 13.4336,
+        "official_status": "open",
+        "verified_status": "needs_review",
+        "water_temperature": "26°C",
+        "crowd_level": "low",
+        "maps_url": "https://maps.google.com/?q=Schwimmhalle+Ernst-Thälmann-Park+Berlin"
+    },
 ]
