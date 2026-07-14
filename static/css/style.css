@@ -2841,6 +2841,92 @@ main {
   background: linear-gradient(135deg, rgba(255,159,0,0.04), rgba(255,159,0,0.01));
 }
 
+/* ── SEO Topic Chips (Startseite) ── */
+.seo-topics-section {
+  margin: 2rem 0;
+  padding: 0.5rem 0;
+}
+.seo-topics-title {
+  font-size: 1.1rem;
+  color: var(--dark-blue);
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+.seo-topics-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.seo-topic-chip {
+  display: inline-block;
+  padding: 6px 16px;
+  background: var(--white);
+  border: 1px solid rgba(0,168,204,0.15);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: var(--dark-blue);
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.seo-topic-chip:hover {
+  background: var(--turquoise);
+  color: var(--white);
+  border-color: var(--turquoise);
+}
+
+/* ── Footer SEO Links ── */
+.footer-seo-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.footer-seo-links a {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+.footer-seo-links a:hover {
+  color: var(--turquoise);
+}
+
+/* ── Coach SEO Links ── */
+.coach-seo-links {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0,168,204,0.1);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.coach-seo-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+.coach-seo-link {
+  font-size: 0.82rem;
+  color: var(--turquoise);
+  text-decoration: none;
+  padding: 2px 10px;
+  border: 1px solid rgba(0,168,204,0.15);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+.coach-seo-link:hover {
+  background: var(--turquoise);
+  color: var(--white);
+  border-color: var(--turquoise);
+}
+
+
+
 /* ── Calendar Export Button ── */
 .btn-calendar {
   display: inline-flex;

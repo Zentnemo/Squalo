@@ -94,6 +94,320 @@ SHOP_PRODUCTS = [
 ]
 
 
+# ── SEO Landing Pages ─────────────────────────────────────────────
+LANDING_PAGES = {
+    "schwimmtraining-berlin": {
+        "meta_title": "Schwimmtraining Berlin – Personal Schwimmcoaching mit Squalo",
+        "meta_description": "Individuelles Schwimmtraining in Berlin: Technik verbessern, Kraulen lernen, Wasserlage optimieren und sicherer schwimmen – mit persönlichem Coaching an Schwimmbädern und Badeseen.",
+        "kicker": "Personal Coaching Berlin",
+        "h1": "Schwimmtraining in Berlin",
+        "intro": "Du möchtest deine Schwimmtechnik verbessern, sicherer im Wasser werden oder einfach wieder regelmäßig schwimmen? Mit persönlichem Coaching an über 40 Schwimmorten in Berlin – individuell, technikorientiert, ohne Massenkurs.",
+        "cta_primary_label": "Termin anfragen",
+        "cta_secondary_label": "Schwimmorte ansehen",
+        "cta_secondary_url": "/schwimmorte-berlin",
+        "benefits_title": "Für wen ist das Schwimmtraining geeignet?",
+        "benefits": [
+            {"icon": "👤", "title": "Anfänger", "text": "Du hast kaum Erfahrung im Wasser oder fühlst dich unsicher? Kein Problem. Wir starten bei null – mit ruhiger Anleitung, Wassergefühl und den ersten Schritten zu einer sauberen Schwimmtechnik."},
+            {"icon": "🔄", "title": "Wiedereinsteiger", "text": "Früher konntest du schwimmen, aber die Technik ist eingerostet? Wir holen dich ab, bauen Kondition auf und bringen deine Züge wieder in einen sauberen Rhythmus."},
+            {"icon": "⚡", "title": "Fortgeschrittene", "text": "Du schwimmst regelmäßig, aber es fehlt die letzte Effizienz? Wir analysieren deine Wasserlage, Atmung und Zugmechanik und optimieren gezielt."},
+            {"icon": "🏅", "title": "Triathleten", "text": "Effizienteres Schwimmen bedeutet mehr Energie für Rad und Lauf. Wir trainieren Wasserlage, Rhythmus und Orientierung – auch in Berliner Seen."},
+        ],
+        "approach_title": "Trainingsansatz",
+        "approach": [
+            {"icon": "🌊", "title": "Technik vor Tempo", "text": "Eine saubere Wasserlage und ruhige Atmung sind die Basis. Erst wenn die Technik sitzt, arbeiten wir an Tempo und Ausdauer."},
+            {"icon": "🫁", "title": "Atmung & Rhythmus", "text": "Die richtige Atmung ist der Schlüssel zu entspanntem Schwimmen. Wir trainieren Atemrhythmus, Rotation und Seitlage."},
+            {"icon": "💪", "title": "Wasserlage & Ökonomie", "text": "Körperlage, Armzug und Beinschlag müssen harmonieren. Durch gezielte Übungen wird dein Schwimmen flüssiger und effizienter."},
+        ],
+        "region_title": "Schwimmtraining in Berlin",
+        "region_note": "Dein Training findet an den schönsten Schwimmorten Berlins statt: von Hallenbädern wie dem Stadtbad Tiergarten über Sommerbäder wie das Sommerbad Kreuzberg bis zu Badeseen wie der Krummen Lanke. Du wählst deinen Wunschort – wir kommen dorthin.",
+        "locations_link_label": "Alle Schwimmorte in Berlin entdecken",
+        "locations_link_url": "/schwimmorte-berlin",
+        "steps_title": "So läuft es ab",
+        "steps": [
+            {"title": "Termin anfragen", "text": "Wähle deinen Wunschort, eine Uhrzeit und Dauer – unverbindlich und ohne Stress."},
+            {"title": "Bestätigung erhalten", "text": "Moritz prüft deine Anfrage und bestätigt dir den passenden Termin persönlich."},
+            {"title": "Training starten", "text": "Los geht's! Dein persönliches Schwimmtraining an deinem Lieblingsort in Berlin."},
+        ],
+        "coach_note": "Moritz Zentner ist dein Coach in Berlin. Mit über 15 Jahren Erfahrung im Schwimmsport und einem klaren Fokus auf Technik und saubere Bewegungsabläufe begleitet er dich von den ersten Zügen bis zur Wettkampfvorbereitung.",
+        "faq_title": "Häufige Fragen zum Schwimmtraining",
+        "faqs": [
+            {"q": "Für wen ist das Schwimmtraining geeignet?", "a": "Das Training richtet sich an alle – Anfänger, Wiedereinsteiger, Fortgeschrittene und Triathleten. Jede Einheit wird an dein persönliches Niveau und Ziel angepasst."},
+            {"q": "Wie läuft eine erste Stunde ab?", "a": "In der ersten Stunde schauen wir uns dein aktuelles Schwimmniveau an: Wasserlage, Atmung, Armzug. Daraus entwickeln wir einen Fahrplan für die folgenden Einheiten."},
+            {"q": "Kann ich als Erwachsener noch Kraulen lernen?", "a": "Ja, absolut. Viele Erwachsene lernen Kraulen erst spät – mit einer Schritt-für-Schritt-Methode und ohne Leistungsdruck ist das gut umsetzbar."},
+            {"q": "Wo findet das Training statt?", "a": "Du wählst einen Ort aus über 40 Schwimmbädern, Sommerbädern oder Badeseen in Berlin. Dein Training findet genau dort statt."},
+            {"q": "Wie frage ich einen Termin an?", "a": "Einfach über das Buchungsformular deine Wünsche eingeben – Moritz meldet sich zur Bestätigung."},
+        ],
+    },
+    "kraulen-lernen-berlin": {
+        "meta_title": "Kraulen lernen Berlin – Techniktraining für Erwachsene & Triathlon",
+        "meta_description": "Kraulen lernen in Berlin mit persönlichem Schwimmcoach: Atmung, Armzug, Beinschlag, Rotation und Wasserlage Schritt für Schritt verbessern.",
+        "kicker": "Kraultechnik Berlin",
+        "h1": "Kraulen lernen in Berlin",
+        "intro": "Kraulen gilt als anspruchsvollste Schwimmart – aber mit der richtigen Anleitung wird es einfacher, als du denkst. Schritt für Schritt bauen wir Atmung, Armzug, Beinschlag und Rotation sauber auf.",
+        "cta_primary_label": "Kraulen lernen – Termin anfragen",
+        "benefits_title": "Für wen eignet sich Kraultraining?",
+        "benefits": [
+            {"icon": "👤", "title": "Erwachsene Anfänger", "text": "Du hast noch nie gekrault oder es früher nie richtig gelernt? Mit ruhiger Anleitung und einfachen Übungen startest du ganz ohne Druck."},
+            {"icon": "🔄", "title": "Wiedereinsteiger", "text": "Du hast früher gekrault, aber die Technik ist nicht mehr sauber? Wir arbeiten an Atmung, Körperlage und Koordination."},
+            {"icon": "🏅", "title": "Triathleten", "text": "Effizientes Kraulen ist die Basis für einen guten Start in den Wettkampf. Wir verbessern deine Wasserlage und Ökonomie."},
+        ],
+        "approach_title": "Unser Kraul-Ansatz",
+        "approach": [
+            {"icon": "🫁", "title": "Atmung zuerst", "text": "Die richtige Atemtechnik ist das Fundament. Wir trainieren die Seitlage, den richtigen Moment zum Atmen und den Rhythmus."},
+            {"icon": "🔄", "title": "Rotation & Körperlage", "text": "Effizientes Kraulen kommt aus der Körperrotation – nicht aus den Armen allein. Wir bauen die Drehbewegung sauber auf."},
+            {"icon": "✋", "title": "Armzug & Beinschlag", "text": "Armzug und Beinschlag werden einzeln trainiert und dann flüssig verbunden. So entsteht ein harmonischer Gesamtablauf."},
+        ],
+        "region_title": "Kraulen lernen in Berlin",
+        "region_note": "Das Kraultraining findet in ausgewählten Berliner Schwimmbädern statt – ruhig, ohne Massenbetrieb und mit genug Platz für konzentriertes Üben. Du bestimmst den Ort.",
+        "locations_link_label": "Schwimmorte in Berlin ansehen",
+        "locations_link_url": "/schwimmorte-berlin",
+        "steps": [
+            {"title": "Termin anfragen", "text": "Wähle Ort, Dauer und Wunschtermin – ganz unverbindlich."},
+            {"title": "Bestätigung erhalten", "text": "Moritz bestätigt deinen Termin und stimmt ihn auf dein Niveau ab."},
+            {"title": "Kraulen lernen", "text": "Los geht's mit deinem persönlichen Kraultraining – Schritt für Schritt."},
+        ],
+        "coach_note": "Moritz Zentner begleitet dich als Coach in Berlin. Mit über 15 Jahren Erfahrung im Wasser und einem Gespür für saubere Technik bringt er dir Kraulen entspannt und effektiv bei.",
+        "faqs": [
+            {"q": "Kann ich Kraulen lernen, wenn ich noch nie gekrault habe?", "a": "Ja, auf jeden Fall. Wir starten mit Atmung und Wasserlage und bauen dann Armzug, Beinschlag und Rotation Schritt für Schritt auf."},
+            {"q": "Wie lange dauert es, Kraulen zu lernen?", "a": "Das ist individuell. Viele haben nach 3–5 Einheiten die Grundlagen sicher und arbeiten dann an der Verfeinerung."},
+            {"q": "Ist Kraulen für Erwachsene schwerer als für Kinder?", "a": "Kinder lernen oft spielerischer, aber Erwachsene haben den Vorteil, dass sie Technik bewusster umsetzen können. Mit Geduld und klaren Übungen klappt es sehr gut."},
+            {"q": "Brauche ich eine gute Kondition zum Kraulen?", "a": "Nein. Die Technik steht am Anfang im Vordergrund. Sobald Atmung und Wasserlage stimmen, wird das Durchhaltevermögen von allein besser."},
+        ],
+    },
+    "schwimmkurs-erwachsene-berlin": {
+        "meta_title": "Schwimmkurs Erwachsene Berlin – ruhig, individuell, persönlich",
+        "meta_description": "Schwimmen lernen oder Technik verbessern als Erwachsener in Berlin: ruhiges Einzelcoaching, individuelles Tempo und mehr Sicherheit im Wasser.",
+        "kicker": "Schwimmkurs für Erwachsene",
+        "h1": "Schwimmkurs für Erwachsene in Berlin",
+        "intro": "Du hast als Kind nie richtig schwimmen gelernt oder fühlst dich unsicher im Wasser? Kein Grund zur Sorge – mit ruhigem Einzelcoaching und deinem eigenen Tempo holen wir das nach.",
+        "cta_primary_label": "Schwimmkurs anfragen",
+        "benefits": [
+            {"icon": "🙋", "title": "Ruhiges Einzelcoaching", "text": "Keine Gruppe, kein Wettbewerb, kein Zeitdruck. Nur du und dein Coach – genau in deinem Tempo."},
+            {"icon": "💧", "title": "Wassergefühl entwickeln", "text": "Viele Erwachsene haben wenig Vertrauen ins Wasser. Wir arbeiten mit einfachen Übungen an Auftrieb, Gleiten und sicherer Atmung."},
+            {"icon": "🫁", "title": "Atmung & Sicherheit", "text": "Die Atmung ist oft die größte Hürde. Sobald du ruhig ausatmen und koordiniert einatmen kannst, wird alles andere leichter."},
+        ],
+        "approach": [
+            {"icon": "🌊", "title": "Vom Gleiten zum Zug", "text": "Wir beginnen mit den Grundlagen: Gleiten, Ausatmen ins Wasser, Auftrieb halten. Daraus entwickeln wir erste Schwimmzüge."},
+            {"icon": "🧘", "title": "Entspannt lernen", "text": "Kein Leistungsdruck, keine festgelegten Ziele. Du bestimmst, wie schnell wir voranschreiten."},
+        ],
+        "region_title": "Schwimmkurs für Erwachsene in Berlin",
+        "region_note": "Der Kurs findet an ruhigen Schwimmorten in Berlin statt – ideal für konzentriertes Lernen ohne Hektik. Du wählst den Ort, der dir am angenehmsten ist.",
+        "locations_link_label": "Schwimmorte in Berlin entdecken",
+        "locations_link_url": "/schwimmorte-berlin",
+        "steps": [
+            {"title": "Termin anfragen", "text": "Wähle einen Ort und eine Zeit – ganz unverbindlich."},
+            {"title": "Bestätigung erhalten", "text": "Moritz meldet sich und stimmt den Termin auf dich ab."},
+            {"title": "Schwimmen lernen", "text": "Entspanntes Einzelcoaching – in deinem Tempo, ohne Druck."},
+        ],
+        "coach_note": "Moritz Zentner begleitet dich als Coach in Berlin. Mit ruhiger Art und viel Geduld hilft er dir, Vertrauen ins Wasser zu fassen und Schritt für Schritt schwimmen zu lernen.",
+        "faqs": [
+            {"q": "Kann ich als Erwachsener noch schwimmen lernen?", "a": "Ja, auf jeden Fall. Viele Erwachsene lernen erst spät schwimmen oder holen Grundlagen nach. Mit ruhiger Anleitung ist das gut machbar."},
+            {"q": "Wie läuft die erste Stunde ab?", "a": "Wir treffen uns an deinem Wunschort, machen uns mit dem Wasser vertraut und starten mit einfachen Atem- und Gleitübungen."},
+            {"q": "Wie viele Stunden brauche ich, um sicher zu schwimmen?", "a": "Das ist individuell. Manche fühlen sich nach 5–8 Einheiten sicher, andere nehmen sich mehr Zeit – ganz in deinem Rhythmus."},
+        ],
+    },
+    "schwimmtraining-kinder-berlin": {
+        "meta_title": "Schwimmtraining Kinder Berlin – Sicherheit, Technik und Vertrauen",
+        "meta_description": "Individuelles Schwimmtraining für Kinder in Berlin: Wassergewöhnung, Sicherheit, Technik und ruhige Betreuung im passenden Tempo.",
+        "kicker": "Kindertraining Berlin",
+        "h1": "Schwimmtraining für Kinder in Berlin",
+        "intro": "Jedes Kind hat sein eigenes Tempo. Im persönlichen Coaching – ohne Gruppe und ohne Druck – entwickeln Kinder Wassergefühl, Sicherheit und Freude an der Bewegung.",
+        "cta_primary_label": "Training für mein Kind anfragen",
+        "benefits": [
+            {"icon": "🛡️", "title": "Sicherheit & Vertrauen", "text": "Im Mittelpunkt steht ein sicherer Umgang mit dem Wasser. Dein Kind lernt, sich im Wasser wohlzufühlen und sich selbstbewusst zu bewegen."},
+            {"icon": "🎯", "title": "Spielerische Technik", "text": "Übungen werden kindgerecht und mit Spaß vermittelt. So entsteht Freude an der Bewegung – ganz ohne Leistungsdruck."},
+            {"icon": "👤", "title": "Individuelle Betreuung", "text": "Jedes Kind ist anders. Die Einheiten werden an das Können, die Aufmerksamkeitsspanne und die Persönlichkeit deines Kindes angepasst."},
+        ],
+        "approach": [
+            {"icon": "💧", "title": "Wassergewöhnung & Auftrieb", "text": "Spielerisch tauchen, gleiten und den Auftrieb spüren – das schafft Vertrauen und legt das Fundament für alle Schwimmtechniken."},
+            {"icon": "🏊", "title": "Erste Züge & Technik", "text": "Sobald dein Kind sicher im Wasser ist, beginnen wir mit ersten Schwimmzügen – sauber und kindgerecht aufgebaut."},
+        ],
+        "region_title": "Training in Berlin",
+        "region_note": "Das Kindertraining findet an ruhigen, flachen Schwimmorten in Berlin statt – mit besonderem Fokus auf Sicherheit und eine angenehme Atmosphäre.",
+        "locations_link_label": "Geeignete Schwimmorte in Berlin",
+        "locations_link_url": "/schwimmorte-berlin",
+        "steps": [
+            {"title": "Anfrage senden", "text": "Als Elternteil sendest du eine unverbindliche Terminanfrage mit Ort und Zeitwunsch."},
+            {"title": "Bestätigung erhalten", "text": "Moritz bestätigt den Termin und stimmt ihn auf das Können deines Kindes ab."},
+            {"title": "Training starten", "text": "Dein Kind trainiert in entspannter Atmosphäre – sicher, spielerisch und mit Freude."},
+        ],
+        "coach_note": "Moritz Zentner trainiert Kinder in Berlin mit Geduld und Einfühlungsvermögen. Ihm ist wichtig, dass Kinder Spaß am Wasser entwickeln und sich in ihrem Tempo weiterentwickeln können.",
+        "faqs": [
+            {"q": "Ab welchem Alter ist das Kindertraining geeignet?", "a": "Das Training ist für Kinder ab etwa 5 Jahren geeignet. Bei Unsicherheit oder früherem Einstieg sprich uns bitte direkt an."},
+            {"q": "Muss mein Kind schon schwimmen können?", "a": "Nein. Wir starten dort, wo dein Kind steht – ob Wassergewöhnung oder schon erste Züge."},
+            {"q": "Kann ich als Elternteil zuschauen?", "a": "Ja, gerne. Eltern können am Beckenrand oder Ufer zuschauen und sich ein Bild vom Training machen."},
+        ],
+    },
+    "triathlon-schwimmtraining-berlin": {
+        "meta_title": "Triathlon Schwimmtraining Berlin – effizienter kraulen und Energie sparen",
+        "meta_description": "Triathlon-Schwimmtraining in Berlin: Kraultechnik, Orientierung, Wasserlage und Rhythmus verbessern, um effizienter aus dem Wasser zu kommen.",
+        "kicker": "Triathlon-Schwimmen Berlin",
+        "h1": "Triathlon Schwimmtraining in Berlin",
+        "intro": "Die Schwimmdisziplin entscheidet oft über den weiteren Rennverlauf. Mit besserer Wasserlage, ruhiger Atmung und effizienter Technik sparst du wertvolle Energie für Rad und Lauf.",
+        "cta_primary_label": "Triathlon-Training anfragen",
+        "benefits": [
+            {"icon": "🏅", "title": "Effizienz statt Meterfressen", "text": "Es geht nicht darum, möglichst viele Meter zu schwimmen – sondern die richtigen Meter. Mit sauberer Technik schwimmst du ruhiger und kommst frischer aus dem Wasser."},
+            {"icon": "🌊", "title": "Wasserlage & Rhythmus", "text": "Eine gute Wasserlage ist die Basis. Wir arbeiten an der Körperposition, damit du mit weniger Kraft mehr Vortrieb erzeugst."},
+            {"icon": "🧭", "title": "Orientierung & Gelassenheit", "text": "Im offenen Gewässer die Orientierung zu behalten ist ein zentraler Baustein. Wir trainieren Blickschulung und ruhiges Schwimmen in unbekannten Gewässern."},
+        ],
+        "approach": [
+            {"icon": "🫁", "title": "Atmung unter Belastung", "text": "Eine ruhige Atmung in der Stresssituation zu bewahren ist trainierbar. Mit gezielten Übungen für Atemrhythmus und Seitenlage."},
+            {"icon": "⚡", "title": "Energieökonomie", "text": "Jeder überflüssige Bewegungsaufwand kostet Kraft. Wir identifizieren ineffiziente Bewegungsmuster und ersetzen sie durch saubere, stromlinienförmige Züge."},
+            {"icon": "🏊", "title": "An die offene Gewässer angepasst", "text": "Training in Berliner Seen und Sommerbädern bereitet auf die Bedingungen im Wettkampf vor – Wellen, Fahrrinne, Massenstart."},
+        ],
+        "region_title": "Triathlon-Vorbereitung in Berlin",
+        "region_note": "Trainingsorte sind unter anderem die Krumme Lanke und andere Berliner Gewässer, sowie Sommerbäder – je nach Saison und Zielsetzung. Deine Wettkampfstrecke fließt in die Planung ein.",
+        "locations_link_label": "Schwimmorte für Triathlon-Training",
+        "locations_link_url": "/schwimmorte-berlin",
+        "steps": [
+            {"title": "Termin anfragen", "text": "Nenne deine Wettkampfziele und Wunschtermine – ganz unverbindlich."},
+            {"title": "Bestätigung erhalten", "text": "Moritz stimmt die Trainingsinhalte auf deine Zielveranstaltung ab."},
+            {"title": "Training starten", "text": "Gezieltes Triathlon-Schwimmtraining – effizient, zielgerichtet und praxisnah."},
+        ],
+        "coach_note": "Moritz Zentner bereitet Triathleten in Berlin auf die Schwimmdisziplin vor. Mit technischem Fokus, Erfahrung im offenen Wasser und einem Auge für die Wettkampfpraxis.",
+        "faqs": [
+            {"q": "Wie verbessere ich meine Schwimmzeit für den Triathlon?", "a": "Oft bringt eine bessere Technik mehr als reines Bahnentraining. Wasserlage, Atmung und Effizienz sind die Hebel, an denen wir arbeiten."},
+            {"q": "Trainiert ihr auch im offenen Wasser?", "a": "Ja, saisonabhängig an Berliner Badeseen. Offenes Wasser hat eigene Anforderungen – Orientierung, Wellen, Massenstart – die wir gezielt trainieren."},
+            {"q": "Bin ich als Anfänger im Triathlon-Schwimmen richtig?", "a": "Ja. Ob du deinen ersten Triathlon vorbereitest oder deine Bestzeit verbessern willst – das Training wird an dein Niveau angepasst."},
+            {"q": "Wie oft sollte ich trainieren?", "a": "Das hängt von deinem Ziel und Zeitplan ab. Gemeinsam finden wir einen Rhythmus, der in deine Vorbereitung passt."},
+        ],
+    },
+    "schwimmtraining-freiburg": {
+        "meta_title": "Schwimmtraining Freiburg – Personal Schwimmcoaching mit Clara Zentner",
+        "meta_description": "Individuelles Schwimmtraining in Freiburg und Umgebung: Techniktraining, Kraulen lernen, Wasserlage verbessern und sicherer schwimmen mit persönlichem Coaching.",
+        "kicker": "Personal Coaching Freiburg",
+        "h1": "Schwimmtraining in Freiburg",
+        "intro": "Du suchst persönliches Schwimmtraining in Freiburg und Umgebung? Mit Clara Zentner an deiner Seite trainierst du an den schönsten Schwimmorten der Region – individuell, technikorientiert und ohne Massenbetrieb.",
+        "cta_primary_label": "Termin anfragen",
+        "cta_secondary_label": "Schwimmorte in Freiburg ansehen",
+        "cta_secondary_url": "/schwimmorte-freiburg",
+        "benefits": [
+            {"icon": "👤", "title": "Anfänger & Wiedereinsteiger", "text": "Du möchtest schwimmen lernen oder deine Technik auffrischen? Clara begleitet dich mit ruhiger Anleitung und einem auf dich abgestimmten Tempo."},
+            {"icon": "⚡", "title": "Fortgeschrittene & Triathleten", "text": "Auch für erfahrene Schwimmer und Triathleten: Wir analysieren deine Technik und optimieren Wasserlage, Atmung und Effizienz."},
+            {"icon": "🌿", "title": "Training in Freiburg & Umgebung", "text": "Vom Westbad über das Eugen-Keidel-Bad bis zu Badeseen in der Region – dein Training dort, wo du dich wohlfühlst."},
+        ],
+        "approach": [
+            {"icon": "🌊", "title": "Technik vor Tempo", "text": "Eine saubere Wasserlage und ruhige Atmung sind die Basis. Erst wenn die Technik sitzt, arbeiten wir an Tempo und Ausdauer."},
+            {"icon": "🫁", "title": "Atmung & Rhythmus", "text": "Die richtige Atmung ist der Schlüssel zu entspanntem Schwimmen. Wir trainieren Atemrhythmus, Rotation und Seitlage."},
+            {"icon": "💪", "title": "Wasserlage & Ökonomie", "text": "Körperlage, Armzug und Beinschlag müssen harmonieren. Durch gezielte Übungen wird dein Schwimmen flüssiger und effizienter."},
+        ],
+        "region_title": "Schwimmtraining in Freiburg",
+        "region_note": "Das Training findet an ausgewählten Schwimmorten in Freiburg und Umgebung statt: Westbad, Haslach, Merzhausen, Badenova, Eugen-Keidel-Bad, Denzlingen, Gundelfingen, Bad Krozingen und weitere – je nach Saison und deinem Wunsch.",
+        "locations_link_label": "Alle Schwimmorte in Freiburg entdecken",
+        "locations_link_url": "/schwimmorte-freiburg",
+        "steps": [
+            {"title": "Termin anfragen", "text": "Wähle deinen Wunschort in Freiburg oder Umgebung – unverbindlich."},
+            {"title": "Bestätigung erhalten", "text": "Clara prüft deine Anfrage und bestätigt dir den passenden Termin."},
+            {"title": "Training starten", "text": "Dein persönliches Schwimmtraining in Freiburg – mit voller Aufmerksamkeit."},
+        ],
+        "coach_note": "Clara Zentner ist deine Coach in Freiburg und Umgebung. Mit ihrem Hintergrund im Schwimmsport und einem ruhigen, ermutigenden Stil begleitet sie dich bei deinem Training.",
+        "faqs": [
+            {"q": "Für wen ist das Schwimmtraining geeignet?", "a": "Das Training richtet sich an alle – Anfänger, Wiedereinsteiger, Fortgeschrittene und Triathleten. Jede Einheit wird an dein persönliches Niveau angepasst."},
+            {"q": "Wo findet das Training in Freiburg statt?", "a": "Das Training findet an deinem Wunschort statt – ob Westbad, Eugen-Keidel-Bad, Badenova oder einem Badesee in der Region."},
+            {"q": "Wie läuft eine erste Stunde ab?", "a": "In der ersten Stunde schauen wir uns dein aktuelles Schwimmniveau an und entwickeln einen persönlichen Trainingsplan."},
+            {"q": "Wie frage ich einen Termin an?", "a": "Einfach über das Buchungsformular deine Wünsche eingeben – Clara meldet sich zur Bestätigung."},
+        ],
+    },
+    "kraulen-lernen-freiburg": {
+        "meta_title": "Kraulen lernen Freiburg – Schwimmtechnik mit persönlichem Coaching",
+        "meta_description": "Kraulen lernen in Freiburg: Atmung, Armzug, Beinschlag, Rotation und Wasserlage Schritt für Schritt mit persönlichem Schwimmcoaching verbessern.",
+        "kicker": "Kraultechnik Freiburg",
+        "h1": "Kraulen lernen in Freiburg",
+        "intro": "Du möchtest in Freiburg Kraulen lernen? Mit Clara Zentner als Coach trainierst du Schritt für Schritt: Atmung, Körperrotation, Armzug und Beinschlag – ohne Druck, mit klarer Anleitung.",
+        "cta_primary_label": "Kraulen lernen – Termin anfragen",
+        "benefits": [
+            {"icon": "👤", "title": "Erwachsene & Anfänger", "text": "Du hast noch nie gekrault? Kein Problem. Wir starten mit den Grundlagen und bauen die Technik sauber auf."},
+            {"icon": "🔄", "title": "Wiedereinsteiger", "text": "Dein Kraulstil ist eingerostet? Wir arbeiten an Atmung, Rotation und Koordination."},
+            {"icon": "🏅", "title": "Triathleten", "text": "Effizientes Kraulen für deine Wettkampfvorbereitung in Freiburg und Umgebung."},
+        ],
+        "approach": [
+            {"icon": "🫁", "title": "Atmung zuerst", "text": "Die richtige Atemtechnik ist das Fundament. Wir trainieren die Seitlage, den richtigen Moment zum Atmen und den Rhythmus."},
+            {"icon": "🔄", "title": "Rotation & Körperlage", "text": "Effizientes Kraulen kommt aus der Körperrotation – nicht aus den Armen allein."},
+            {"icon": "✋", "title": "Armzug & Beinschlag", "text": "Armzug und Beinschlag werden einzeln trainiert und dann flüssig verbunden."},
+        ],
+        "region_title": "Kraulen lernen in Freiburg",
+        "region_note": "Das Kraultraining findet in ausgewählten Freiburger Schwimmbädern statt – ruhig, ohne Massenbetrieb und mit genug Platz für konzentriertes Üben.",
+        "locations_link_label": "Schwimmorte in Freiburg",
+        "locations_link_url": "/schwimmorte-freiburg",
+        "steps": [
+            {"title": "Termin anfragen", "text": "Wähle Ort und Dauer – unverbindlich."},
+            {"title": "Bestätigung erhalten", "text": "Clara bestätigt deinen Termin."},
+            {"title": "Kraulen lernen", "text": "Los geht's mit deinem persönlichen Kraultraining."},
+        ],
+        "coach_note": "Clara Zentner begleitet dich als Coach in Freiburg. Mit ruhiger Art und einem klaren Fokus auf saubere Technik bringt sie dir Kraulen entspannt und effektiv bei.",
+        "faqs": [
+            {"q": "Kann ich Kraulen lernen, wenn ich noch nie gekrault habe?", "a": "Ja. Wir starten mit Atmung und Wasserlage und bauen dann Armzug, Beinschlag und Rotation Schritt für Schritt auf."},
+            {"q": "Wie lange dauert es, Kraulen zu lernen?", "a": "Das ist individuell. Viele haben nach 3–5 Einheiten die Grundlagen sicher."},
+            {"q": "Ist Kraulen für Erwachsene schwerer?", "a": "Erwachsene haben den Vorteil, Technik bewusst umsetzen zu können. Mit Geduld und klaren Übungen klappt es sehr gut."},
+        ],
+    },
+    "schwimmorte-berlin": {
+        "meta_title": "Schwimmorte Berlin – Schwimmbäder, Seen und Badestellen für dein Training",
+        "meta_description": "Entdecke Schwimmorte in Berlin für dein Training: Schwimmbäder, Badeseen, Strandbäder und passende Orte für Techniktraining mit Squalo.",
+        "kicker": "Schwimmorte Berlin",
+        "h1": "Schwimmorte in Berlin",
+        "intro": "Berlin hat eine vielfältige Schwimmlandschaft: von historischen Hallenbädern über Sommerbäder bis zu natürlichen Badeseen. Wähle deinen Lieblingsort für dein persönliches Squalo-Training.",
+        "cta_primary_label": "Termin an einem Schwimmort anfragen",
+        "cta_secondary_label": "Zur Karte mit allen Orten",
+        "cta_secondary_url": "/#map",
+        "benefits_title": "Schwimmbäder & Seen in Berlin",
+        "benefits": [
+            {"icon": "🏛️", "title": "Hallenbäder", "text": "Ganzjährig nutzbare Schwimmbäder wie das Stadtbad Tiergarten, die Schwimmhalle Schöneberg oder das Kombibad Spandau – ideal für Techniktraining bei jeder Witterung."},
+            {"icon": "☀️", "title": "Sommerbäder & Strandbäder", "text": "Im Sommer bieten Sommerbäder wie das Sommerbad Kreuzberg oder das Strandbad Wannsee ideale Bedingungen für ausgedehntes Training im Freien."},
+            {"icon": "🌲", "title": "Badeseen", "text": "Die Krumme Lanke, der Schlachtensee oder der Teufelssee – Berlins Badeseen sind beliebte Trainingsorte mit natürlichem Charakter und viel Platz."},
+        ],
+        "region_title": "Training in ganz Berlin",
+        "region_note": "Squalo trainiert an über 40 Schwimmorten in ganz Berlin – vom Hallenbad in Mitte bis zum Badesee in Steglitz-Zehlendorf. Wähle den Ort, der am besten zu dir passt, und buche dein persönliches Training.",
+        "locations_link_label": "Alle Orte auf der Karte ansehen",
+        "locations_link_url": "/#map",
+        "steps_title": "So nutzt du die Schwimmorte",
+        "steps": [
+            {"title": "Ort auswählen", "text": "Stöbere durch die Liste der Schwimmorte oder nutze die Karte, um deinen Wunschort zu finden."},
+            {"title": "Termin anfragen", "text": "Buche ein persönliches Training an deinem ausgewählten Ort."},
+            {"title": "Training genießen", "text": "Dein Coach kommt an den Ort – du musst dich um nichts kümmern."},
+        ],
+        "coach_note": "Moritz Zentner ist dein Coach in Berlin und kennt die Schwimmorte in der Stadt genau. Er hilft dir, den passenden Ort für dein Training zu finden.",
+        "faqs": [
+            {"q": "Welche Schwimmorte in Berlin sind für Anfänger geeignet?", "a": "Ruhige Hallenbäder mit Trainingsbecken eignen sich besonders gut. Dein Coach berät dich gerne bei der Auswahl."},
+            {"q": "Kann ich auch an einem Badesee trainieren?", "a": "Ja, viele Badeseen in Berlin eignen sich für das Training – besonders in den Sommermonaten."},
+            {"q": "Ist Training im Freibad auch im Winter möglich?", "a": "Nein, die meisten Freibäder und Sommerbäder haben nur in der warmen Jahreszeit geöffnet. Im Winter weichen wir auf Hallenbäder aus."},
+        ],
+    },
+    "schwimmorte-freiburg": {
+        "meta_title": "Schwimmorte Freiburg – Schwimmbäder, Thermen und Badeseen in der Region",
+        "meta_description": "Finde Schwimmorte in Freiburg und Umgebung: Schwimmbäder, Thermen und Badeseen für dein persönliches Schwimmtraining mit Squalo.",
+        "kicker": "Schwimmorte Freiburg",
+        "h1": "Schwimmorte in Freiburg",
+        "intro": "Freiburg und die Region bieten eine Reihe schöner Schwimmorte – von modernen Hallenbädern über Thermen bis zu natürlichen Badeseen. Wähle deinen Lieblingsort für dein persönliches Squalo-Training.",
+        "cta_primary_label": "Termin in Freiburg anfragen",
+        "cta_secondary_label": "Mehr über das Training in Freiburg",
+        "cta_secondary_url": "/schwimmtraining-freiburg",
+        "benefits_title": "Schwimmorte in Freiburg & Umgebung",
+        "benefits": [
+            {"icon": "🏊", "title": "Schwimmbäder in Freiburg", "text": "Das Westbad, das Eugen-Keidel-Bad, das Hallenbad Haslach, Badenova und das Freibad Merzhausen – beliebte Orte für regelmäßiges Training."},
+            {"icon": "🌿", "title": "Bäder in der Region", "text": "Auch in Gundelfingen, Denzlingen, Bad Krozingen, Emmendingen, Waldkirch und weiteren Orten in der Region gibt es Schwimmbäder für dein Training."},
+            {"icon": "🌊", "title": "Thermen & Badeseen", "text": "Die Therme Bad Krozingen und natürliche Badeseen in der Region ergänzen das Angebot – je nach Saison und Vorliebe."},
+        ],
+        "region_title": "Training in Freiburg und Umgebung",
+        "region_note": "Clara Zentner trainiert in Freiburg und der Region – vom Westbad Freiburg bis zu den Bädern in Bad Krozingen, Emmendingen oder Waldkirch. Du wählst deinen Wunschort, sie kommt dorthin.",
+        "locations_link_label": "Alle Standorte auf der Karte ansehen",
+        "locations_link_url": "/#map",
+        "steps_title": "So nutzt du die Schwimmorte",
+        "steps": [
+            {"title": "Ort auswählen", "text": "Stöbere durch die Liste der Schwimmorte in Freiburg und Umgebung."},
+            {"title": "Termin anfragen", "text": "Buche ein persönliches Training an deinem ausgewählten Ort."},
+            {"title": "Training genießen", "text": "Clara kommt an den Ort – du musst dich um nichts kümmern."},
+        ],
+        "coach_note": "Clara Zentner ist deine Coach in Freiburg und kennt die Schwimmbäder der Region genau. Sie hilft dir, den passenden Ort für dein Training zu finden.",
+        "faqs": [
+            {"q": "Welche Schwimmbäder in Freiburg sind am besten für Training geeignet?", "a": "Das Westbad Freiburg und das Eugen-Keidel-Bad sind beliebte Trainingsorte. Dein Coach berät dich gerne."},
+            {"q": "Gibt es auch Training in Badeseen in Freiburg?", "a": "Ja, in den Sommermonaten können Badeseen in der Region für das Training genutzt werden."},
+            {"q": "Trainiert Clara auch außerhalb von Freiburg?", "a": "Ja, Clara trainiert in der gesamten Region – von Gundelfingen bis Bad Krozingen. Frag einfach nach deinem Wunschort."},
+        ],
+    },
+}
+
+
 # ── Confirmed-status helpers ──────────────────────────────────────
 CONFIRMED_STATUSES = ('bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen')
 
@@ -2457,10 +2771,24 @@ def create_app() -> Flask:
         )
         return Response(content, mimetype='text/plain')
 
+    # ── SEO Landing Pages ───────────────────────────────────────
+    for _slug, _data in LANDING_PAGES.items():
+        def _make_landing(slug=_slug, data=_data):
+            def _landing():
+                return render_template("landing_page.html", page=data)
+            _landing.__name__ = f"landing_{slug.replace('-', '_')}"
+            return _landing
+        app.add_url_rule(f"/{_slug}", endpoint=f"landing_{_slug.replace('-', '_')}", view_func=_make_landing(_slug, _data))
+
+    @app.context_processor
+    def inject_landing_slugs():
+        return dict(landing_slugs=sorted(LANDING_PAGES.keys()))
+
     # ── sitemap.xml ─────────────────────────────────────────────
     @app.route("/sitemap.xml")
     def sitemap_xml():
         base = get_public_base_url()
+        landing_slugs = sorted(LANDING_PAGES.keys())
         pages = [
             ('/', '1.0', 'daily'),
             ('/coaches', '0.8', 'weekly'),
@@ -2468,6 +2796,8 @@ def create_app() -> Flask:
             ('/booking', '0.5', 'monthly'),
             ('/impressum', '0.3', 'monthly'),
         ]
+        for slug in landing_slugs:
+            pages.append((f"/{slug}", '0.7', 'monthly'))
         xml_parts = ['<?xml version="1.0" encoding="UTF-8"?>']
         xml_parts.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
         for path, priority, changefreq in pages:

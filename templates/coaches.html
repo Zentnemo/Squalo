@@ -81,7 +81,22 @@
               </a>
               <p class="coach-price-hint">💰 50 € / Std · 5-er Paket: 250 € · 10-er Paket: 500 €</p>
             </div>
-          </div>
+            {# ── SEO region links per coach ── #}
+            {% if 'Berlin' in (coach.cities_list or []) %}
+              <div class="coach-seo-links">
+                <span class="coach-seo-label">Mehr zu:</span>
+                <a href="/schwimmtraining-berlin" class="coach-seo-link">Schwimmtraining Berlin</a>
+                <a href="/kraulen-lernen-berlin" class="coach-seo-link">Kraulen lernen Berlin</a>
+                <a href="/schwimmorte-berlin" class="coach-seo-link">Schwimmorte Berlin</a>
+              </div>
+            {% endif %}
+            {% if 'Freiburg' in (coach.cities_list or []) %}
+              <div class="coach-seo-links">
+                <span class="coach-seo-label">Mehr zu:</span>
+                <a href="/schwimmtraining-freiburg" class="coach-seo-link">Schwimmtraining Freiburg</a>
+                <a href="/schwimmorte-freiburg" class="coach-seo-link">Schwimmorte Freiburg</a>
+              </div>
+            {% endif %}          </div>
         </div>
 
         {# ── Reviews ── #}

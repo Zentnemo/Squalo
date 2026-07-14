@@ -1,0 +1,379 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page.meta_title }}{% endblock %}
+{% block meta_description %}{{ page.meta_description }}{% endblock %}
+{% block og_title %}{{ page.og_title or page.meta_title }}{% endblock %}
+{% block og_description %}{{ page.og_description or page.meta_description }}{% endblock %}
+{% block twitter_title %}{{ page.og_title or page.meta_title }}{% endblock %}
+{% block twitter_description %}{{ page.og_description or page.meta_description }}{% endblock %}
+
+{% block content %}
+<div class="landing-page">
+  {# ── Hero ── #}
+  <section class="landing-hero">
+    <div class="landing-hero-bg"></div>
+    <div class="landing-hero-overlay"></div>
+    <div class="container" style="position:relative;z-index:2;">
+      {% if page.kicker %}
+        <p class="landing-kicker">{{ page.kicker }}</p>
+      {% endif %}
+      <h1 class="landing-hero-title">{{ page.h1 }}</h1>
+      {% if page.intro %}
+        <p class="landing-hero-text">{{ page.intro }}</p>
+      {% endif %}
+      <div class="landing-hero-actions">
+        <a href="{{ page.cta_primary_url or url_for('booking') }}" class="btn btn-hero-primary">
+          {{ page.cta_primary_label or 'Termin anfragen' }}
+        </a>
+        {% if page.cta_secondary_url and page.cta_secondary_label %}
+          <a href="{{ page.cta_secondary_url }}" class="btn btn-hero-secondary">
+            {{ page.cta_secondary_label }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    {# ── Benefits / Für wen geeignet ── #}
+    {% if page.benefits %}
+      <section class="landing-section">
+        <h2 class="landing-section-title">{{ page.benefits_title or 'Für wen ist das Training geeignet?' }}</h2>
+        <div class="landing-card-grid">
+          {% for benefit in page.benefits %}
+            <div class="landing-card">
+              <div class="landing-card-icon">{{ benefit.icon }}</div>
+              <h3 class="landing-card-title">{{ benefit.title }}</h3>
+              <p class="landing-card-text">{{ benefit.text }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {# ── Trainingsansatz ── #}
+    {% if page.approach %}
+      <section class="landing-section">
+        <h2 class="landing-section-title">{{ page.approach_title or 'Trainingsansatz' }}</h2>
+        <div class="landing-card-grid">
+          {% for item in page.approach %}
+            <div class="landing-card">
+              <div class="landing-card-icon">{{ item.icon }}</div>
+              <h3 class="landing-card-title">{{ item.title }}</h3>
+              <p class="landing-card-text">{{ item.text }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {# ── Regionale Einbindung ── #}
+    {% if page.region_note %}
+      <section class="landing-section landing-region">
+        <h2 class="landing-section-title">{{ page.region_title or 'Training in der Region' }}</h2>
+        <div class="landing-region-content">
+          <div class="landing-region-text">{{ page.region_note }}</div>
+          {% if page.locations_link_label and page.locations_link_url %}
+            <a href="{{ page.locations_link_url }}" class="btn btn-secondary">
+              {{ page.locations_link_label }}
+            </a>
+          {% endif %}
+        </div>
+      </section>
+    {% endif %}
+
+    {# ── Ablauf ── #}
+    {% if page.steps %}
+      <section class="landing-section">
+        <h2 class="landing-section-title">{{ page.steps_title or 'So läuft es ab' }}</h2>
+        <div class="landing-steps">
+          {% for step in page.steps %}
+            <div class="landing-step">
+              <span class="landing-step-number">{{ loop.index }}</span>
+              <div class="landing-step-content">
+                <h3 class="landing-step-title">{{ step.title }}</h3>
+                <p class="landing-step-text">{{ step.text }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {# ── Coach-Hinweis ── #}
+    {% if page.coach_note %}
+      <section class="landing-section landing-coach">
+        <div class="landing-coach-card">
+          <div class="landing-coach-icon">🏊</div>
+          <div>
+            <h3>Dein Coach</h3>
+            <p>{{ page.coach_note }}</p>
+            <a href="{{ url_for('coaches') }}" class="btn btn-secondary">Alle Coaches ansehen</a>
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    {# ── FAQ ── #}
+    {% if page.faqs %}
+      <section class="landing-section" itemscope="" itemtype="https://schema.org/FAQPage">
+        <h2 class="landing-section-title">{{ page.faq_title or 'Häufige Fragen' }}</h2>
+        <div class="landing-faqs">
+          {% for faq in page.faqs %}
+            <div class="landing-faq" itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
+              <button class="landing-faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+                <span itemprop="name">{{ faq.q }}</span>
+                <span class="landing-faq-toggle">+</span>
+              </button>
+              <div class="landing-faq-answer" itemprop="acceptedAnswer" itemscope="" itemtype="https://schema.org/Answer" style="display:none;">
+                <div itemprop="text">{{ faq.a }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {# ── Final CTA ── #}
+    <section class="landing-section landing-final-cta">
+      <h2>{{ page.final_cta_title or 'Bereit für dein Schwimmtraining?' }}</h2>
+      <p>{{ page.final_cta_text or 'Starte jetzt und buche dein persönliches Coaching.' }}</p>
+      <a href="{{ page.cta_primary_url or url_for('booking') }}" class="btn btn-hero-primary" style="font-size:1.1em;padding:14px 32px;">
+        {{ page.final_cta_label or 'Jetzt Schwimmtraining anfragen' }}
+      </a>
+    </section>
+  </div>
+</div>
+
+{% if page.faqs %}
+<script>
+function toggleFaq(btn) {
+  var expanded = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', !expanded);
+  var answer = btn.nextElementSibling;
+  answer.style.display = expanded ? 'none' : 'block';
+}
+</script>
+{% endif %}
+
+<style>
+.landing-hero {
+  position:relative;
+  min-height:50vh;
+  display:flex;
+  align-items:center;
+  background:linear-gradient(135deg,var(--dark-blue,#003d4d) 0%,var(--squalo-deep-blue,#002433) 50%,#001a2e 100%);
+  overflow:hidden;
+  padding:4rem 0;
+}
+.landing-hero-bg {
+  position:absolute;inset:0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(0,168,204,0.10) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 30%, rgba(255,159,0,0.06) 0%, transparent 50%);
+  pointer-events:none;
+}
+.landing-hero-overlay {
+  position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300a8cc' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.landing-hero-title {
+  font-size:clamp(1.8rem,5vw,3rem);
+  color:#fff;
+  margin:0 0 0.75rem;
+  line-height:1.15;
+}
+.landing-kicker {
+  color:var(--turquoise,#00a8cc);
+  font-size:0.9rem;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  margin-bottom:0.5rem;
+}
+.landing-hero-text {
+  color:rgba(255,255,255,0.8);
+  font-size:1.1rem;
+  max-width:640px;
+  line-height:1.6;
+  margin-bottom:1.5rem;
+}
+.landing-hero-actions {
+  display:flex;gap:12px;flex-wrap:wrap;
+}
+.landing-section {
+  padding:3rem 0;
+  border-bottom:1px solid rgba(0,168,204,0.08);
+}
+.landing-section:last-of-type { border-bottom:none; }
+.landing-section-title {
+  font-size:1.6rem;
+  color:var(--dark-blue,#003d4d);
+  margin-bottom:1.5rem;
+}
+.landing-card-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:1.25rem;
+}
+.landing-card {
+  background:var(--card-bg,#f9f9f9);
+  border-radius:10px;
+  padding:1.5rem;
+  border:1px solid rgba(0,168,204,0.10);
+  transition:box-shadow 0.2s;
+}
+.landing-card:hover {
+  box-shadow:0 4px 20px rgba(0,168,204,0.12);
+}
+.landing-card-icon {
+  font-size:2rem;
+  margin-bottom:0.5rem;
+}
+.landing-card-title {
+  font-size:1.05rem;
+  color:var(--dark-blue,#003d4d);
+  margin:0 0 0.5rem;
+}
+.landing-card-text {
+  font-size:0.92rem;
+  color:var(--text-muted,#666);
+  line-height:1.55;
+  margin:0;
+}
+.landing-steps {
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+}
+.landing-step {
+  display:flex;
+  gap:1rem;
+  align-items:flex-start;
+  padding:1rem;
+  background:var(--card-bg,#f9f9f9);
+  border-radius:8px;
+}
+.landing-step-number {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:36px;height:36px;
+  min-width:36px;
+  border-radius:50%;
+  background:var(--turquoise,#00a8cc);
+  color:#fff;
+  font-weight:700;
+  font-size:0.95rem;
+}
+.landing-step-content { flex:1; }
+.landing-step-title {
+  font-size:1rem;
+  color:var(--dark-blue,#003d4d);
+  margin:0 0 0.25rem;
+}
+.landing-step-text {
+  font-size:0.9rem;
+  color:var(--text-muted,#666);
+  margin:0;
+  line-height:1.5;
+}
+.landing-region-content {
+  background:var(--card-bg,#f9f9f9);
+  border-radius:10px;
+  padding:1.5rem;
+  border-left:4px solid var(--turquoise,#00a8cc);
+}
+.landing-region-text {
+  font-size:0.95rem;
+  color:var(--text-muted,#666);
+  line-height:1.6;
+  margin-bottom:1rem;
+}
+.landing-coach-card {
+  display:flex;
+  gap:1.25rem;
+  align-items:center;
+  background:linear-gradient(135deg,var(--dark-blue,#003d4d),var(--squalo-deep-blue,#002433));
+  color:#fff;
+  border-radius:12px;
+  padding:1.5rem 2rem;
+}
+.landing-coach-icon {
+  font-size:2.5rem;
+  min-width:50px;
+  text-align:center;
+}
+.landing-coach-card h3 {
+  margin:0 0 0.25rem;
+  font-size:1.1rem;
+}
+.landing-coach-card p {
+  margin:0 0 0.75rem;
+  opacity:0.85;
+  font-size:0.92rem;
+}
+.landing-coach-card .btn { color:#fff;border-color:rgba(255,255,255,0.5); }
+.landing-coach-card .btn:hover { background:rgba(255,255,255,0.1); }
+.landing-faqs {
+  display:flex;
+  flex-direction:column;
+  gap:0.5rem;
+  max-width:720px;
+}
+.landing-faq {
+  border:1px solid rgba(0,168,204,0.12);
+  border-radius:8px;
+  overflow:hidden;
+}
+.landing-faq-question {
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:1rem 1.25rem;
+  background:var(--card-bg,#f9f9f9);
+  border:none;
+  cursor:pointer;
+  font-size:0.95rem;
+  font-weight:600;
+  color:var(--dark-blue,#003d4d);
+  text-align:left;
+  font-family:inherit;
+}
+.landing-faq-question:hover { background:rgba(0,168,204,0.04); }
+.landing-faq-toggle {
+  font-size:1.3rem;
+  color:var(--turquoise,#00a8cc);
+  transition:transform 0.2s;
+  margin-left:1rem;min-width:24px;text-align:center;
+}
+.landing-faq-question[aria-expanded="true"] .landing-faq-toggle {
+  transform:rotate(45deg);
+}
+.landing-faq-answer {
+  padding:0 1.25rem 1rem;
+  font-size:0.9rem;
+  color:var(--text-muted,#666);
+  line-height:1.6;
+}
+.landing-final-cta {
+  text-align:center;
+  padding:4rem 0;
+}
+.landing-final-cta h2 {
+  font-size:1.6rem;
+  color:var(--dark-blue,#003d4d);
+  margin-bottom:0.5rem;
+}
+.landing-final-cta p {
+  color:var(--text-muted,#666);
+  margin-bottom:1.5rem;
+}
+@media(max-width:600px){
+  .landing-hero { min-height:40vh;padding:2.5rem 0; }
+  .landing-card-grid { grid-template-columns:1fr; }
+  .landing-coach-card { flex-direction:column;text-align:center; }
+  .landing-hero-actions { flex-direction:column; }
+}
+</style>
+{% endblock %}

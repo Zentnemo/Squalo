@@ -125,8 +125,13 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="site-footer">
-        <p>&copy; 2026 Squalo Schwimmcoaching Berlin · <a href="{{ url_for('impressum') }}">Impressum</a></p>
+    <footer class="site-footer">        <div class="footer-seo-links">
+            <a href="/schwimmtraining-berlin">Schwimmtraining Berlin</a>
+            <a href="/kraulen-lernen-berlin">Kraulen lernen Berlin</a>
+            <a href="/schwimmtraining-freiburg">Schwimmtraining Freiburg</a>
+            <a href="/schwimmorte-berlin">Schwimmorte Berlin</a>
+            <a href="/schwimmorte-freiburg">Schwimmorte Freiburg</a>
+        </div>        <p>&copy; 2026 Squalo Schwimmcoaching Berlin · <a href="{{ url_for('impressum') }}">Impressum</a></p>
     </footer>
 
     {% block json_ld %}{% endblock %}
