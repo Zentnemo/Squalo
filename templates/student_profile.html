@@ -50,7 +50,6 @@
               <th>Coach</th>
               <th>Preis</th>
               <th>Rechnung</th>
-              <th>Stunden-Log</th>
             </tr>
           </thead>
           <tbody>
@@ -94,77 +93,6 @@
                        class="btn btn-primary" style="font-size:0.8em;padding:4px 10px;text-decoration:none;">
                       🧾 Rechnung erstellen
                     </a>
-                  {% endif %}
-                </td>
-                <td>
-                  {% set ns_log = namespace(existing_log=none) %}
-                  {% for log in lesson_logs %}
-                    {% if log.booking_id == b.id %}
-                      {% set ns_log.existing_log = log %}
-                    {% endif %}
-                  {% endfor %}
-
-                  {# ── Fall 1: Stunden-Log bereits vorhanden ── #}
-                  {% if ns_log.existing_log %}
-                    <div style="font-size:0.85em;">
-                      <span style="color:var(--success);font-weight:600;">✅ Stunden-Log vorhanden</span><br>
-                      <span style="color:var(--text-muted);font-size:0.85em;">
-                        {{ ns_log.existing_log.original_filename }}
-                        {% if ns_log.existing_log.title and ns_log.existing_log.title != 'Stunden-Log' %}
-                          · {{ ns_log.existing_log.title }}
-                        {% endif %}
-                      </span>
-                      <div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;">
-                        <a href="{{ url_for('admin_download_student_file', file_id=ns_log.existing_log.id) }}"
-                           class="btn btn-primary" style="font-size:0.75em;padding:4px 10px;text-decoration:none;">
-                          📄 Download
-                        </a>
-                        <button type="button" class="btn btn-secondary"
-                                style="font-size:0.75em;padding:4px 10px;cursor:pointer;"
-                                onclick="this.nextElementSibling.style.display='block';this.style.display='none'">
-                          ✏️ Ersetzen
-                        </button>
-                        <form action="{{ url_for('admin_upload_lesson_log', user_id=student.id, booking_id=b.id) }}"
-                              method="POST" enctype="multipart/form-data"
-                              style="display:none;">
-                          <input type="file" name="file" accept=".pdf,application/pdf" required
-                                 style="font-size:0.75em;width:100px;">
-                          <button type="submit" class="btn btn-primary"
-                                  style="font-size:0.75em;padding:4px 8px;">
-                            ↑ Upload
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-
-                  {# ── Fall 2: Bestätigte Stunde ohne Log → Upload anbieten ── #}
-                  {% elif b.status in all_confirmed %}
-                    <div style="font-size:0.85em;">
-                      <div style="font-weight:600;margin-bottom:4px;color:var(--dark-blue);">
-                        📋 Stunden-Log / Trainingstagebuch hochladen
-                      </div>
-                      <form action="{{ url_for('admin_upload_lesson_log', user_id=student.id, booking_id=b.id) }}"
-                            method="POST" enctype="multipart/form-data">
-                        <div style="display:flex;flex-direction:column;gap:4px;">
-                          <input type="text" name="title" placeholder="Titel (optional)"
-                                 style="padding:4px 6px;font-size:0.85em;border:1px solid #ccc;border-radius:3px;width:100%;max-width:200px;">
-                          <input type="text" name="topic" placeholder="Thema / Notiz (optional)"
-                                 style="padding:4px 6px;font-size:0.85em;border:1px solid #ccc;border-radius:3px;width:100%;max-width:200px;">
-                          <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
-                            <input type="file" name="file" accept=".pdf,application/pdf" required
-                                   style="font-size:0.8em;width:130px;">
-                            <button type="submit" class="btn btn-primary"
-                                    style="font-size:0.8em;padding:4px 12px;">
-                              💾 Upload speichern
-                            </button>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-
-                  {# ── Fall 3: Nicht bestätigte Stunde ── #}
-                  {% else %}
-                    <span style="color:var(--text-muted);font-size:0.85em;">–</span>
                   {% endif %}
                 </td>
               </tr>
@@ -249,6 +177,135 @@
       </div>
     {% else %}
       <p style="color:var(--text-muted);">Noch keine Trainingspläne hochgeladen.</p>
+    {% endif %}
+  </section>
+
+  {# ── Training Diary / Lesson Log Upload ── #}
+  <section class="admin-section">
+    <h3>📓 Trainingstagebuch-Eintrag hochladen</h3>
+    <p style="color:var(--text-muted);margin-bottom:12px;">
+      Lade hier ein Stunden-Log oder Feedback-PDF hoch und ordne es einer konkreten Trainingsstunde zu.
+    </p>
+
+    <form action="{{ url_for('admin_upload_lesson_log', user_id=student.id) }}"
+          method="POST" enctype="multipart/form-data"
+          style="background:var(--card-bg, #f9f9f9);padding:16px;border-radius:8px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px;">
+
+      {% set ns_conf = namespace(has_confirmed=false) %}
+      {% for item in confirmed_bookings %}
+        {% set ns_conf.has_confirmed = true %}
+      {% endfor %}
+
+      {% if ns_conf.has_confirmed %}
+        <div>
+          <label style="font-weight:600;display:block;margin-bottom:4px;">Trainingsstunde auswählen *</label>
+          <select name="booking_id" required
+                  style="padding:8px 10px;font-size:0.9em;border:1px solid #ccc;border-radius:4px;width:100%;max-width:400px;">
+            <option value="">– Bitte wählen –</option>
+            {% for item in confirmed_bookings %}
+              {% set b = item.booking %}
+              {% set label_parts = [] %}
+              {% if item.eff_date %}
+                {% set _ = label_parts.append(item.eff_date.strftime('%d.%m.%Y')) %}
+              {% endif %}
+              {% if item.eff_time %}
+                {% set _ = label_parts.append(item.eff_time.strftime('%H:%M') ~ ' Uhr') %}
+              {% endif %}
+              {% if item.loc_name and item.loc_name != '–' %}
+                {% set _ = label_parts.append(item.loc_name) %}
+              {% endif %}
+              {% if item.coach_name and item.coach_name != '–' %}
+                {% set _ = label_parts.append(item.coach_name) %}
+              {% endif %}
+              {% set label = label_parts|join(' – ') if label_parts else 'Trainingsstunde ' ~ b.id %}
+              <option value="{{ b.id }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      {% else %}
+        <p style="color:var(--text-muted);font-style:italic;">
+          Noch keine zuordenbare Trainingsstunde vorhanden.
+        </p>
+      {% endif %}
+
+      <div>
+        <label style="font-weight:600;display:block;margin-bottom:4px;">Titel</label>
+        <input type="text" name="title" placeholder="z. B. Techniktraining Kraul"
+               style="padding:8px 10px;font-size:0.9em;border:1px solid #ccc;border-radius:4px;width:100%;max-width:400px;">
+      </div>
+
+      <div>
+        <label style="font-weight:600;display:block;margin-bottom:4px;">Thema / kurze Notiz <small style="font-weight:400;color:var(--text-muted);">(optional)</small></label>
+        <input type="text" name="topic" placeholder="z. B. Fokus auf Beinschlag und Atmung"
+               style="padding:8px 10px;font-size:0.9em;border:1px solid #ccc;border-radius:4px;width:100%;max-width:400px;">
+      </div>
+
+      <div>
+        <label style="font-weight:600;display:block;margin-bottom:4px;">PDF-Datei auswählen *</label>
+        <input type="file" name="file" accept=".pdf,application/pdf" required
+               style="font-size:0.9em;padding:4px 0;">
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="padding:8px 20px;align-self:flex-start;"
+              {% if not ns_conf.has_confirmed %}disabled style="opacity:0.5;cursor:not-allowed;padding:8px 20px;align-self:flex-start;"{% endif %}>
+        💾 Upload speichern
+      </button>
+    </form>
+
+    {# ── Existing training diary entries ── #}
+    {% set diary_entries = lesson_logs|sort(attribute='uploaded_at', reverse=True) %}
+    <h4 style="margin-bottom:8px;">Trainingstagebuch-Einträge ({{ diary_entries|length }})</h4>
+    {% if diary_entries %}
+      <div class="bookings-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Datum der Stunde</th>
+              <th>Titel</th>
+              <th>Thema / Notiz</th>
+              <th>Datei</th>
+              <th>Zugeordnete Stunde</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for entry in diary_entries %}
+              <tr>
+                <td>
+                  {% if entry.booking %}
+                    {% if entry.booking.confirmed_date %}
+                      {{ entry.booking.confirmed_date.strftime('%d.%m.%Y') }}
+                    {% else %}
+                      –
+                    {% endif %}
+                  {% else %}
+                    –
+                  {% endif %}
+                </td>
+                <td><strong>{{ entry.title }}</strong></td>
+                <td>{{ entry.topic or '–' }}</td>
+                <td>
+                  <a href="{{ url_for('admin_download_student_file', file_id=entry.id) }}"
+                     class="btn btn-secondary" style="font-size:0.8em;padding:4px 10px;text-decoration:none;">
+                    📄 {{ entry.original_filename }}
+                  </a>
+                </td>
+                <td>
+                  {% if entry.booking and entry.booking.confirmed_date %}
+                    {{ entry.booking.confirmed_date.strftime('%d.%m.%Y') }}
+                    {% if entry.booking.confirmed_time %}
+                      {{ entry.booking.confirmed_time.strftime('%H:%M') }} Uhr
+                    {% endif %}
+                  {% else %}
+                    <span style="color:var(--text-muted);">–</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p style="color:var(--text-muted);">Noch keine Trainingstagebuch-Einträge hochgeladen.</p>
     {% endif %}
   </section>
 {% endblock %}

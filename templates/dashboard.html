@@ -205,15 +205,15 @@
                   <p style="margin-top:8px;">
                     <a href="{{ url_for('student_download_file', file_id=ns_ses.log.id) }}"
                        class="btn btn-primary" style="font-size:0.85em;padding:6px 14px;text-decoration:none;">
-                      📄 Stunden-Log herunterladen
+                      📄 Trainingstagebuch herunterladen
                     </a>
-                    {% if ns_ses.log.title and ns_ses.log.title != 'Stunden-Log' %}
+                    {% if ns_ses.log.title and ns_ses.log.title != 'Stunden-Log' and ns_ses.log.title != 'Trainingstagebuch' %}
                       <br><small style="color:var(--text-muted);">{{ ns_ses.log.title }}{% if ns_ses.log.topic %} – {{ ns_ses.log.topic }}{% endif %}</small>
                     {% endif %}
                   </p>
                 {% else %}
                   <p style="margin-top:8px;color:var(--text-muted);font-size:0.9em;">
-                    ⏳ Kein Stunden-Log verfügbar.
+                    Noch kein Trainingstagebuch hinterlegt.
                   </p>
                 {% endif %}
               </div>

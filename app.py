@@ -2070,9 +2070,16 @@ def create_app() -> Flask:
                 'coach_name': coach_name,
             })
 
+        # Prepare confirmed bookings for the training diary dropdown
+        confirmed_bookings = [
+            item for item in bookings_with_invoices
+            if is_confirmed_status(item['booking'].status)
+        ]
+
         return render_template("student_profile.html",
                                student=student,
                                bookings_with_invoices=bookings_with_invoices,
+                               confirmed_bookings=confirmed_bookings,
                                lesson_logs=StudentFile.query.filter_by(user_id=student.id, file_type="lesson_log").all(),
                                training_plans=StudentFile.query.filter_by(user_id=student.id, file_type="training_plan").order_by(StudentFile.uploaded_at.desc()).all())
 
@@ -2142,15 +2149,20 @@ def create_app() -> Flask:
             download_name=filename,
         )
 
-    # ── Student File Upload: Lesson Log ──────────────────────────
-    @app.route("/admin/students/<int:user_id>/bookings/<int:booking_id>/upload-lesson-log", methods=["POST"])
+    # ── Student File Upload: Training Diary / Lesson Log ─────────
+    @app.route("/admin/students/<int:user_id>/upload-lesson-log", methods=["POST"])
     @login_required
-    def admin_upload_lesson_log(user_id, booking_id):
+    def admin_upload_lesson_log(user_id):
         if getattr(current_user, "role", "") != "admin":
             flash("Access denied", "danger")
             return redirect(url_for("index"))
 
         student = User.query.get_or_404(user_id)
+        booking_id = request.form.get("booking_id", type=int)
+        if not booking_id:
+            flash("Keine Trainingsstunde ausgewählt.", "warning")
+            return redirect(url_for("admin_student_profile", user_id=user_id))
+
         booking = Booking.query.get_or_404(booking_id)
         if booking.user_id != student.id:
             flash("Buchung gehört nicht zu diesem Schüler.", "danger")
@@ -2180,7 +2192,7 @@ def create_app() -> Flask:
             flash(f"Datei zu groß ({size / 1024 / 1024:.1f} MB). Maximal 10 MB erlaubt.", "danger")
             return redirect(url_for("admin_student_profile", user_id=user_id))
 
-        title = request.form.get("title", "").strip() or "Stunden-Log"
+        title = request.form.get("title", "").strip() or "Trainingstagebuch"
         topic = request.form.get("topic", "").strip() or None
 
         from werkzeug.utils import secure_filename
@@ -2208,7 +2220,7 @@ def create_app() -> Flask:
         db.session.add(sf)
         db.session.commit()
 
-        flash(f"Stunden-Log „{title}” hochgeladen.", "success")
+        flash(f"Trainingstagebuch „{title}” hochgeladen.", "success")
         return redirect(url_for("admin_student_profile", user_id=user_id))
 
     # ── Student File Upload: Training Plan ──────────────────────
