@@ -487,7 +487,10 @@ def send_email(subject, recipient, body_text, body_html=None):
         print(f"An:     {recipient}")
         print(f"Betreff: {subject}")
         print("-" * 60)
-        print(body_text)
+        try:
+            print(body_text)
+        except UnicodeEncodeError:
+            print(body_text.encode('utf-8', errors='replace').decode('utf-8', errors='replace'))
         if body_html:
             print("-" * 60)
             print("[HTML-Version verfügbar, wird in Konsole nicht angezeigt]")
@@ -523,44 +526,108 @@ def send_booking_notification(booking):
     """Send admin notification when a new booking request is submitted."""
     admin_email = get_admin_email()
     user = User.query.get(booking.user_id)
-    subject = AppSetting.get('tpl_new_subject', 'Neue Squalo-Terminanfrage')
+    user_name = user.name if user else 'unbekannt'
+    user_email = user.email if user else 'unbekannt'
 
+    # ── Format date with German day names ──
+    weekday_names = {
+        0: 'Montag', 1: 'Dienstag', 2: 'Mittwoch', 3: 'Donnerstag',
+        4: 'Freitag', 5: 'Samstag', 6: 'Sonntag'
+    }
+    def fmt_date(d):
+        if not d:
+            return None
+        wd = weekday_names.get(d.weekday(), '')
+        return f"{wd}, {d.strftime('%d.%m.%Y')}"
+
+    def fmt_time(t):
+        return t.strftime('%H:%M') if t else None
+
+    # ── Time options with day names ──
     time_options = []
     if booking.date_option_1:
-        t1 = booking.time_option_1.strftime('%H:%M') if booking.time_option_1 else '?'
-        time_options.append(f"  - {booking.date_option_1.strftime('%d.%m.%Y')} {t1} Uhr")
+        d1s = fmt_date(booking.date_option_1)
+        t1s = fmt_time(booking.time_option_1) or '?'
+        time_options.append(f"  ① {d1s} – {t1s} Uhr")
     if booking.date_option_2:
-        t2 = booking.time_option_2.strftime('%H:%M') if booking.time_option_2 else '?'
-        time_options.append(f"  - {booking.date_option_2.strftime('%d.%m.%Y')} {t2} Uhr")
+        d2s = fmt_date(booking.date_option_2)
+        t2s = fmt_time(booking.time_option_2) or '?'
+        time_options.append(f"  ② {d2s} – {t2s} Uhr")
     if booking.date_option_3:
-        t3 = booking.time_option_3.strftime('%H:%M') if booking.time_option_3 else '?'
-        time_options.append(f"  - {booking.date_option_3.strftime('%d.%m.%Y')} {t3} Uhr")
+        d3s = fmt_date(booking.date_option_3)
+        t3s = fmt_time(booking.time_option_3) or '?'
+        time_options.append(f"  ③ {d3s} – {t3s} Uhr")
     if not time_options and booking.requested_start:
-        time_options.append(f"  - {booking.requested_start.strftime('%d.%m.%Y %H:%M')} Uhr")
+        time_options.append(f"  → {booking.requested_start.strftime('%A, %d.%m.%Y %H:%M')} Uhr")
 
+    zeitoptionen_str = chr(10).join(time_options) if time_options else '  Keine Angabe'
+
+    # ── Locations with city ──
     locs = []
+    first_city = ''
     for lid in [booking.preferred_location_1_id, booking.preferred_location_2_id, booking.preferred_location_3_id]:
         if lid:
             loc = Location.query.get(lid)
             if loc:
-                locs.append(loc.name)
+                locs.append(f"{loc.name} ({loc.city or 'Berlin'})")
+                if not first_city:
+                    first_city = loc.city or 'Berlin'
 
-    duration_map = {30: "30 Min", 60: "1 Std", 90: "1,5 Std", 120: "2 Std",
-                    180: "3 Std", 240: "4 Std", 300: "5 Std (Paket)"}
-    duration_str = duration_map.get(booking.duration_minutes, f"{booking.duration_minutes} Min")
+    wunschorte_str = ', '.join(locs) if locs else 'Keine Angabe'
+    stadt_region = first_city or 'Keine Angabe'
 
-    body = _render_template_from_settings('tpl_new_body',
-        name=user.name if user else 'unbekannt',
-        email=user.email if user else 'unbekannt',
-        zeitoptionen=chr(10).join(time_options) if time_options else '  keine',
-        wunschorte=', '.join(locs) if locs else 'keine',
-        coach=booking.preferred_coach.name if booking.preferred_coach else 'egal',
+    # ── Coach ──
+    coach_str = booking.preferred_coach.name if booking.preferred_coach else 'Kein Wunsch (egal)'
+
+    # ── Duration ──
+    duration_map = {30: "30 Minuten", 60: "1 Stunde", 90: "1,5 Stunden", 120: "2 Stunden",
+                    180: "3 Stunden", 240: "4 Stunden", 300: "5 Stunden (Paket)"}
+    duration_str = duration_map.get(booking.duration_minutes, f"{booking.duration_minutes} Minuten")
+
+    # ── Subject: dynamic with customer name, first location, first date ──
+    first_date_str = ''
+    if booking.date_option_1:
+        first_date_str = booking.date_option_1.strftime('%d.%m.%Y')
+    elif booking.requested_start:
+        first_date_str = booking.requested_start.strftime('%d.%m.%Y')
+
+    if first_date_str:
+        subject = f"Neue Buchungsanfrage: {user_name} – {first_date_str}"
+    else:
+        subject = f"Neue Buchungsanfrage: {user_name} – Termin offen"
+
+    # ── Phone (User model has no phone field, always 'Keine Angabe') ──
+    telefon_str = 'Keine Angabe'
+
+    # ── Admin URL ──
+    base_url = get_public_base_url()
+    admin_url = f"{base_url}/admin"
+    admin_booking_url = f"{base_url}/admin/booking/{booking.id}"
+
+    # ── Render body ──
+    tpl_kwargs = dict(
+        name=user_name,
+        email=user_email,
+        telefon=telefon_str,
+        zeitoptionen=zeitoptionen_str,
+        wunschorte=wunschorte_str,
+        stadt_region=stadt_region,
+        coach=coach_str,
         dauer=duration_str,
-        ziel=booking.training_goal or 'keines',
-        notiz=booking.user_note or 'keine',
+        ziel=booking.training_goal or 'Keine Angabe',
+        notiz=booking.user_note or 'Keine Angabe',
         preis=f"{int(booking.estimated_price)} €",
-    ) or _default_tpl_new().replace('{{name}}', user.name if user else 'unbekannt')
+        admin_url=admin_url,
+        admin_booking_url=admin_booking_url,
+        booking_id=str(booking.id),
+    )
+    body = _render_template_from_settings('tpl_new_body', **tpl_kwargs)
+    if not body:
+        body = _default_tpl_new()
+        for key, val in tpl_kwargs.items():
+            body = body.replace('{{' + key + '}}', str(val))
 
+    print(f"[MAIL] Admin booking email built for BookingRequest ID {booking.id}")
     send_email(subject, admin_email, body)
 
 
@@ -761,22 +828,35 @@ def _send_shop_admin_email(order, products):
 def _default_tpl_new():
     return """Hallo Moritz,
 
-eine neue Terminanfrage ist eingegangen.
+eine neue Buchungsanfrage ist eingegangen.
 
-Kunde: {{name}}
-E-Mail: {{email}}
+─── KUNDENDATEN ───
+Name:       {{name}}
+E-Mail:     {{email}}
+Telefon:    {{telefon}}
 
-Zeitoptionen:
+─── TRAINING ───
+Region:         {{stadt_region}}
+Wunschort(e):   {{wunschorte}}
+Coach-Wunsch:   {{coach}}
+Dauer:          {{dauer}}
+Trainingsziel:  {{ziel}}
+
+─── TERMINWÜNSCHE ───
 {{zeitoptionen}}
 
-Wunschorte: {{wunschorte}}
-Coach-Wunsch: {{coach}}
-Dauer: {{dauer}}
-Trainingsziel: {{ziel}}
-Notiz: {{notiz}}
+─── NOTIZ ───
+{{notiz}}
+
+─── PREIS ───
 Geschätzter Preis: {{preis}}
 
-Link: /admin
+─── ADMIN ───
+Anfrage direkt öffnen:
+{{admin_booking_url}}
+
+Zum Admin-Dashboard:
+{{admin_url}}
 
 Viele Grüße
 Squalo Benachrichtigungssystem"""
