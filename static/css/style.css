@@ -3348,6 +3348,224 @@ main {
 }
 
 /* ════════════════════════════════════════════════════════
+   PRICING HIGHLIGHT – Premium Pricing Cards
+   ════════════════════════════════════════════════════════ */
+
+.pricing-highlight {
+  max-width: 800px;
+  margin: -30px auto 40px;
+  padding: 0 20px;
+  position: relative;
+  z-index: 5;
+}
+
+.pricing-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fcff 100%);
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 8px 32px rgba(0, 61, 77, 0.10), 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 168, 204, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle pool-blue accent at top */
+.pricing-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--squalo-pool-blue), var(--squalo-neon-orange), var(--squalo-pool-blue));
+  opacity: 0.5;
+}
+
+.pricing-grid {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pricing-item {
+  flex: 1;
+  min-width: 200px;
+  text-align: center;
+  padding: 8px 12px;
+}
+
+.pricing-item:first-child {
+  border-right: 1px solid rgba(0, 168, 204, 0.12);
+}
+
+.pricing-value {
+  font-family: 'Righteous', cursive;
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--squalo-deep-blue);
+  line-height: 1.1;
+  margin-bottom: 2px;
+}
+
+.pricing-value .pricing-euro {
+  color: var(--squalo-neon-orange);
+  font-size: 28px;
+}
+
+.pricing-value .pricing-amount {
+  color: var(--squalo-deep-blue);
+}
+
+.pricing-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--dark-blue);
+  margin-bottom: 6px;
+}
+
+.pricing-desc {
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.pricing-cta-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(0, 168, 204, 0.08);
+}
+
+.pricing-cta-row .btn {
+  min-width: 220px;
+}
+
+/* ── Pricing Sidebar (Booking Page) ── */
+.pricing-sidebar {
+  background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  border: 1px solid rgba(0, 168, 204, 0.12);
+  box-shadow: 0 2px 12px rgba(0, 61, 77, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.pricing-sidebar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pricing-sidebar-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pricing-sidebar-value {
+  font-family: 'Righteous', cursive;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--squalo-deep-blue);
+}
+
+.pricing-sidebar-value .pricing-euro {
+  color: var(--squalo-neon-orange);
+}
+
+.pricing-sidebar-desc {
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.5;
+  flex: 1;
+  min-width: 180px;
+  margin: 0;
+}
+
+.pricing-sidebar-cta {
+  margin-left: auto;
+}
+
+@media (max-width: 600px) {
+  .pricing-highlight {
+    margin: -20px auto 28px;
+    padding: 0 14px;
+  }
+
+  .pricing-card {
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
+
+  .pricing-grid {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .pricing-item:first-child {
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 168, 204, 0.12);
+    padding-bottom: 14px;
+  }
+
+  .pricing-value {
+    font-size: 28px;
+  }
+
+  .pricing-label {
+    font-size: 14px;
+  }
+
+  .pricing-desc {
+    font-size: 12px;
+  }
+
+  .pricing-cta-row .btn {
+    width: 100%;
+  }
+
+  .pricing-sidebar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 18px;
+    gap: 12px;
+  }
+
+  .pricing-sidebar-item {
+    width: 100%;
+  }
+
+  .pricing-sidebar-value {
+    font-size: 20px;
+  }
+
+  .pricing-sidebar-desc {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .pricing-sidebar-cta {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .pricing-sidebar-cta .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ════════════════════════════════════════════════════════
    RESPONSIVE / MOBILE OPTIMIZATION
    ════════════════════════════════════════════════════════ */
 
