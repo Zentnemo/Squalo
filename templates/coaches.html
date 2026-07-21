@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}Squalo Coaches – Schwimmtrainer in Berlin und Freiburg{% endblock %}
-{% block meta_description %}Lerne die Squalo Coaches kennen: individuelles Schwimmtraining mit Moritz Zentner in Berlin und Clara Zentner in Freiburg und Umgebung.{% endblock %}
+{% block meta_description %}Lerne die Squalo Coaches kennen: individuelles Schwimmtraining mit Moritz Zentner in Berlin, Tolga in Berlin und Clara Zentner in Freiburg und Umgebung.{% endblock %}
 {% block og_title %}Squalo Coaches – Schwimmtrainer in Berlin und Freiburg{% endblock %}
-{% block og_description %}Lerne die Squalo Coaches kennen: individuelles Schwimmtraining mit Moritz Zentner in Berlin und Clara Zentner in Freiburg und Umgebung.{% endblock %}
+{% block og_description %}Lerne die Squalo Coaches kennen: individuelles Schwimmtraining mit Moritz Zentner in Berlin, Tolga in Berlin und Clara Zentner in Freiburg und Umgebung.{% endblock %}
 {% block twitter_title %}Squalo Coaches – Schwimmtrainer in Berlin und Freiburg{% endblock %}
-{% block twitter_description %}Lerne die Squalo Coaches kennen: individuelles Schwimmtraining mit Moritz Zentner in Berlin und Clara Zentner in Freiburg und Umgebung.{% endblock %}
+{% block twitter_description %}Lerne die Squalo Coaches kennen: individuelles Schwimmtraining mit Moritz Zentner in Berlin, Tolga in Berlin und Clara Zentner in Freiburg und Umgebung.{% endblock %}
 {% block content %}
 <div class="coaches-page">
   <section class="coaches-hero">
@@ -140,7 +140,7 @@
           {# ── Review Form (logged in users) ── #}
           {% if current_user.is_authenticated %}
             <div class="review-form-wrap">
-              <h4>Moritz bewerten</h4>
+              <h4>{{ coach.name.split(' ')[0] }} bewerten</h4>
               <form method="POST" action="{{ url_for('coaches_review', coach_id=coach.id) }}" class="review-form">
                 <div class="form-group">
                   <label>Deine Bewertung</label>

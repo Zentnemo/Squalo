@@ -1521,6 +1521,141 @@ def create_app() -> Flask:
         
         db.session.commit()
 
+        # ── Coach seeden: Tolga (Berlin) ───────────────────────────────
+        coach_slug_tolga = "tolga"
+        existing_coach_tolga = Coach.query.filter_by(slug=coach_slug_tolga).first()
+        if existing_coach_tolga:
+            existing_coach_tolga.name = "Tolga"
+            existing_coach_tolga.slug = coach_slug_tolga
+            existing_coach_tolga.first_name = "Tolga"
+            existing_coach_tolga.last_name = None
+            existing_coach_tolga.title = "Schwimmtrainer in Berlin – Technik, Wettkampfvorbereitung & türkischsprachiges Coaching"
+            existing_coach_tolga.bio = (
+                "Tolga ist Schwimmtrainer in Berlin und richtet sich besonders an "
+                "Schwimmerinnen und Schwimmer, die ihre Technik auf ein höheres Niveau "
+                "bringen möchten. Durch seine langjährige Erfahrung im Vereinsschwimmen "
+                "und im leistungsorientierten Training kennt er die Details, die im Wasser "
+                "wirklich einen Unterschied machen: saubere Wasserlage, effizienter Armzug, "
+                "kraftvolle Starts, Wenden und ein klarer Trainingsaufbau.\n\n"
+                "Sein Fokus liegt auf fortgeschrittenem Techniktraining, Kraultechnik und "
+                "Wettkampfvorbereitung. Wer bereits sicher schwimmt und gezielt schneller, "
+                "effizienter oder technisch sauberer werden möchte, findet bei Tolga einen "
+                "ruhigen, erfahrenen und präzisen Coach.\n\n"
+                "Ein besonderer Vorteil: Tolga spricht neben Deutsch auch fließend Türkisch "
+                "und kann Schwimmtraining deshalb auch auf Türkisch anbieten. Das macht ihn "
+                "besonders interessant für alle, die sich beim Lernen und Trainieren in "
+                "türkischer Sprache wohler fühlen.\n\n"
+                "Bei gutem Wetter trainiert Tolga bevorzugt am Plötzensee. Alternativ ist "
+                "er besonders für Training im Kombibad Seestraße verfügbar."
+            )
+            existing_coach_tolga.strengths = (
+                "• Langjährige Erfahrung im leistungsorientierten Schwimmen\n"
+                "• Techniktraining für fortgeschrittene Schwimmer\n"
+                "• Kraultechnik, Wasserlage, Starts und Wenden\n"
+                "• Wettkampfvorbereitung und Leistungssteigerung\n"
+                "• Erfahrung aus dem Berliner Vereinsschwimmen\n"
+                "• Rettungsschwimmer\n"
+                "• Training auf Deutsch und Türkisch möglich\n"
+                "• Bevorzugte Orte: Plötzensee und Kombibad Seestraße"
+            )
+            existing_coach_tolga.swim_style = (
+                "Tolgas Training richtet sich besonders an Schwimmer, die bereits "
+                "Grundlagen mitbringen und gezielt an Technik, Tempo und Effizienz "
+                "arbeiten möchten. Im Mittelpunkt stehen saubere Bewegungsabläufe, "
+                "ein stabiler Rhythmus, kraftsparendes Kraulen und ein strukturierter "
+                "Aufbau der Trainingseinheiten.\n\n"
+                "Für ambitionierte Schwimmer kann der Fokus auch auf wettkampfnahen "
+                "Themen liegen: Start, Wende, Atemrhythmus, Tempoaufbau und "
+                "Belastungssteuerung. Dabei bleibt das Coaching klar, ruhig und direkt "
+                "verständlich – auf Deutsch oder auf Türkisch."
+            )
+            existing_coach_tolga.experience = (
+                "🏅 Langjährige Schwimmerfahrung\n"
+                "🏅 Erfahrung im leistungsorientierten Vereinsschwimmen\n"
+                "🏅 Wettkampferfahrung\n"
+                "🏅 Techniktraining für Fortgeschrittene\n"
+                "🏅 Rettungsschwimmer\n"
+                "🏅 Deutsch- und türkischsprachiges Coaching\n"
+                "📍 Verfügbar in Berlin, besonders Plötzensee und Kombibad Seestraße"
+            )
+            existing_coach_tolga.specialization = (
+                "Techniktraining, Kraultechnik, Wettkampfvorbereitung, "
+                "Starts und Wenden, Leistungssteigerung, "
+                "türkischsprachiges Schwimmtraining"
+            )
+            existing_coach_tolga.cities_served = "Berlin"
+            existing_coach_tolga.image_url = "/static/images/squalo-logo.png"
+            existing_coach_tolga.is_active = True
+            print(f"[OK] Coach aktualisiert: {existing_coach_tolga.name}")
+        else:
+            coach_tolga = Coach(
+                name="Tolga",
+                slug=coach_slug_tolga,
+                first_name="Tolga",
+                last_name=None,
+                title="Schwimmtrainer in Berlin – Technik, Wettkampfvorbereitung & türkischsprachiges Coaching",
+                bio=(
+                    "Tolga ist Schwimmtrainer in Berlin und richtet sich besonders an "
+                    "Schwimmerinnen und Schwimmer, die ihre Technik auf ein höheres Niveau "
+                    "bringen möchten. Durch seine langjährige Erfahrung im Vereinsschwimmen "
+                    "und im leistungsorientierten Training kennt er die Details, die im Wasser "
+                    "wirklich einen Unterschied machen: saubere Wasserlage, effizienter Armzug, "
+                    "kraftvolle Starts, Wenden und ein klarer Trainingsaufbau.\n\n"
+                    "Sein Fokus liegt auf fortgeschrittenem Techniktraining, Kraultechnik und "
+                    "Wettkampfvorbereitung. Wer bereits sicher schwimmt und gezielt schneller, "
+                    "effizienter oder technisch sauberer werden möchte, findet bei Tolga einen "
+                    "ruhigen, erfahrenen und präzisen Coach.\n\n"
+                    "Ein besonderer Vorteil: Tolga spricht neben Deutsch auch fließend Türkisch "
+                    "und kann Schwimmtraining deshalb auch auf Türkisch anbieten. Das macht ihn "
+                    "besonders interessant für alle, die sich beim Lernen und Trainieren in "
+                    "türkischer Sprache wohler fühlen.\n\n"
+                    "Bei gutem Wetter trainiert Tolga bevorzugt am Plötzensee. Alternativ ist "
+                    "er besonders für Training im Kombibad Seestraße verfügbar."
+                ),
+                strengths=(
+                    "• Langjährige Erfahrung im leistungsorientierten Schwimmen\n"
+                    "• Techniktraining für fortgeschrittene Schwimmer\n"
+                    "• Kraultechnik, Wasserlage, Starts und Wenden\n"
+                    "• Wettkampfvorbereitung und Leistungssteigerung\n"
+                    "• Erfahrung aus dem Berliner Vereinsschwimmen\n"
+                    "• Rettungsschwimmer\n"
+                    "• Training auf Deutsch und Türkisch möglich\n"
+                    "• Bevorzugte Orte: Plötzensee und Kombibad Seestraße"
+                ),
+                swim_style=(
+                    "Tolgas Training richtet sich besonders an Schwimmer, die bereits "
+                    "Grundlagen mitbringen und gezielt an Technik, Tempo und Effizienz "
+                    "arbeiten möchten. Im Mittelpunkt stehen saubere Bewegungsabläufe, "
+                    "ein stabiler Rhythmus, kraftsparendes Kraulen und ein strukturierter "
+                    "Aufbau der Trainingseinheiten.\n\n"
+                    "Für ambitionierte Schwimmer kann der Fokus auch auf wettkampfnahen "
+                    "Themen liegen: Start, Wende, Atemrhythmus, Tempoaufbau und "
+                    "Belastungssteuerung. Dabei bleibt das Coaching klar, ruhig und direkt "
+                    "verständlich – auf Deutsch oder auf Türkisch."
+                ),
+                experience=(
+                    "🏅 Langjährige Schwimmerfahrung\n"
+                    "🏅 Erfahrung im leistungsorientierten Vereinsschwimmen\n"
+                    "🏅 Wettkampferfahrung\n"
+                    "🏅 Techniktraining für Fortgeschrittene\n"
+                    "🏅 Rettungsschwimmer\n"
+                    "🏅 Deutsch- und türkischsprachiges Coaching\n"
+                    "📍 Verfügbar in Berlin, besonders Plötzensee und Kombibad Seestraße"
+                ),
+                specialization=(
+                    "Techniktraining, Kraultechnik, Wettkampfvorbereitung, "
+                    "Starts und Wenden, Leistungssteigerung, "
+                    "türkischsprachiges Schwimmtraining"
+                ),
+                cities_served="Berlin",
+                image_url="/static/images/squalo-logo.png",
+                is_active=True,
+            )
+            db.session.add(coach_tolga)
+            print(f"[OK] Coach neu angelegt: {coach_tolga.name}")
+
+        db.session.commit()
+
         # ── Bewertungen seeden (idempotent) ────────────────────────
         coach_moritz = Coach.query.filter_by(slug=coach_slug).first()
         if coach_moritz:

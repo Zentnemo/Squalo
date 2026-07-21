@@ -3348,37 +3348,258 @@ main {
 }
 
 /* ════════════════════════════════════════════════════════
+   EXPLAINER BLOCK – How Squalo works (between Hero & Pricing)
+   ════════════════════════════════════════════════════════ */
+
+.squalo-explainer {
+  max-width: 900px;
+  margin: -10px auto 30px;
+  padding: 0 20px;
+  position: relative;
+  z-index: 4;
+}
+
+.explainer-panel {
+  position: relative;
+  background: linear-gradient(145deg, #eaf7ff 0%, #d4f0ff 30%, #e8f9ff 70%, #f0fbff 100%);
+  border-radius: 20px;
+  padding: 36px 36px 28px;
+  box-shadow: 0 10px 40px rgba(0, 61, 77, 0.08), 0 2px 12px rgba(0, 168, 204, 0.10);
+  border: 1px solid rgba(0, 168, 204, 0.15);
+  overflow: hidden;
+}
+
+/* Water background caustics */
+.explainer-water-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 200px 100px at 15% 25%, rgba(102, 224, 255, 0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 180px 120px at 75% 20%, rgba(0, 168, 204, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 150px 80px at 60% 80%, rgba(255, 140, 26, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 120px 90px at 85% 70%, rgba(102, 224, 255, 0.15) 0%, transparent 55%),
+    radial-gradient(ellipse 160px 70px at 30% 60%, rgba(0, 168, 204, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.explainer-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.explainer-headline {
+  font-family: 'Righteous', cursive;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--squalo-deep-blue);
+  margin: 0 0 12px 0;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.explainer-intro {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #1a3a4a;
+  margin: 0 auto 10px;
+  max-width: 720px;
+}
+
+.explainer-intro strong {
+  color: var(--squalo-neon-orange);
+  font-weight: 700;
+}
+
+.explainer-detail {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #2a5a6a;
+  margin: 0 auto;
+  max-width: 680px;
+}
+
+.explainer-detail strong {
+  color: var(--turquoise);
+  font-weight: 600;
+}
+
+/* ── 3 Steps ── */
+.explainer-steps {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 22px;
+}
+
+.explainer-step {
+  flex: 1;
+  min-width: 0;
+  max-width: 280px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 168, 204, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 61, 77, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.explainer-step:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 168, 204, 0.10);
+}
+
+.step-badge {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--squalo-neon-orange), #ff7a00);
+  color: #fff;
+  font-family: 'Righteous', cursive;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(255, 140, 26, 0.3);
+}
+
+.step-text h3 {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--squalo-deep-blue);
+}
+
+.step-text p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #3a5a6a;
+}
+
+/* ── Tags ── */
+.explainer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 22px;
+}
+
+.tag-item {
+  display: inline-block;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--squalo-deep-blue);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 168, 204, 0.20);
+  border-radius: 20px;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+}
+
+.tag-item:hover {
+  background: var(--turquoise);
+  color: #fff;
+  border-color: var(--turquoise);
+  box-shadow: 0 2px 8px rgba(0, 168, 204, 0.25);
+}
+
+/* ── CTA Row ── */
+.explainer-cta-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.explainer-cta-row .btn-outline {
+  background: transparent;
+  color: var(--squalo-deep-blue);
+  border: 2px solid var(--squalo-deep-blue);
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.explainer-cta-row .btn-outline:hover {
+  background: var(--squalo-deep-blue);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 61, 77, 0.2);
+}
+
+/* ════════════════════════════════════════════════════════
    PRICING HIGHLIGHT – Premium Pricing Cards
    ════════════════════════════════════════════════════════ */
 
 .pricing-highlight {
   max-width: 800px;
-  margin: -30px auto 40px;
+  margin: -20px auto 40px;
   padding: 0 20px;
   position: relative;
   z-index: 5;
 }
 
 .pricing-card {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fcff 100%);
-  border-radius: 16px;
-  padding: 28px 32px;
-  box-shadow: 0 8px 32px rgba(0, 61, 77, 0.10), 0 2px 8px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 168, 204, 0.12);
+  background: linear-gradient(145deg, #ffffff 0%, #f0faff 40%, #e8f7ff 100%);
+  border-radius: 18px;
+  padding: 32px 32px 28px;
+  box-shadow: 0 12px 40px rgba(0, 61, 77, 0.10), 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 168, 204, 0.15);
   position: relative;
   overflow: hidden;
 }
 
-/* Subtle pool-blue accent at top */
-.pricing-card::before {
-  content: '';
+/* Stronger accent bar with Squalo colors */
+.pricing-accent-bar {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--squalo-pool-blue), var(--squalo-neon-orange), var(--squalo-pool-blue));
-  opacity: 0.5;
+  height: 4px;
+  background: linear-gradient(90deg,
+    var(--squalo-pool-blue) 0%,
+    var(--turquoise) 25%,
+    var(--squalo-neon-orange) 50%,
+    var(--turquoise) 75%,
+    var(--squalo-pool-blue) 100%
+  );
+  opacity: 0.8;
+  box-shadow: 0 0 20px rgba(0, 168, 204, 0.2);
+}
+
+/* Subtle water shimmer behind pricing */
+.pricing-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 300px 120px at 20% 30%, rgba(102, 224, 255, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 200px 100px at 80% 70%, rgba(255, 140, 26, 0.04) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .pricing-grid {
@@ -3387,6 +3608,8 @@ main {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
 }
 
 .pricing-item {
@@ -3402,7 +3625,7 @@ main {
 
 .pricing-value {
   font-family: 'Righteous', cursive;
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 900;
   color: var(--squalo-deep-blue);
   line-height: 1.1;
@@ -3412,10 +3635,12 @@ main {
 .pricing-value .pricing-euro {
   color: var(--squalo-neon-orange);
   font-size: 28px;
+  filter: drop-shadow(0 0 6px rgba(255, 140, 26, 0.2));
 }
 
 .pricing-value .pricing-amount {
   color: var(--squalo-deep-blue);
+  filter: drop-shadow(0 0 8px rgba(0, 61, 77, 0.08));
 }
 
 .pricing-label {
@@ -3423,6 +3648,8 @@ main {
   font-weight: 600;
   color: var(--dark-blue);
   margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .pricing-desc {
@@ -3430,14 +3657,35 @@ main {
   color: var(--text-light);
   line-height: 1.5;
   margin: 0;
+  max-width: 260px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pricing-sub {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 168, 204, 0.06);
+}
+
+.pricing-sub-text {
+  font-size: 13px;
+  color: var(--text-light);
+  font-style: italic;
+  opacity: 0.75;
 }
 
 .pricing-cta-row {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
-  padding-top: 18px;
+  margin-top: 18px;
+  padding-top: 16px;
   border-top: 1px solid rgba(0, 168, 204, 0.08);
+  position: relative;
+  z-index: 1;
 }
 
 .pricing-cta-row .btn {
@@ -3560,6 +3808,65 @@ main {
   }
 
   .pricing-sidebar-cta .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .squalo-explainer {
+    margin: -15px auto 24px;
+    padding: 0 14px;
+  }
+
+  .explainer-panel {
+    padding: 24px 18px 22px;
+    border-radius: 16px;
+  }
+
+  .explainer-headline {
+    font-size: 20px;
+  }
+
+  .explainer-intro {
+    font-size: 14px;
+  }
+
+  .explainer-detail {
+    font-size: 13px;
+  }
+
+  .explainer-steps {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .explainer-step {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .step-text h3 {
+    font-size: 13px;
+  }
+
+  .step-text p {
+    font-size: 12px;
+  }
+
+  .tag-item {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .explainer-cta-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .explainer-cta-row .btn,
+  .explainer-cta-row .btn-outline {
     width: 100%;
     text-align: center;
   }

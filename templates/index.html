@@ -27,24 +27,82 @@
     </div>
   </section>
 
+  {# ── Erklärblock: So funktioniert Squalo ── #}
+  <section class="squalo-explainer" aria-label="So funktioniert Squalo">
+    <div class="explainer-panel">
+      <div class="explainer-water-bg"></div>
+      <div class="explainer-content">
+        <h2 class="explainer-headline">Dein Schwimmcoaching – flexibel, persönlich, effektiv</h2>
+        <p class="explainer-intro">
+          Squalo verbindet dich mit erfahrenen Schwimmcoaches in deiner Nähe. Du wählst einen Trainingsort, gibst dein Ziel an und erhältst persönliches 1:1-Coaching – in <strong>Berlin</strong> oder <strong>Freiburg</strong>. Ob <strong>Schwimmen lernen</strong>, <strong>Kraultechnik</strong> verbessern oder die <strong>Triathlon</strong>- und <strong>Freiwasserschwimmen</strong>-Vorbereitung – dein Training wird genau auf dich abgestimmt.
+        </p>
+        <p class="explainer-detail">
+          Unsere Coaches begleiten dich aktiv im Wasser – mit direktem Feedback, klaren Übungen und einem Programm, das zu deinem Level passt. So machst du bei jeder <strong>Schwimmstunde</strong> spürbare Fortschritte.
+        </p>
+      </div>
+
+      <div class="explainer-steps">
+        <div class="explainer-step">
+          <div class="step-badge">1</div>
+          <div class="step-text">
+            <h3>Ort auswählen</h3>
+            <p>Finde ein Schwimmbad, einen See oder eine Badestelle in deiner Nähe.</p>
+          </div>
+        </div>
+        <div class="explainer-step">
+          <div class="step-badge">2</div>
+          <div class="step-text">
+            <h3>Coach connecten</h3>
+            <p>Wähle einen Coach, der zu deiner Region und deinem Trainingsziel passt.</p>
+          </div>
+        </div>
+        <div class="explainer-step">
+          <div class="step-badge">3</div>
+          <div class="step-text">
+            <h3>Besser schwimmen</h3>
+            <p>Trainiere Technik, Atmung, Wasserlage &amp; Sicherheit mit direktem Feedback im Wasser.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="explainer-tags">
+        <span class="tag-item">Kraultechnik</span>
+        <span class="tag-item">Erwachsene</span>
+        <span class="tag-item">Kinder</span>
+        <span class="tag-item">Triathlon</span>
+        <span class="tag-item">Freiwasser</span>
+        <span class="tag-item">Sicherheit im Wasser</span>
+      </div>
+
+      <div class="explainer-cta-row">
+        <a href="{{ url_for('booking') }}" class="btn btn-primary">Termin anfragen</a>
+        <a href="/#map" class="btn btn-outline">Schwimmorte ansehen</a>
+      </div>
+    </div>
+  </section>
+
   {# ── Pricing Highlight ── #}
   <section class="pricing-highlight" aria-label="Preise und Angebote">
     <div class="pricing-card">
+      <div class="pricing-accent-bar"></div>
       <div class="pricing-grid">
         <div class="pricing-item">
           <div class="pricing-value">
             <span class="pricing-euro">ab </span><span class="pricing-amount">50 €</span>
           </div>
           <div class="pricing-label">Einzelstunde</div>
-          <p class="pricing-desc">Individuelles Techniktraining in Berlin und Freiburg – passend zu deinem Level, deinem Ziel und deinem Trainingsort.</p>
+          <p class="pricing-desc">Individuelles Schwimmtraining in Berlin und Freiburg – passend zu deinem Level, deinem Ziel und deinem Trainingsort.</p>
         </div>
         <div class="pricing-item">
           <div class="pricing-value">
             <span class="pricing-amount">200 €</span>
           </div>
           <div class="pricing-label">5er-Paket</div>
-          <p class="pricing-desc">Ideal, wenn du regelmäßig an Technik, Wasserlage und Atmung arbeiten möchtest – für kontinuierlichen Technikaufbau und messbare Fortschritte.</p>
+          <p class="pricing-desc">Für regelmäßigen Technikaufbau, mehr Sicherheit und spürbare Fortschritte im Wasser.</p>
         </div>
+      </div>
+      <div class="pricing-sub">
+        <span class="pricing-sub-text">Schwimmstunden für Anfänger, Wiedereinsteiger und ambitionierte Schwimmer</span>
       </div>
       <div class="pricing-cta-row">
         <a class="btn btn-primary" href="{{ url_for('booking') }}">Termin anfragen</a>
