@@ -850,12 +850,44 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "SportsActivityLocation",
-  "name": "Squalo Schwimmcoaching",
-  "description": "Personal Schwimmtraining, Techniktraining und Triathlon-Coaching in Berlin und Freiburg.",
-  "url": "https://squalo-schwimmcoaching.com",
-  "areaServed": ["Berlin", "Freiburg"],
-  "sport": "Swimming"
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://squalo-schwimmcoaching.com/#organization",
+      "name": "Squalo Schwimmcoaching",
+      "description": "Personal Schwimmtraining, Techniktraining und Triathlon-Coaching in Berlin und Freiburg.",
+      "url": "https://squalo-schwimmcoaching.com",
+      "areaServed": ["Berlin", "Freiburg"],
+      "sport": "Swimming",
+      "foundingDate": "2025",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "info@squalo-schwimmcoaching.com"
+      },
+      "sameAs": []
+    },
+    {
+      "@type": "SportsActivityLocation",
+      "@id": "https://squalo-schwimmcoaching.com/#location",
+      "name": "Squalo Schwimmcoaching Berlin",
+      "description": "Personal Schwimmtraining, Techniktraining und Triathlon-Coaching in Berlin.",
+      "url": "https://squalo-schwimmcoaching.com",
+      "areaServed": ["Berlin"],
+      "sport": "Swimming",
+      "parentOrganization": { "@id": "https://squalo-schwimmcoaching.com/#organization" }
+    },
+    {
+      "@type": "SportsActivityLocation",
+      "@id": "https://squalo-schwimmcoaching.com/#location-freiburg",
+      "name": "Squalo Schwimmcoaching Freiburg",
+      "description": "Personal Schwimmtraining, Techniktraining und Triathlon-Coaching in Freiburg.",
+      "url": "https://squalo-schwimmcoaching.com",
+      "areaServed": ["Freiburg"],
+      "sport": "Swimming",
+      "parentOrganization": { "@id": "https://squalo-schwimmcoaching.com/#organization" }
+    }
+  ]
 }
 </script>
 {% endblock %}

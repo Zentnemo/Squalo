@@ -2986,7 +2986,52 @@ def create_app() -> Flask:
             "Disallow: /feed\n"
             "Disallow: /login\n"
             "Disallow: /register\n"
+            "Disallow: /logout\n"
+            "\n"
+            "# KI-Such-Crawler explizit erlauben\n"
+            "User-agent: OAI-SearchBot\n"
+            "Allow: /\n"
+            "Disallow: /admin\n"
+            "Disallow: /dashboard\n"
+            "Disallow: /login\n"
+            "Disallow: /register\n"
+            "\n"
+            "User-agent: OAI-AdsBot\n"
+            "Allow: /\n"
+            "Disallow: /admin\n"
+            "Disallow: /dashboard\n"
+            "Disallow: /login\n"
+            "Disallow: /register\n"
+            "\n"
+            "User-agent: ChatGPT-User\n"
+            "Allow: /\n"
+            "Disallow: /admin\n"
+            "Disallow: /dashboard\n"
+            "Disallow: /login\n"
+            "Disallow: /register\n"
             f"\nSitemap: {base}/sitemap.xml\n"
+        )
+        return Response(content, mimetype='text/plain')
+
+    # ── llms.txt (optional, KI-/LLM-freundliche Übersicht) ──────
+    @app.route("/llms.txt")
+    def llms_txt():
+        base = get_public_base_url()
+        content = (
+            "# Squalo Schwimmcoaching\n\n"
+            "Squalo bietet persönliches Schwimmcoaching in Berlin und Freiburg.\n\n"
+            "Wichtige Seiten:\n"
+            f"- {base}/\n"
+            f"- {base}/coaches\n"
+            f"- {base}/schwimmtraining-berlin\n"
+            f"- {base}/kraulen-lernen-berlin\n"
+            f"- {base}/schwimmkurs-erwachsene-berlin\n"
+            f"- {base}/schwimmtraining-kinder-berlin\n"
+            f"- {base}/triathlon-schwimmtraining-berlin\n"
+            f"- {base}/schwimmtraining-freiburg\n"
+            f"- {base}/kraulen-lernen-freiburg\n"
+            f"- {base}/schwimmorte-berlin\n"
+            f"- {base}/schwimmorte-freiburg\n"
         )
         return Response(content, mimetype='text/plain')
 
