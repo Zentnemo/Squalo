@@ -18,6 +18,7 @@
           <a class="btn btn-hero-primary hero-btn-water" href="{{ url_for('register') }}">Kostenlos registrieren</a>
           <a class="btn btn-hero-secondary hero-btn-water" href="{{ url_for('login') }}">Einloggen</a>
         </div>
+        <p class="hero-reg-hint">Erhalte dein persönliches Dashboard für Termine, Trainingspläne und Trainingstagebuch.</p>
       {% else %}
         <div class="cta-buttons hero-anim hero-anim-buoy">
           <a class="btn btn-hero-primary hero-btn-water" href="{{ url_for('booking') }}">Termin anfragen</a>
@@ -27,18 +28,17 @@
     </div>
   </section>
 
-  {# ── Erklärblock: So funktioniert Squalo (vereinfacht) ── #}
-  <section class="hp-banner" aria-label="So funktioniert Squalo">
+  {# ── Breiter flacher Banner: Persönliches Schwimmcoaching ── #}
+  <section class="hp-banner" aria-label="Persönliches Schwimmcoaching">
     <div class="hp-banner-inner">
-      <h2 class="hp-banner-headline">Schwimmcoaching, das zu dir und deinem Trainingsort passt</h2>
-      <p class="hp-banner-text">
-        Squalo verbindet dich mit erfahrenen Schwimmcoaches in Berlin und Freiburg. Du wählst ein Schwimmbad, einen See oder eine Badestelle in deiner Nähe und erhältst persönliches 1:1-Schwimmtraining – vom Schwimmen lernen über Kraultechnik bis zur Vorbereitung auf Triathlon oder Freiwasserschwimmen.
-      </p>
-      <p class="hp-banner-text">
-        Unsere Coaches begleiten dich aktiv im Wasser, erklären Bewegungen verständlich und zeigen Übungen direkt vor. So arbeitest du gezielt an Technik, Atmung, Wasserlage, Sicherheit und längeren Distanzen.
-      </p>
-      <div class="hp-banner-cta">
-        <a href="{{ url_for('booking') }}" class="btn btn-primary">Termin anfragen</a>
+      <h2 class="hp-banner-headline">Persönliches Schwimmcoaching an deinem Wunschort</h2>
+      <div class="hp-banner-columns">
+        <p class="hp-banner-text">
+          Squalo verbindet dich mit erfahrenen Schwimmcoaches in Berlin und Freiburg. Du wählst ein Schwimmbad, einen See oder eine Badestelle in deiner Nähe und erhältst persönliches 1:1-Schwimmtraining – vom Schwimmen lernen über Kraultechnik bis zur Vorbereitung auf Triathlon oder Freiwasserschwimmen.
+        </p>
+        <p class="hp-banner-text">
+          Unsere Coaches begleiten dich aktiv im Wasser, erklären Bewegungen verständlich und zeigen Übungen direkt vor. So arbeitest du gezielt an Technik, Atmung, Wasserlage, Sicherheit und längeren Distanzen.
+        </p>
       </div>
     </div>
   </section>
@@ -67,7 +67,7 @@
         <span class="pricing-sub-text">Schwimmstunden für Anfänger, Wiedereinsteiger und ambitionierte Schwimmer</span>
       </div>
       <div class="pricing-cta-row">
-        <a class="btn btn-primary" href="{{ url_for('booking') }}">Termin anfragen</a>
+        <a class="btn btn-primary" href="{{ url_for('booking') }}">Training anfragen</a>
       </div>
     </div>
   </section>
