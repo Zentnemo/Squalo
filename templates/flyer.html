@@ -1,0 +1,453 @@
+{% extends "base.html" %}
+{% block title %}Schwimmtraining Berlin am See – Squalo Sommeraktion{% endblock %}
+{% block meta_description %}1:1 Schwimmtraining in Berlin: Kraultechnik, Sicherheit im Freiwasser und Triathlon-Vorbereitung an Berliner Schwimmbädern und Badeseen.{% endblock %}
+{% block og_title %}Schwimmtraining Berlin am See – Squalo Sommeraktion{% endblock %}
+{% block og_description %}1:1 Schwimmtraining in Berlin: Kraultechnik, Sicherheit im Freiwasser und Triathlon-Vorbereitung an Berliner Schwimmbädern und Badeseen.{% endblock %}
+{% block twitter_title %}Schwimmtraining Berlin am See – Squalo Sommeraktion{% endblock %}
+{% block twitter_description %}1:1 Schwimmtraining in Berlin: Kraultechnik, Sicherheit im Freiwasser und Triathlon-Vorbereitung an Berliner Schwimmbädern und Badeseen.{% endblock %}
+{% block content %}
+<style>
+  /* ── Flyer Landing Page Styles ── */
+  .flyer-hero {
+    position: relative;
+    text-align: center;
+    padding: 80px 20px 60px;
+    background:
+      linear-gradient(165deg, #003d4d 0%, #005f73 40%, #007a93 70%, #003d4d 100%);
+    color: var(--white);
+    overflow: hidden;
+    border-radius: 0 0 24px 24px;
+    margin-bottom: 0;
+  }
+
+  .flyer-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 120% 50% at 30% 30%, rgba(102, 224, 255, 0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 100% 40% at 70% 70%, rgba(255, 159, 0, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .flyer-hero-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .flyer-hero h1 {
+    font-family: 'Righteous', cursive;
+    font-size: 44px;
+    font-weight: 900;
+    margin: 0 0 12px 0;
+    letter-spacing: 1px;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .flyer-hero-sub {
+    font-size: 20px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 auto 20px;
+    max-width: 650px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .flyer-prices {
+    display: inline-flex;
+    gap: 24px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    padding: 12px 24px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .flyer-price-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .flyer-price-value {
+    font-family: 'Righteous', cursive;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--squalo-neon-orange);
+    text-shadow: 0 0 12px rgba(255, 159, 0, 0.3);
+  }
+
+  .flyer-price-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.75);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .flyer-hero-cta .btn {
+    font-size: 19px;
+    padding: 16px 40px;
+    background: linear-gradient(135deg, var(--orange), #ff8533);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    box-shadow: 0 6px 24px rgba(255, 106, 0, 0.4);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .flyer-hero-cta .btn:hover {
+    background: linear-gradient(135deg, #ff8533, var(--orange));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(255, 106, 0, 0.6);
+  }
+
+  /* Content sections */
+  .flyer-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 36px 20px;
+  }
+
+  .flyer-section:last-of-type {
+    padding-bottom: 48px;
+  }
+
+  .flyer-section h2 {
+    font-family: 'Righteous', cursive;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--squalo-deep-blue);
+    margin: 0 0 16px 0;
+    text-align: center;
+  }
+
+  .flyer-section p {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #1a3a4a;
+    margin: 0 0 12px 0;
+    text-align: center;
+  }
+
+  /* Location text */
+  .flyer-locations {
+    background: linear-gradient(135deg, #f0faff 0%, #e8f7ff 100%);
+    border-radius: 14px;
+    padding: 28px 24px;
+    margin: 0 0 0 0;
+    border: 1px solid rgba(0, 168, 204, 0.08);
+  }
+
+  /* Target group cards */
+  .flyer-targets {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 8px;
+  }
+
+  .flyer-target-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 18px 16px;
+    border: 1px solid rgba(0, 168, 204, 0.10);
+    box-shadow: 0 2px 8px rgba(0, 61, 77, 0.04);
+    text-align: center;
+  }
+
+  .flyer-target-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--squalo-deep-blue);
+    margin: 0 0 4px 0;
+  }
+
+  .flyer-target-card p {
+    font-size: 14px;
+    color: var(--text-light);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* Steps */
+  .flyer-steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .flyer-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid rgba(0, 168, 204, 0.08);
+  }
+
+  .flyer-step-num {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--squalo-pool-blue), var(--turquoise));
+    color: var(--squalo-deep-blue);
+    font-weight: 800;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .flyer-step-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1a3a4a;
+    padding-top: 4px;
+  }
+
+  /* Trust block */
+  .flyer-trust {
+    background: linear-gradient(135deg, #eaf7ff 0%, #f5fbff 100%);
+    border-radius: 14px;
+    padding: 28px 24px;
+    border: 1px solid rgba(0, 168, 204, 0.08);
+  }
+
+  .flyer-trust-items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .flyer-trust-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #1a3a4a;
+  }
+
+  .flyer-trust-icon {
+    flex-shrink: 0;
+    font-size: 18px;
+    margin-top: 1px;
+  }
+
+  /* Bottom CTA */
+  .flyer-bottom-cta {
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .flyer-bottom-cta p {
+    font-size: 18px;
+    color: var(--squalo-deep-blue);
+    margin: 0 0 16px 0;
+    font-weight: 600;
+  }
+
+  .flyer-bottom-cta .btn {
+    font-size: 18px;
+    padding: 14px 36px;
+    background: linear-gradient(135deg, var(--orange), #ff8533);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    box-shadow: 0 6px 24px rgba(255, 106, 0, 0.4);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .flyer-bottom-cta .btn:hover {
+    background: linear-gradient(135deg, #ff8533, var(--orange));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(255, 106, 0, 0.6);
+  }
+
+  /* QR hint */
+  .flyer-qr-hint {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-light);
+    padding: 12px 20px 32px;
+    opacity: 0.7;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .flyer-hero {
+      padding: 56px 16px 40px;
+    }
+
+    .flyer-hero h1 {
+      font-size: 30px;
+    }
+
+    .flyer-hero-sub {
+      font-size: 17px;
+    }
+
+    .flyer-prices {
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 20px;
+    }
+
+    .flyer-price-value {
+      font-size: 22px;
+    }
+
+    .flyer-section {
+      padding: 24px 16px;
+    }
+
+    .flyer-section h2 {
+      font-size: 22px;
+    }
+
+    .flyer-section p {
+      font-size: 16px;
+    }
+
+    .flyer-targets {
+      grid-template-columns: 1fr;
+    }
+
+    .flyer-steps {
+      grid-template-columns: 1fr;
+    }
+
+    .flyer-trust-items {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<section class="flyer-hero">
+  <div class="flyer-hero-inner">
+    <h1>1:1 Schwimmtraining in Berlin</h1>
+    <p class="flyer-hero-sub">
+      Kraultechnik verbessern, sicherer im Freiwasser werden oder gezielt für Triathlon trainieren – mit persönlichem Coaching an Berliner Schwimmbädern und Badeseen.
+    </p>
+    <div class="flyer-prices">
+      <div class="flyer-price-item">
+        <span class="flyer-price-value">ab 50 €</span>
+        <span class="flyer-price-label">pro Stunde</span>
+      </div>
+      <div class="flyer-price-item">
+        <span class="flyer-price-value">200 €</span>
+        <span class="flyer-price-label">5er-Paket</span>
+      </div>
+    </div>
+    <div class="flyer-hero-cta">
+      <a class="btn" href="{{ url_for('booking') }}?utm_source=flyer&amp;utm_medium=offline&amp;utm_campaign=summer_lakes_2026">Jetzt Termin anfragen</a>
+    </div>
+  </div>
+</section>
+
+<div class="flyer-section">
+  <h2>🏖️ Trainieren an Berliner Seen &amp; Schwimmbädern</h2>
+  <div class="flyer-locations">
+    <p>
+      Trainiert wird flexibel an passenden Orten in Berlin – zum Beispiel am <strong>Plötzensee</strong>, <strong>Tegeler See</strong>, <strong>Flughafensee</strong> oder in Berliner Schwimmbädern wie dem <strong>Kombibad Seestraße</strong> oder <strong>Stadtbad Tiergarten</strong>. Dein Wunschort zählt.
+    </p>
+  </div>
+</div>
+
+<div class="flyer-section">
+  <h2>🎯 Für wen ist Squalo?</h2>
+  <div class="flyer-targets">
+    <div class="flyer-target-card">
+      <h3>🏊 Kraulen lernen</h3>
+      <p>Systematischer Aufbau von Atmung, Armzug und Beinschlag – für sauberes Kraulen ohne Hektik.</p>
+    </div>
+    <div class="flyer-target-card">
+      <h3>🌊 Sicherer im See</h3>
+      <p>Orientierung, ruhige Atmung und mehr Vertrauen im offenen Wasser – für entspanntes Schwimmen im Freiwasser.</p>
+    </div>
+    <div class="flyer-target-card">
+      <h3>📈 Technik verbessern</h3>
+      <p>Wasserlage, Effizienz und Bewegungskoordination für gleichmäßigeres und leichteres Schwimmen.</p>
+    </div>
+    <div class="flyer-target-card">
+      <h3>🏅 Triathlon vorbereiten</h3>
+      <p>Effizientes Schwimmen für den Wettkampf – mit sauberer Technik und ruhigerem Start ins Rennen.</p>
+    </div>
+  </div>
+</div>
+
+<div class="flyer-section">
+  <h2>📋 So funktioniert es</h2>
+  <div class="flyer-steps">
+    <div class="flyer-step">
+      <span class="flyer-step-num">1</span>
+      <span class="flyer-step-text">Ort und Ziel angeben</span>
+    </div>
+    <div class="flyer-step">
+      <span class="flyer-step-num">2</span>
+      <span class="flyer-step-text">Terminwunsch senden</span>
+    </div>
+    <div class="flyer-step">
+      <span class="flyer-step-num">3</span>
+      <span class="flyer-step-text">Squalo bestätigt deine Anfrage mit dem passenden Coach.</span>
+    </div>
+    <div class="flyer-step">
+      <span class="flyer-step-num">4</span>
+      <span class="flyer-step-text">Im Wasser trainieren</span>
+    </div>
+  </div>
+</div>
+
+<div class="flyer-section">
+  <h2>✅ Vertrauen &amp; Qualifikation</h2>
+  <div class="flyer-trust">
+    <div class="flyer-trust-items">
+      <div class="flyer-trust-item">
+        <span class="flyer-trust-icon">🏊</span>
+        <span>Erfahrene Schwimmcoaches mit Rettungsschwimmer- und Vereinserfahrung</span>
+      </div>
+      <div class="flyer-trust-item">
+        <span class="flyer-trust-icon">👤</span>
+        <span>1:1 Feedback im Wasser – direkt, klar, persönlich</span>
+      </div>
+      <div class="flyer-trust-item">
+        <span class="flyer-trust-icon">👨‍👩‍👧‍👦</span>
+        <span>Training für Erwachsene, Kinder, Wiedereinsteiger und Fortgeschrittene</span>
+      </div>
+      <div class="flyer-trust-item">
+        <span class="flyer-trust-icon">🛡️</span>
+        <span>Fokus auf Technik, Sicherheit und sauberen Aufbau</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flyer-section">
+  <div class="flyer-bottom-cta">
+    <p>Sommer nutzen – jetzt Schwimmtraining anfragen</p>
+    <a class="btn" href="{{ url_for('booking') }}?utm_source=flyer&amp;utm_medium=offline&amp;utm_campaign=summer_lakes_2026">Termin anfragen</a>
+  </div>
+</div>
+
+<p class="flyer-qr-hint">Du bist über einen Flyer hier? Willkommen bei Squalo.</p>
+{% endblock %}

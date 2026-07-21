@@ -2974,6 +2974,11 @@ def create_app() -> Flask:
     def impressum():
         return render_template("impressum.html")
 
+    # ── Flyer Landing Page ──────────────────────────────────────
+    @app.route("/flyer")
+    def flyer():
+        return render_template("flyer.html")
+
     # ── robots.txt ──────────────────────────────────────────────
     @app.route("/robots.txt")
     def robots_txt():
@@ -3013,6 +3018,7 @@ def create_app() -> Flask:
             ('/coaches', '0.8', 'weekly'),
             ('/shop', '0.6', 'weekly'),
             ('/booking', '0.5', 'monthly'),
+            ('/flyer', '0.7', 'weekly'),
             ('/impressum', '0.3', 'monthly'),
         ]
         for slug in landing_slugs:
