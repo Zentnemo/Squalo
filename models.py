@@ -261,27 +261,6 @@ class ShopOrderItem(db.Model):
     quantity = db.Column(db.Integer, default=1)
 
 
-class CoachApplication(db.Model):
-    """A coach application submitted via the /coach-werden landing page."""
-    __tablename__ = 'coach_application'
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(80), nullable=False)
-    last_name = db.Column(db.String(80))
-    email = db.Column(db.String(128), nullable=False)
-    phone = db.Column(db.String(40))
-    city_region = db.Column(db.String(128), nullable=False)
-    languages = db.Column(db.Text)
-    swim_experience = db.Column(db.Text, nullable=False)
-    coaching_experience = db.Column(db.Text)
-    licenses = db.Column(db.Text)
-    preferred_locations = db.Column(db.Text)
-    target_groups = db.Column(db.Text)
-    availability = db.Column(db.Text)
-    motivation = db.Column(db.Text, nullable=False)
-    status = db.Column(db.String(32), default='new')
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-
 class StudentFile(db.Model):
     """A file uploaded by a coach for a student – lesson log or training plan PDF."""
     __tablename__ = 'student_file'
