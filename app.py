@@ -20,7 +20,7 @@ from pathlib import Path
 
 from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
-from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview, SiteSession, Invoice, ShopOrder, ShopOrderItem, StudentFile
+from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview, CoachApplication, SiteSession, Invoice, ShopOrder, ShopOrderItem, StudentFile
 from location_status import compute_location_status
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
@@ -2970,6 +2970,107 @@ def create_app() -> Flask:
         db.session.commit()
         print(f"Seeded {len(SWIM_LOCATIONS)} Squalo swim locations")
 
+    # ── Coach werden Landingpage + Bewerbungsformular ──────────────
+    @app.route("/coach-werden", methods=["GET", "POST"])
+    def coach_werden():
+        if request.method == "POST":
+            first_name = request.form.get("first_name", "").strip()
+            last_name = request.form.get("last_name", "").strip()
+            email = request.form.get("email", "").strip()
+            phone = request.form.get("phone", "").strip()
+            city_region = request.form.get("city_region", "").strip()
+            languages = request.form.get("languages", "").strip()
+            swim_experience = request.form.get("swim_experience", "").strip()
+            coaching_experience = request.form.get("coaching_experience", "").strip()
+            licenses = request.form.get("licenses", "").strip()
+            preferred_locations = request.form.get("preferred_locations", "").strip()
+            target_groups = request.form.getlist("target_groups")
+            availability = request.form.get("availability", "").strip()
+            motivation = request.form.get("motivation", "").strip()
+
+            # Pflichtfelder prüfen
+            errors = []
+            if not first_name:
+                errors.append("Vorname ist erforderlich.")
+            if not email:
+                errors.append("E-Mail ist erforderlich.")
+            if not city_region:
+                errors.append("Stadt/Region ist erforderlich.")
+            if not swim_experience:
+                errors.append("Angabe zur Schwimmerfahrung ist erforderlich.")
+            if not motivation:
+                errors.append("Motivationstext ist erforderlich.")
+
+            if errors:
+                for err in errors:
+                    flash(err, "danger")
+                return render_template("coach_werden.html", form_data=request.form)
+
+            # Speichern
+            app = CoachApplication(
+                first_name=first_name,
+                last_name=last_name or None,
+                email=email,
+                phone=phone or None,
+                city_region=city_region,
+                languages=languages or None,
+                swim_experience=swim_experience,
+                coaching_experience=coaching_experience or None,
+                licenses=licenses or None,
+                preferred_locations=preferred_locations or None,
+                target_groups=", ".join(target_groups) if target_groups else None,
+                availability=availability or None,
+                motivation=motivation,
+                status="new",
+            )
+            db.session.add(app)
+            db.session.commit()
+
+            # Admin-Mail benachrichtigen
+            try:
+                admin_email = get_admin_email()
+                base_url = get_public_base_url()
+                subject = f"Neue Coach-Bewerbung: {first_name} {last_name or ''} – {email}"
+                tg_str = ", ".join(target_groups) if target_groups else "–"
+                body = (
+                    f"Neue Coach-Bewerbung\n"
+                    f"{'=' * 50}\n\n"
+                    f"Name:              {first_name} {last_name or ''}\n"
+                    f"E-Mail:            {email}\n"
+                    f"Telefon:           {phone or '–'}\n"
+                    f"Stadt/Region:      {city_region}\n"
+                    f"Sprachen:          {languages or '–'}\n"
+                    f"Schwimmerfahrung:  {swim_experience}\n"
+                    f"Coaching-Erfahrung:{coaching_experience or '–'}\n"
+                    f"Lizenzen:          {licenses or '–'}\n"
+                    f"Bevorzugte Orte:   {preferred_locations or '–'}\n"
+                    f"Zielgruppen:       {tg_str}\n"
+                    f"Verfügbarkeit:     {availability or '–'}\n"
+                    f"\nMotivation:\n{motivation}\n\n"
+                    f"{base_url}/coach-werden"
+                )
+                send_email(subject, admin_email, body)
+            except Exception as e:
+                print(f"[Coach-Bewerbung] Admin-Mail fehlgeschlagen: {e}")
+
+            flash(
+                "Danke für deine Bewerbung! Wir melden uns bei dir, "
+                "wenn dein Profil zu Squalo passt.",
+                "success"
+            )
+            return redirect(url_for("coach_werden"))
+
+        return render_template("coach_werden.html", form_data={})
+
+    # ── Aliase (redirect auf /coach-werden) ──
+    @app.route("/schwimmcoach-werden")
+    def alias_schwimmcoach_werden():
+        return redirect(url_for("coach_werden"), 301)
+
+    @app.route("/schwimmtrainer-werden")
+    def alias_schwimmtrainer_werden():
+        return redirect(url_for("coach_werden"), 301)
+
     @app.route("/impressum")
     def impressum():
         return render_template("impressum.html")
@@ -3058,6 +3159,7 @@ def create_app() -> Flask:
             ('/coaches', '0.8', 'weekly'),
             ('/shop', '0.6', 'weekly'),
             ('/booking', '0.5', 'monthly'),
+            ('/coach-werden', '0.6', 'monthly'),
             ('/impressum', '0.3', 'monthly'),
         ]
         for slug in landing_slugs:
