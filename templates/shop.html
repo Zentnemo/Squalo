@@ -96,12 +96,12 @@
     {# ── Customer data ── #}
     <div class="shop-customer-section" id="shop-customer-section">
       <div class="shop-delivery-info">
-        <p>📦 <strong>Abholung direkt beim Training:</strong> Wir bringen dein ausgewähltes Schwimmequipment zur nächsten Squalo-Trainingseinheit mit. Kein Versandstress – du bist direkt passend ausgestattet. Basisprodukte sind in der Regel vorrätig.</p>
+        <p>📦 <strong>Abholung direkt beim Training:</strong> Wir bringen dein ausgewähltes Schwimmequipment zur nächsten Squalo-Trainingseinheit mit. Kein Versandstress – Basisprodukte sind vorrätig und du bist direkt passend ausgestattet.</p>
       </div>
       <h3>Kontaktdaten</h3>
       {% if current_user.is_authenticated %}
         <p class="shop-customer-info">
-          <strong>{{ current_user.name }}</strong> · {{ current_user.email }}
+          <strong>{{ current_user.name }}</strong> · Squalo · <a href="mailto:hello@squalo-schwimmcoaching.com">hello@squalo-schwimmcoaching.com</a>
           <input type="hidden" name="customer_name" value="{{ current_user.name }}">
           <input type="hidden" name="customer_email" value="{{ current_user.email }}">
         </p>
