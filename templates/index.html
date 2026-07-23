@@ -10,8 +10,7 @@
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <h1 class="hero-title hero-anim hero-anim-sunrise">SQUALO SCHWIMMCOACHING</h1>
-      <p class="hero-tagline hero-anim hero-anim-fog">Trainiere in den besten Schwimmbädern Berlins &amp; Freiburgs</p>
-      <p class="hero-description hero-anim hero-anim-fog">{{ locations|length }} Schwimmlocations – Buche dein persönliches Training an deinem Wunschort</p>
+      <p class="hero-tagline hero-anim hero-anim-fog">Trainiere flexibel an 50 Schwimmlocations in Berlin &amp; Freiburg – mit persönlichem Coaching an deinem Wunschort.</p>
 
       {% if not current_user.is_authenticated %}
         <div class="cta-buttons hero-anim hero-anim-buoy">
@@ -25,40 +24,6 @@
           <a class="btn btn-hero-secondary hero-btn-water" href="{{ url_for('dashboard') }}">Mein Dashboard</a>
         </div>
       {% endif %}
-    </div>
-  </section>
-
-  {# ── Pricing Highlight ── #}
-  <section class="pricing-highlight" aria-label="Preise und Angebote">
-    <div class="pricing-card">
-      <div class="pricing-accent-bar"></div>
-      <div class="pricing-intro">
-        <h2 class="pricing-intro-headline">Persönliches Schwimmcoaching an deinem Wunschort</h2>
-        <p class="pricing-intro-text">Buche dein 1:1-Schwimmtraining zeitlich flexibel an einem passenden Schwimmbad, See oder Trainingsort in deiner Nähe. Squalo verbindet dich mit erfahrenen Coaches, erstellt auf Wunsch individuelle Trainingspläne und begleitet deine Fortschritte über dein persönliches Dashboard.</p>
-        <p class="pricing-intro-sub">Ideal für Kraultechnik, sicheres Schwimmen, längere Distanzen, Triathlon-Vorbereitung und mehr Selbstvertrauen im Wasser.</p>
-      </div>
-      <div class="pricing-grid">
-        <div class="pricing-item">
-          <div class="pricing-value">
-            <span class="pricing-euro">ab </span><span class="pricing-amount">50 €</span>
-          </div>
-          <div class="pricing-label">Einzelstunde</div>
-          <p class="pricing-desc">Individuelles Schwimmtraining in Berlin und Freiburg – passend zu deinem Level, deinem Ziel und deinem Trainingsort.</p>
-        </div>
-        <div class="pricing-item">
-          <div class="pricing-value">
-            <span class="pricing-amount">200 €</span>
-          </div>
-          <div class="pricing-label">5er-Paket</div>
-          <p class="pricing-desc">Für regelmäßigen Technikaufbau, mehr Sicherheit und spürbare Fortschritte im Wasser.</p>
-        </div>
-      </div>
-      <div class="pricing-sub">
-        <span class="pricing-sub-text">Schwimmstunden für Anfänger, Wiedereinsteiger und ambitionierte Schwimmer</span>
-      </div>
-      <div class="pricing-cta-row">
-        <a class="btn btn-primary" href="{{ url_for('booking') }}">Training anfragen</a>
-      </div>
     </div>
   </section>
 
@@ -276,6 +241,32 @@
       </div>
     </aside>
   </div><!-- /.map-area -->
+
+  {# ── Pricing / Infoblock ── #}
+  <section class="pricing-highlight">
+    <div class="pricing-card">
+      <div class="pricing-accent-bar"></div>
+      <div class="pricing-intro">
+        <h2 class="pricing-intro-headline">Persönliches Schwimmcoaching an deinem Wunschort</h2>
+        <p class="pricing-intro-text">
+          Buche dein 1:1-Schwimmtraining zeitlich flexibel an einem passenden Schwimmbad, See oder Trainingsort in deiner Nähe. Squalo verbindet dich mit erfahrenen Coaches, erstellt auf Wunsch individuelle Trainingspläne und begleitet deine Fortschritte über dein persönliches Dashboard.
+        </p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-item">
+          <div class="pricing-value"><span class="pricing-euro">ab 50</span> <span class="pricing-amount">€</span></div>
+          <div class="pricing-label">Einzelstunde</div>
+        </div>
+        <div class="pricing-item">
+          <div class="pricing-value"><span class="pricing-euro">200</span> <span class="pricing-amount">€</span></div>
+          <div class="pricing-label">5er-Paket</div>
+        </div>
+      </div>
+      <div class="pricing-cta-row">
+        <a class="btn btn-primary" href="{{ url_for('booking') }}">Training anfragen</a>
+      </div>
+    </div>
+  </section>
 
   <section class="info-section">
     <h2>Wie funktioniert Squalo?</h2>
