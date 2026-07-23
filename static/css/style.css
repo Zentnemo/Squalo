@@ -5999,6 +5999,205 @@ main {
 }
 
 /* ══════════════════════════════════════
+   COACH WERDEN PAGE
+   ══════════════════════════════════════ */
+
+.coach-werden-page {
+  padding-bottom: 60px;
+}
+
+.coach-werden-hero {
+  background: linear-gradient(135deg, var(--dark-blue), #006070);
+  padding: 60px 0 48px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.coach-werden-title {
+  font-size: 36px;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+
+.coach-werden-subtitle {
+  font-size: 18px;
+  color: rgba(255,255,255,0.85);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.coach-werden-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.coach-werden-text h2 {
+  font-size: 22px;
+  color: var(--dark-blue);
+  margin: 28px 0 12px;
+}
+
+.coach-werden-text h2:first-child {
+  margin-top: 0;
+}
+
+.coach-werden-text ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.coach-werden-text ul li {
+  padding: 8px 0 8px 28px;
+  position: relative;
+  line-height: 1.5;
+  color: #333;
+}
+
+.coach-werden-text ul li::before {
+  content: "•";
+  position: absolute;
+  left: 8px;
+  color: var(--turquoise);
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.coach-werden-contact {
+  margin-top: 24px;
+  font-size: 16px;
+  color: #555;
+}
+
+.coach-werden-contact a {
+  color: var(--turquoise);
+  font-weight: 600;
+}
+
+.coach-werden-form-wrap {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.coach-werden-form-wrap h2 {
+  font-size: 24px;
+  color: var(--dark-blue);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.coach-werden-form .form-group {
+  margin-bottom: 18px;
+}
+
+.coach-werden-form label {
+  display: block;
+  font-weight: 600;
+  color: var(--dark-blue);
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.coach-werden-form input[type="text"],
+.coach-werden-form input[type="email"],
+.coach-werden-form input[type="tel"],
+.coach-werden-form textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #d0d5dd;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  background: #f9fafb;
+}
+
+.coach-werden-form input:focus,
+.coach-werden-form textarea:focus {
+  outline: none;
+  border-color: var(--turquoise);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(0,168,204,0.12);
+}
+
+.coach-werden-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.coach-werden-form .btn-hero-primary {
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 17px;
+  margin-top: 8px;
+}
+
+/* ── Coach-werden CTA on Coaches page ── */
+
+.coach-werden-cta {
+  margin-top: 60px;
+  padding: 0 20px;
+}
+
+.coach-werden-cta-inner {
+  background: linear-gradient(135deg, var(--dark-blue), #006070);
+  border-radius: 16px;
+  padding: 48px 40px;
+  text-align: center;
+  color: var(--white);
+}
+
+.coach-werden-cta-inner h2 {
+  font-size: 28px;
+  margin-bottom: 12px;
+  color: var(--white);
+}
+
+.coach-werden-cta-inner p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.coach-werden-cta-inner .btn-hero-primary {
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .coach-werden-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .coach-werden-title {
+    font-size: 28px;
+  }
+
+  .coach-werden-subtitle {
+    font-size: 16px;
+  }
+
+  .coach-werden-form-wrap {
+    padding: 24px 20px;
+  }
+
+  .coach-werden-cta-inner {
+    padding: 32px 24px;
+  }
+
+  .coach-werden-cta-inner h2 {
+    font-size: 22px;
+  }
+}
+
+/* ══════════════════════════════════════
    ADMIN PANEL – Coach Panel Tabs
    ══════════════════════════════════════ */
 

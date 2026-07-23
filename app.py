@@ -1792,6 +1792,71 @@ def create_app() -> Flask:
         coach_list = Coach.query.filter_by(is_active=True).order_by(Coach.name.asc()).all()
         return render_template("coaches.html", coaches=coach_list)
 
+    @app.route("/coach-werden", methods=["GET", "POST"])
+    def coach_werden():
+        if request.method == "POST":
+            vorname = request.form.get("vorname", "").strip()
+            nachname = request.form.get("nachname", "").strip()
+            email = request.form.get("email", "").strip()
+            telefon = request.form.get("telefon", "").strip()
+            stadt = request.form.get("stadt", "").strip()
+            sprachen = request.form.get("sprachen", "").strip()
+            schwimmerfahrung = request.form.get("schwimmerfahrung", "").strip()
+            coaching_erfahrung = request.form.get("coaching_erfahrung", "").strip()
+            qualifikationen = request.form.get("qualifikationen", "").strip()
+            trainingsorte = request.form.get("trainingsorte", "").strip()
+            motivation = request.form.get("motivation", "").strip()
+
+            errors = []
+            if not vorname:
+                errors.append("Vorname ist erforderlich.")
+            if not email:
+                errors.append("E-Mail ist erforderlich.")
+            if not stadt:
+                errors.append("Stadt/Region ist erforderlich.")
+            if not schwimmerfahrung:
+                errors.append("Angabe zur Schwimmerfahrung ist erforderlich.")
+            if not motivation:
+                errors.append("Motivation ist erforderlich.")
+
+            if errors:
+                for e in errors:
+                    flash(e, "danger")
+                return render_template("coach_werden.html", form_data=request.form)
+
+            # E-Mail an Admin
+            subject = f"Neue Coach-Bewerbung von {vorname} {nachname}"
+            body_text = f"""Neue Coach-Bewerbung bei Squalo
+
+Vorname: {vorname}
+Nachname: {nachname or '-'}
+E-Mail: {email}
+Telefon: {telefon or '-'}
+Stadt/Region: {stadt}
+Sprachen: {sprachen or '-'}
+
+Schwimmerfahrung:
+{schwimmerfahrung}
+
+Coaching-Erfahrung:
+{coaching_erfahrung or '-'}
+
+Lizenzen / Qualifikationen:
+{qualifikationen or '-'}
+
+Bevorzugte Trainingsorte:
+{trainingsorte or '-'}
+
+Motivation:
+{motivation}
+"""
+            send_email(subject, get_admin_email(), body_text)
+
+            flash("Danke für deine Bewerbung! Wir melden uns bei dir, wenn dein Profil zu Squalo passt.", "success")
+            return redirect(url_for("coach_werden"))
+
+        return render_template("coach_werden.html", form_data={})
+
     @app.route("/coaches/review/<int:coach_id>", methods=["POST"])
     @login_required
     def coaches_review(coach_id):
@@ -3026,6 +3091,7 @@ def create_app() -> Flask:
         pages = [
             ('/', '1.0', 'daily'),
             ('/coaches', '0.8', 'weekly'),
+            ('/coach-werden', '0.7', 'monthly'),
             ('/shop', '0.6', 'weekly'),
             ('/booking', '0.5', 'monthly'),
             ('/flyer', '0.7', 'weekly'),

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Schwimmcoach werden – Mit Squalo Schwimmtraining geben{% endblock %}
+{% block meta_description %}Du hast Erfahrung im Schwimmen und möchtest als Coach arbeiten? Bewirb dich bei Squalo und gib individuelles Schwimmtraining in deiner Stadt.{% endblock %}
+{% block og_title %}Schwimmcoach werden – Mit Squalo Schwimmtraining geben{% endblock %}
+{% block og_description %}Du hast Erfahrung im Schwimmen und möchtest als Coach arbeiten? Bewirb dich bei Squalo und gib individuelles Schwimmtraining in deiner Stadt.{% endblock %}
+{% block twitter_title %}Schwimmcoach werden – Mit Squalo Schwimmtraining geben{% endblock %}
+{% block twitter_description %}Du hast Erfahrung im Schwimmen und möchtest als Coach arbeiten? Bewirb dich bei Squalo und gib individuelles Schwimmtraining in deiner Stadt.{% endblock %}
+{% block canonical %}<link rel="canonical" href="https://squalo-schwimmcoaching.com/coach-werden">{% endblock %}
+{% block content %}
+<div class="coach-werden-page">
+  <section class="coach-werden-hero">
+    <div class="container">
+      <h1 class="coach-werden-title">Coach werden bei Squalo</h1>
+      <p class="coach-werden-subtitle">
+        Du liebst das Schwimmen und möchtest deine Leidenschaft weitergeben?<br>
+        Werde Teil des Squalo-Teams und biete persönliches Schwimmtraining an deinen Wunschorten.
+      </p>
+    </div>
+  </section>
+
+  <section class="coach-werden-intro">
+    <div class="container">
+      <div class="coach-werden-grid">
+        <div class="coach-werden-text">
+          <h2>Für wen ist das?</h2>
+          <ul>
+            <li><strong>Erfahrene Schwimmer:innen</strong> – Du schwimmst sicher und möchtest Technik &amp; Training weitergeben.</li>
+            <li><strong>Trainer:innen &amp; Übungsleiter:innen</strong> – Du hast bereits Erfahrung im Coaching oder Unterrichten.</li>
+            <li><strong>Sportstudierende &amp; Quereinsteiger:innen</strong> – Du bringst Begeisterung mit und möchstest dich im Coaching ausprobieren.</li>
+            <li><strong>Menschen aus Berlin &amp; Freiburg</strong> – Wir suchen Coaches in beiden Städten und Umgebung.</li>
+          </ul>
+
+          <h2>Was bietet Squalo?</h2>
+          <ul>
+            <li>✅ Flexible Zeiteinteilung – du bestimmst, wann und wo du trainierst</li>
+            <li>✅ Eigene Locations vorschlagen oder an bestehenden Squalo-Orten trainieren</li>
+            <li>✅ Faire Vergütung pro Trainingseinheit</li>
+            <li>✅ Unterstützung durch die Squalo-Community &amp; Marketing</li>
+            <li>✅ Eigenes Coach-Profil auf der Squalo-Website</li>
+          </ul>
+
+          <p class="coach-werden-contact">
+            Noch Fragen? Schreib uns an <a href="mailto:hello@squalo-schwimmcoaching.com">hello@squalo-schwimmcoaching.com</a>
+          </p>
+        </div>
+
+        <div class="coach-werden-form-wrap">
+          <h2>Jetzt bewerben</h2>
+          <form method="POST" action="{{ url_for('coach_werden') }}" class="coach-werden-form">
+            <div class="form-group">
+              <label for="vorname">Vorname *</label>
+              <input type="text" id="vorname" name="vorname" value="{{ form_data.get('vorname', '') }}" required maxlength="100" placeholder="Dein Vorname">
+            </div>
+
+            <div class="form-group">
+              <label for="nachname">Nachname</label>
+              <input type="text" id="nachname" name="nachname" value="{{ form_data.get('nachname', '') }}" maxlength="100" placeholder="Dein Nachname (optional)">
+            </div>
+
+            <div class="form-group">
+              <label for="email">E-Mail *</label>
+              <input type="email" id="email" name="email" value="{{ form_data.get('email', '') }}" required maxlength="200" placeholder="deine@email.de">
+            </div>
+
+            <div class="form-group">
+              <label for="telefon">Telefon</label>
+              <input type="tel" id="telefon" name="telefon" value="{{ form_data.get('telefon', '') }}" maxlength="50" placeholder="Optional">
+            </div>
+
+            <div class="form-group">
+              <label for="stadt">Stadt / Region *</label>
+              <input type="text" id="stadt" name="stadt" value="{{ form_data.get('stadt', '') }}" required maxlength="100" placeholder="Berlin, Freiburg, …">
+            </div>
+
+            <div class="form-group">
+              <label for="sprachen">Sprachen</label>
+              <input type="text" id="sprachen" name="sprachen" value="{{ form_data.get('sprachen', '') }}" maxlength="200" placeholder="Deutsch, Englisch, …">
+            </div>
+
+            <div class="form-group">
+              <label for="schwimmerfahrung">Schwimmerfahrung *</label>
+              <textarea id="schwimmerfahrung" name="schwimmerfahrung" rows="4" required placeholder="Seit wann schwimmst du? Hast du Wettkampferfahrung? Welche Lagen beherrschst du?">{{ form_data.get('schwimmerfahrung', '') }}</textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="coaching_erfahrung">Coaching-Erfahrung</label>
+              <textarea id="coaching_erfahrung" name="coaching_erfahrung" rows="3" placeholder="Hast du bereits als Trainer:in gearbeitet? Mit welchen Altersgruppen / Niveaus?">{{ form_data.get('coaching_erfahrung', '') }}</textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="qualifikationen">Lizenzen / Qualifikationen</label>
+              <textarea id="qualifikationen" name="qualifikationen" rows="3" placeholder="Trainer-Lizenz, Rettungsschwimmer, Sportstudium, …">{{ form_data.get('qualifikationen', '') }}</textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="trainingsorte">Bevorzugte Trainingsorte</label>
+              <textarea id="trainingsorte" name="trainingsorte" rows="3" placeholder="Welche Schwimmbäder oder Seen wären ideal für dich?">{{ form_data.get('trainingsorte', '') }}</textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="motivation">Motivation *</label>
+              <textarea id="motivation" name="motivation" rows="4" required placeholder="Warum möchtest du Coach bei Squalo werden? Was möchtest du deinen Schüler:innen mitgeben?">{{ form_data.get('motivation', '') }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-hero-primary">Bewerbung absenden</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
