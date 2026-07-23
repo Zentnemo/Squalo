@@ -772,14 +772,13 @@ def _send_shop_customer_email(order, products):
         f"Ausgewählte Produkte:\n"
         f"{product_list}\n"
         f"{total_line}"
-        f"Ich bringe dir die ausgewählten Produkte zur nächsten passenden Schwimmstunde mit. "
+        f"Unsere Coaches bringen dir die ausgewählten Produkte zur nächsten passenden Trainingseinheit mit. "
         f"Wir schauen dann gemeinsam, ob sie gut zu deinem Training und deinem Level passen.\n"
         f"\n"
         f"Falls du noch Fragen zum Equipment hast, kannst du einfach auf diese Mail antworten.\n"
         f"\n"
         f"Bis bald im Wasser!\n"
         f"\n"
-        f"Moritz\n"
         f"Squalo Schwimmcoaching"
     )
 
@@ -2127,7 +2126,7 @@ def create_app() -> Flask:
             _send_shop_customer_email(order, selected)
             _send_shop_admin_email(order, selected)
 
-            flash("Deine Produktauswahl wurde gespeichert! Ich bringe die Produkte zur nächsten Schwimmstunde mit.", "success")
+            flash("Deine Produktauswahl wurde gespeichert! Unsere Coaches bringen die Produkte zum Training mit.", "success")
             return redirect(url_for("shop"))
 
         # GET: group products by category
