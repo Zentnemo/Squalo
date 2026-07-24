@@ -137,6 +137,7 @@ LANDING_PAGES = {
             {"q": "Wo findet das Training statt?", "a": "Du wählst einen Ort aus über 40 Schwimmbädern, Sommerbädern oder Badeseen in Berlin. Dein Training findet genau dort statt."},
             {"q": "Wie frage ich einen Termin an?", "a": "Einfach über das Buchungsformular deine Wünsche eingeben – Moritz meldet sich zur Bestätigung."},
         ],
+        "hero_image": "images/heroes/schwimmtraining-berlin-hero.jpg",
     },
     "kraulen-lernen-berlin": {
         "meta_title": "Kraulen lernen Berlin – Techniktraining für Erwachsene & Triathlon",
@@ -173,6 +174,7 @@ LANDING_PAGES = {
             {"q": "Ist Kraulen für Erwachsene schwerer als für Kinder?", "a": "Kinder lernen oft spielerischer, aber Erwachsene haben den Vorteil, dass sie Technik bewusster umsetzen können. Mit Geduld und klaren Übungen klappt es sehr gut."},
             {"q": "Brauche ich eine gute Kondition zum Kraulen?", "a": "Nein. Die Technik steht am Anfang im Vordergrund. Sobald Atmung und Wasserlage stimmen, wird das Durchhaltevermögen von allein besser."},
         ],
+        "hero_image": "images/heroes/kraulen-lernen-berlin-hero.jpg",
     },
     "schwimmkurs-erwachsene-berlin": {
         "meta_title": "Schwimmkurs Erwachsene Berlin – ruhig, individuell, persönlich",
@@ -205,6 +207,7 @@ LANDING_PAGES = {
             {"q": "Wie läuft die erste Stunde ab?", "a": "Wir treffen uns an deinem Wunschort, machen uns mit dem Wasser vertraut und starten mit einfachen Atem- und Gleitübungen."},
             {"q": "Wie viele Stunden brauche ich, um sicher zu schwimmen?", "a": "Das ist individuell. Manche fühlen sich nach 5–8 Einheiten sicher, andere nehmen sich mehr Zeit – ganz in deinem Rhythmus."},
         ],
+        "hero_image": "images/heroes/schwimmkurs-erwachsene-berlin-hero.jpg",
     },
     "schwimmtraining-kinder-berlin": {
         "meta_title": "Schwimmtraining Kinder Berlin – Sicherheit, Technik und Vertrauen",
@@ -237,6 +240,7 @@ LANDING_PAGES = {
             {"q": "Muss mein Kind schon schwimmen können?", "a": "Nein. Wir starten dort, wo dein Kind steht – ob Wassergewöhnung oder schon erste Züge."},
             {"q": "Kann ich als Elternteil zuschauen?", "a": "Ja, gerne. Eltern können am Beckenrand oder Ufer zuschauen und sich ein Bild vom Training machen."},
         ],
+        "hero_image": "images/heroes/schwimmtraining-kinder-berlin-hero.jpg",
     },
     "triathlon-schwimmtraining-berlin": {
         "meta_title": "Triathlon Schwimmtraining Berlin – effizienter kraulen und Energie sparen",
@@ -271,6 +275,7 @@ LANDING_PAGES = {
             {"q": "Bin ich als Anfänger im Triathlon-Schwimmen richtig?", "a": "Ja. Ob du deinen ersten Triathlon vorbereitest oder deine Bestzeit verbessern willst – das Training wird an dein Niveau angepasst."},
             {"q": "Wie oft sollte ich trainieren?", "a": "Das hängt von deinem Ziel und Zeitplan ab. Gemeinsam finden wir einen Rhythmus, der in deine Vorbereitung passt."},
         ],
+        "hero_image": "images/heroes/triathlon-schwimmtraining-berlin-hero.jpg",
     },
     "schwimmtraining-freiburg": {
         "meta_title": "Schwimmtraining Freiburg – Personal Schwimmcoaching mit Clara Zentner",
@@ -307,6 +312,7 @@ LANDING_PAGES = {
             {"q": "Wie läuft eine erste Stunde ab?", "a": "In der ersten Stunde schauen wir uns dein aktuelles Schwimmniveau an und entwickeln einen persönlichen Trainingsplan."},
             {"q": "Wie frage ich einen Termin an?", "a": "Einfach über das Buchungsformular deine Wünsche eingeben – Clara meldet sich zur Bestätigung."},
         ],
+        "hero_image": "images/heroes/schwimmtraining-freiburg-hero.jpg",
     },
     "kraulen-lernen-freiburg": {
         "meta_title": "Kraulen lernen Freiburg – Schwimmtechnik mit persönlichem Coaching",
@@ -340,6 +346,7 @@ LANDING_PAGES = {
             {"q": "Wie lange dauert es, Kraulen zu lernen?", "a": "Das ist individuell. Viele haben nach 3–5 Einheiten die Grundlagen sicher."},
             {"q": "Ist Kraulen für Erwachsene schwerer?", "a": "Erwachsene haben den Vorteil, Technik bewusst umsetzen zu können. Mit Geduld und klaren Übungen klappt es sehr gut."},
         ],
+        "hero_image": "images/heroes/kraulen-lernen-freiburg-hero.jpg",
     },
     "schwimmorte-berlin": {
         "meta_title": "Schwimmorte Berlin – Schwimmbäder, Seen und Badestellen für dein Training",
@@ -372,6 +379,7 @@ LANDING_PAGES = {
             {"q": "Kann ich auch an einem Badesee trainieren?", "a": "Ja, viele Badeseen in Berlin eignen sich für das Training – besonders in den Sommermonaten."},
             {"q": "Ist Training im Freibad auch im Winter möglich?", "a": "Nein, die meisten Freibäder und Sommerbäder haben nur in der warmen Jahreszeit geöffnet. Im Winter weichen wir auf Hallenbäder aus."},
         ],
+        "hero_image": "images/heroes/schwimmorte-berlin-hero.jpg",
     },
     "schwimmorte-freiburg": {
         "meta_title": "Schwimmorte Freiburg – Schwimmbäder, Thermen und Badeseen in der Region",
@@ -404,6 +412,7 @@ LANDING_PAGES = {
             {"q": "Gibt es auch Training in Badeseen in Freiburg?", "a": "Ja, in den Sommermonaten können Badeseen in der Region für das Training genutzt werden."},
             {"q": "Trainiert Clara auch außerhalb von Freiburg?", "a": "Ja, Clara trainiert in der gesamten Region – von Gundelfingen bis Bad Krozingen. Frag einfach nach deinem Wunschort."},
         ],
+        "hero_image": "images/heroes/schwimmorte-freiburg-hero.jpg",
     },
 }
 

@@ -1,33 +1,56 @@
 # Hero-Image-Inventar – Squalo Schwimmcoaching
 
-## Gefundene Bildordner
+Kurzdokumentation: Seite → Quellordner → gewählte Bilddatei → finaler Pfad.
+Alle finalen Hero-Bilder liegen in `static/images/heroes/`.
 
-Pfad: `static/images/`
+## Feste Zuordnung
 
-| Ordner | Bilder | Vermutete Zielseite | Status |
-|--------|--------|---------------------|--------|
-| `badestelle-berlin/` | 2 (413 KB, 419 KB) | /schwimmorte-berlin | ✅ Eindeutig |
-| `badestelle-freiburg/` | 2 (357 KB, 1.252 KB) | /schwimmorte-freiburg | ✅ Eindeutig |
-| `coach-werden/` | 2 (299 KB, 1.307 KB) | /coach-werden | ✅ Eindeutig |
-| `coaches/` | 1 (162 KB, PNG) | /coaches | ✅ Wird bereits verwendet |
-| `dashboard/` | 5 (224–302 KB) | /dashboard | ✅ Eindeutig |
-| `hero-uploads/` | 0 (LEER) | — | ⚠️ Leer |
-| `kinder-schwimmtraining/` | 1 (188 KB) | /schwimmtraining-kinder-berlin | ✅ Eindeutig |
-| `kraullernen-berlin/` | 1 (790 KB) | /kraulen-lernen-berlin | ✅ Eindeutig |
-| `kraullernen-freiburg/` | 1 (989 KB) | /kraulen-lernen-freiburg | ✅ Eindeutig |
-| `shop/` | 10 (78–1.186 KB) | /shop (Produktbilder) | ✅ Shop-Produktbilder |
+| Seite | Quellordner | Quelldatei | Finaler Pfad |
+|---|---|---|---|
+| /coach-werden | static/images/coach-werden | gpt-image-2_...-3.jpg | static/images/heroes/coach-werden-hero.jpg |
+| /dashboard | static/images/dashboard | gpt-image-2_...-1.jpg | static/images/heroes/dashboard-hero.jpg |
+| /schwimmorte-berlin | static/images/badestelle-berlin | nano-banana-2_...-0.jpg | static/images/heroes/schwimmorte-berlin-hero.jpg |
+| /schwimmorte-freiburg | static/images/badestelle-freiburg | nano-banana-2_...large_indoor_swimming_faci-3.jpg | static/images/heroes/schwimmorte-freiburg-hero.jpg |
+| /schwimmtraining-kinder-berlin | static/images/kinder-schwimmtraining | gpt-image-2_...child_learning_to_swim_in_-0.jpg | static/images/heroes/schwimmtraining-kinder-berlin-hero.jpg |
+| /kraulen-lernen-berlin | static/images/kraullernen-berlin | nano-banana-2_...sessio-2.jpg | static/images/heroes/kraulen-lernen-berlin-hero.jpg |
+| /kraulen-lernen-freiburg | static/images/kraullernen-freiburg | nano-banana-2_...sessio-3.jpg | static/images/heroes/kraulen-lernen-freiburg-hero.jpg |
 
-## Fehlende Ordner (kein Hero-Bild vorhanden)
+## Fallback-Zuordnung (kein eigener Bildordner vorhanden)
 
-| Seite | Route | Hero-Status |
-|-------|-------|-------------|
-| Schwimmtraining Berlin | /schwimmtraining-berlin | ❌ Kein Ordner/Bild |
-| Schwimmtraining Freiburg | /schwimmtraining-freiburg | ❌ Kein Ordner/Bild |
-| Schwimmkurs Erwachsene Berlin | /schwimmkurs-erwachsene-berlin | ❌ Kein Ordner/Bild |
+| Seite | Quellordner | Quelldatei | Finaler Pfad |
+|---|---|---|---|
+| /schwimmtraining-berlin | static/images/kraullernen-berlin | nano-banana-2_...sessio-2.jpg | static/images/heroes/schwimmtraining-berlin-hero.jpg |
+| /schwimmtraining-freiburg | static/images/kraullernen-freiburg | nano-banana-2_...sessio-3.jpg | static/images/heroes/schwimmtraining-freiburg-hero.jpg |
+| /schwimmkurs-erwachsene-berlin | static/images/kraullernen-berlin | nano-banana-2_...sessio-2.jpg | static/images/heroes/schwimmkurs-erwachsene-berlin-hero.jpg |
+| /triathlon-schwimmtraining-berlin | static/images/badestelle-berlin | nano-banana-2_...-2.jpg | static/images/heroes/triathlon-schwimmtraining-berlin-hero.jpg |
 
-## Empfohlene nächste Schritte
+## Hinweise / Entscheidungen
 
-1. Hero-Bilder für die 3 fehlenden Seiten generieren
-2. Dann alle Bilder sauber in `static/images/heroes/` kopieren und in Templates einbauen
+- Für `/schwimmtraining-berlin` war laut Fallback-Regel auch `static/images/coaches` als Quelle
+  erlaubt. Das dortige Bild (`coach-header-squalo-shirt.png`) enthält jedoch verrauschte
+  Pseudo-Text-Artefakte im oberen Bildbereich (verstößt gegen „keine Schrift im Bild") und wurde
+  daher **nicht** verwendet. Stattdessen kommt das Kraultraining-Bild aus `kraullernen-berlin`
+  zum Einsatz (Mehrfachverwendung, da der Ordner nur ein einziges, sauberes Bild enthält).
+- `/schwimmkurs-erwachsene-berlin` und `/kraulen-lernen-berlin` teilen sich bewusst dasselbe
+  Ausgangsbild aus `kraullernen-berlin` (Fallback-Regel sieht das explizit vor).
+- `/triathlon-schwimmtraining-berlin` nutzt das zweite, bisher ungenutzte Bild aus
+  `badestelle-berlin` (Seeblick mit Steg) – dadurch keine Bildüberschneidung mit
+  `/schwimmorte-berlin`.
+- **Bugfix Landingpages:** `templates/landing_page.html` baute den Bildpfad bisher als
+  reinen String `url('{{ page.hero_image }}')` ohne `url_for('static', ...)` zusammen. Das führte
+  zu 404-Fehlern für alle Hero-Bilder auf Landingpages. Fix: `url_for('static',
+  filename=page.hero_image)` wird jetzt verwendet. Zusätzlich unterstützt das Template optional
+  `page.hero_position` für Bild-Feineinstellung pro Seite.
+- **Bugfix /coach-werden:** `static/css/style.css` enthielt Jinja-Syntax
+  (`{{ url_for(...) }}`) direkt im CSS. CSS-Dateien werden von Flask nicht durch Jinja gerendert,
+  wodurch das Hero-Bild dort nie lud. Fix: `url_for(...)` wurde als Inline-Style auf die
+  `<section class="coach-werden-hero">` in `templates/coach_werden.html` verschoben.
+- **Dashboard-Hero verbessert:** `/dashboard` nutzte bereits `dashboard-hero.jpg` per Inline-Style
+  in `templates/dashboard.html`, aber `.dashboard-header` hatte weder `background-size` noch
+  Mindesthöhe noch Kontrast-Overlay. CSS wurde um `background-size: cover`,
+  `background-position`, `min-height`, ein abdunkelndes Overlay und weiße Textfarbe mit
+  Schatten ergänzt. Dashboard-Funktionalität (Tabs, Buchungen, Trainingspläne, Uploads, Login)
+  wurde nicht verändert.
 
-## Stand: 2026-07-24
+## Stand: 2026-07-24 (aktualisiert)
+

@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=22">
     <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
 </head>
-<body>
+<body{% block body_class %}{% endblock %}>
     <header class="site-header">
         {# Water caustic overlay for realistic pool light refraction #}
         <div class="header-caustics" aria-hidden="true"></div>

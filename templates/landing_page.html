@@ -10,7 +10,7 @@
 {% block content %}
 <div class="landing-page">
   {# ── Hero ── #}
-  <section class="landing-hero">
+  <section class="landing-hero"{% if page.hero_image %} style="background-image: url('{{ url_for('static', filename=page.hero_image) }}');{% if page.hero_position %} background-position: {{ page.hero_position }};{% endif %}"{% endif %}>
     <div class="landing-hero-bg"></div>
     <div class="landing-hero-overlay"></div>
     <div class="container" style="position:relative;z-index:2;">
@@ -165,6 +165,8 @@ function toggleFaq(btn) {
   background:linear-gradient(135deg,var(--dark-blue,#003d4d) 0%,var(--squalo-deep-blue,#002433) 50%,#001a2e 100%);
   overflow:hidden;
   padding:4rem 0;
+  background-size: cover;
+  background-position: center;
 }
 .landing-hero-bg {
   position:absolute;inset:0;
