@@ -138,6 +138,7 @@ LANDING_PAGES = {
             {"q": "Wie frage ich einen Termin an?", "a": "Einfach über das Buchungsformular deine Wünsche eingeben – Moritz meldet sich zur Bestätigung."},
         ],
         "hero_image": "images/heroes/schwimmtraining-berlin-hero.jpg",
+        "hero_position": "center 20%",
     },
     "kraulen-lernen-berlin": {
         "meta_title": "Kraulen lernen Berlin – Techniktraining für Erwachsene & Triathlon",
@@ -379,7 +380,10 @@ LANDING_PAGES = {
             {"q": "Kann ich auch an einem Badesee trainieren?", "a": "Ja, viele Badeseen in Berlin eignen sich für das Training – besonders in den Sommermonaten."},
             {"q": "Ist Training im Freibad auch im Winter möglich?", "a": "Nein, die meisten Freibäder und Sommerbäder haben nur in der warmen Jahreszeit geöffnet. Im Winter weichen wir auf Hallenbäder aus."},
         ],
-        "hero_image": "images/heroes/schwimmorte-berlin-hero.jpg",
+        "hero_images": [
+            "images/heroes/schwimmorte-berlin-hero.jpg",
+            "images/heroes/schwimmorte-berlin-hero-2.jpg",
+        ],
     },
     "schwimmorte-freiburg": {
         "meta_title": "Schwimmorte Freiburg – Schwimmbäder, Thermen und Badeseen in der Region",
@@ -412,7 +416,10 @@ LANDING_PAGES = {
             {"q": "Gibt es auch Training in Badeseen in Freiburg?", "a": "Ja, in den Sommermonaten können Badeseen in der Region für das Training genutzt werden."},
             {"q": "Trainiert Clara auch außerhalb von Freiburg?", "a": "Ja, Clara trainiert in der gesamten Region – von Gundelfingen bis Bad Krozingen. Frag einfach nach deinem Wunschort."},
         ],
-        "hero_image": "images/heroes/schwimmorte-freiburg-hero.jpg",
+        "hero_images": [
+            "images/heroes/schwimmorte-freiburg-hero.jpg",
+            "images/heroes/schwimmorte-freiburg-hero-2.jpg",
+        ],
     },
 }
 
@@ -1762,6 +1769,7 @@ def create_app() -> Flask:
                     "latitude": float(loc.latitude),
                     "longitude": float(loc.longitude),
                     "maps_url": loc.maps_url,
+                    "official_url": getattr(loc, "official_url", None) or getattr(loc, "website_url", None) or getattr(loc, "external_url", None),
                     "booking_url": url_for("booking") + "?location_id=" + str(loc.id),
                     # Computed status
                     "_opening_status": loc._opening_status,

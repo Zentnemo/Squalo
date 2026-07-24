@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 {% block robots_meta %}noindex, nofollow{% endblock %}
+{% block body_class %} class="page-has-hero"{% endblock %}
 {% block content %}
-  <div class="dashboard-header" style="background-image: url('{{ url_for('static', filename='images/heroes/dashboard-hero.jpg') }}');">
+  <div class="dashboard-header">
+    <div class="hero-rotator" aria-hidden="true">
+      <div class="hero-slide is-active" style="background-image: url('{{ url_for('static', filename='images/heroes/dashboard-hero.jpg') }}');"></div>
+      <div class="hero-slide" style="background-image: url('{{ url_for('static', filename='images/heroes/dashboard-hero-3.jpg') }}');"></div>
+    </div>
     <h2>Willkommen, {{ current_user.name }}! 👋</h2>
     <a href="{{ url_for('booking') }}" class="btn btn-primary">+ Neuen Termin anfragen</a>
   </div>

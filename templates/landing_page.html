@@ -6,12 +6,18 @@
 {% block og_description %}{{ page.og_description or page.meta_description }}{% endblock %}
 {% block twitter_title %}{{ page.og_title or page.meta_title }}{% endblock %}
 {% block twitter_description %}{{ page.og_description or page.meta_description }}{% endblock %}
+{% block body_class %} class="page-has-hero"{% endblock %}
 
 {% block content %}
+{% set hero_images = page.hero_images if page.hero_images else ([page.hero_image] if page.hero_image else []) %}
 <div class="landing-page">
   {# ── Hero ── #}
-  <section class="landing-hero"{% if page.hero_image %} style="background-image: url('{{ url_for('static', filename=page.hero_image) }}');{% if page.hero_position %} background-position: {{ page.hero_position }};{% endif %}"{% endif %}>
-    <div class="landing-hero-bg"></div>
+  <section class="landing-hero">
+    <div class="hero-rotator" aria-hidden="true">
+      {% for img in hero_images %}
+        <div class="hero-slide{% if loop.first %} is-active{% endif %}" style="background-image: url('{{ url_for('static', filename=img) }}');{% if page.hero_position %} background-position: {{ page.hero_position }};{% endif %}"></div>
+      {% endfor %}
+    </div>
     <div class="landing-hero-overlay"></div>
     <div class="container" style="position:relative;z-index:2;">
       {% if page.kicker %}

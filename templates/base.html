@@ -136,5 +136,23 @@
     </footer>
 
     {% block json_ld %}{% endblock %}
+
+    <script>
+      // Simple, dependency-free hero image rotation with fade transition.
+      // Only rotates when a hero has more than one slide; respects prefers-reduced-motion.
+      (function () {
+        var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        document.querySelectorAll('.hero-rotator').forEach(function (rotator) {
+          var slides = rotator.querySelectorAll('.hero-slide');
+          if (slides.length < 2 || reduceMotion) return;
+          var index = 0;
+          setInterval(function () {
+            slides[index].classList.remove('is-active');
+            index = (index + 1) % slides.length;
+            slides[index].classList.add('is-active');
+          }, 7000);
+        });
+      })();
+    </script>
 </body>
 </html>

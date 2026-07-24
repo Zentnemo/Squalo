@@ -6,9 +6,14 @@
 {% block twitter_title %}Schwimmcoach werden – Mit Squalo Schwimmtraining geben{% endblock %}
 {% block twitter_description %}Du hast Erfahrung im Schwimmen und möchtest als Coach arbeiten? Bewirb dich bei Squalo und gib individuelles Schwimmtraining in deiner Stadt.{% endblock %}
 {% block canonical %}<link rel="canonical" href="https://squalo-schwimmcoaching.com/coach-werden">{% endblock %}
+{% block body_class %} class="page-has-hero"{% endblock %}
 {% block content %}
 <div class="coach-werden-page">
-  <section class="coach-werden-hero" style="background-image: url('{{ url_for('static', filename='images/heroes/coach-werden-hero.jpg') }}');">
+  <section class="coach-werden-hero">
+    <div class="hero-rotator" aria-hidden="true">
+      <div class="hero-slide is-active" style="background-image: url('{{ url_for('static', filename='images/heroes/coach-werden-hero.jpg') }}');"></div>
+      <div class="hero-slide" style="background-image: url('{{ url_for('static', filename='images/heroes/coach-werden-hero-2.jpg') }}');"></div>
+    </div>
     <div class="container">
       <h1 class="coach-werden-title">Coach werden bei Squalo</h1>
       <p class="coach-werden-subtitle">
