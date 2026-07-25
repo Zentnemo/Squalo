@@ -169,6 +169,15 @@ LANDING_PAGES = {
             {"title": "Kraulen lernen", "text": "Los geht's mit deinem persönlichen Kraultraining – Schritt für Schritt."},
         ],
         "coach_note": "Moritz Zentner begleitet dich als Coach in Berlin. Mit über 15 Jahren Erfahrung im Wasser und einem Gespür für saubere Technik bringt er dir Kraulen entspannt und effektiv bei.",
+        "extra_section": {
+            "title": "Warum Kraulen lernen so viel bringt",
+            "paragraphs": [
+                "Kraul ist für viele Erwachsene die wichtigste Technik, um effizient längere Strecken zu schwimmen. Richtig ausgeführt ist Kraulen in der Regel die schnellste und ökonomischste Schwimmtechnik für längere Distanzen.",
+                "Am Anfang fühlt sich Kraulen oft kompliziert an, weil Atmung, Wasserlage, Armzug und Beinschlag gleichzeitig zusammenkommen müssen. Genau deshalb ist persönliches Feedback in dieser Phase so wertvoll – dein Coach sieht direkt, wo es hakt, und kann gezielt gegensteuern.",
+                "Besonders im sportlichen Schwimmen und im Triathlon spielt eine saubere Kraultechnik eine große Rolle, weil sie Kraft spart und mehr Ruhe ins Wasser bringt.",
+                "Über 50 Kundinnen und Kunden haben mit Squalo bereits Kraultechnik aufgebaut oder verbessert – Schritt für Schritt und in ihrem eigenen Tempo.",
+            ],
+        },
         "faqs": [
             {"q": "Kann ich Kraulen lernen, wenn ich noch nie gekrault habe?", "a": "Ja, auf jeden Fall. Wir starten mit Atmung und Wasserlage und bauen dann Armzug, Beinschlag und Rotation Schritt für Schritt auf."},
             {"q": "Wie lange dauert es, Kraulen zu lernen?", "a": "Das ist individuell. Viele haben nach 3–5 Einheiten die Grundlagen sicher und arbeiten dann an der Verfeinerung."},
@@ -236,6 +245,15 @@ LANDING_PAGES = {
             {"title": "Training starten", "text": "Dein Kind trainiert in entspannter Atmosphäre – sicher, spielerisch und mit Freude."},
         ],
         "coach_note": "Moritz Zentner trainiert Kinder in Berlin mit Geduld und Einfühlungsvermögen. Ihm ist wichtig, dass Kinder Spaß am Wasser entwickeln und sich in ihrem Tempo weiterentwickeln können.",
+        "extra_section": {
+            "title": "Warum 1:1-Schwimmcoaching für Kinder sinnvoll sein kann",
+            "paragraphs": [
+                "Manche Kinder lernen in großen Gruppen gut – andere brauchen mehr Ruhe, Zeit und individuelle Aufmerksamkeit. Im persönlichen Coaching kann der Coach direkt auf dein Kind reagieren und das Tempo entsprechend anpassen.",
+                "Personal Coaching kann eine sinnvolle Vorbereitung sein, bevor ein Kind später in einen größeren Schwimmkurs oder Verein wechselt – oder als gezielte Vorbereitung auf Urlaub, See, Pool oder den Schwimmunterricht in der Schule.",
+                "Im geschützten Rahmen einer Einzelstunde kann dein Kind Wassergefühl, Sicherheit und Vertrauen im eigenen Tempo aufbauen. Der Coach ist eng an der Seite deines Kindes und kann jede Bewegung direkt begleiten.",
+                "Besonders für jüngere Kinder oder für Kinder, die in klassischen Kursgruppen noch nicht gut zurechtkommen, kann diese individuelle Aufmerksamkeit einen großen Unterschied machen.",
+            ],
+        },
         "faqs": [
             {"q": "Ab welchem Alter ist das Kindertraining geeignet?", "a": "Das Training ist für Kinder ab etwa 5 Jahren geeignet. Bei Unsicherheit oder früherem Einstieg sprich uns bitte direkt an."},
             {"q": "Muss mein Kind schon schwimmen können?", "a": "Nein. Wir starten dort, wo dein Kind steht – ob Wassergewöhnung oder schon erste Züge."},
@@ -270,6 +288,15 @@ LANDING_PAGES = {
             {"title": "Training starten", "text": "Gezieltes Triathlon-Schwimmtraining – effizient, zielgerichtet und praxisnah."},
         ],
         "coach_note": "Moritz Zentner bereitet Triathleten in Berlin auf die Schwimmdisziplin vor. Mit technischem Fokus, Erfahrung im offenen Wasser und einem Auge für die Wettkampfpraxis.",
+        "extra_section": {
+            "title": "Warum Schwimmen im Triathlon oft der entscheidende Baustein ist",
+            "paragraphs": [
+                "Viele Triathletinnen und Triathleten fühlen sich beim Laufen oder Radfahren deutlich sicherer als im Wasser. Schwimmen ist für viele der technisch anspruchsvollste Teil des Wettkampfs.",
+                "Der Schwimmstart kann Motivation geben – oder direkt Druck erzeugen, wenn Technik und Orientierung noch nicht sitzen. Unterschiede im Wasser zeigen sich besonders deutlich: Technik, Atmung, Orientierung und Ruhe entscheiden viel über den weiteren Rennverlauf.",
+                "Im Training arbeiten wir gezielt daran, effizienter zu schwimmen, ruhiger zu atmen, dich besser zu orientieren und weniger Energie im Wasser zu verlieren – Energie, die du für Rad und Lauf brauchst.",
+                "Wer möchte, kann sich zusätzlich gezielt auf Freiwasser vorbereiten: Orientierung, Rhythmus, Sicherheit und der Umgang mit anderen Schwimmerinnen und Schwimmern im Wasser.",
+            ],
+        },
         "faqs": [
             {"q": "Wie verbessere ich meine Schwimmzeit für den Triathlon?", "a": "Oft bringt eine bessere Technik mehr als reines Bahnentraining. Wasserlage, Atmung und Effizienz sind die Hebel, an denen wir arbeiten."},
             {"q": "Trainiert ihr auch im offenen Wasser?", "a": "Ja, saisonabhängig an Berliner Badeseen. Offenes Wasser hat eigene Anforderungen – Orientierung, Wellen, Massenstart – die wir gezielt trainieren."},
@@ -342,6 +369,15 @@ LANDING_PAGES = {
             {"title": "Kraulen lernen", "text": "Los geht's mit deinem persönlichen Kraultraining."},
         ],
         "coach_note": "Clara Zentner begleitet dich als Coach in Freiburg. Mit ruhiger Art und einem klaren Fokus auf saubere Technik bringt sie dir Kraulen entspannt und effektiv bei.",
+        "extra_section": {
+            "title": "Warum Kraulen lernen so viel bringt",
+            "paragraphs": [
+                "Kraul ist für viele Erwachsene die wichtigste Technik, um effizient längere Strecken zu schwimmen. Richtig ausgeführt ist Kraulen in der Regel die schnellste und ökonomischste Schwimmtechnik für längere Distanzen.",
+                "Am Anfang fühlt sich Kraulen oft kompliziert an, weil Atmung, Wasserlage, Armzug und Beinschlag gleichzeitig zusammenkommen müssen. Genau deshalb ist persönliches Feedback in dieser Phase so wertvoll – unsere erfahrenen Coaches sehen direkt, wo es hakt, und können gezielt gegensteuern.",
+                "Besonders im sportlichen Schwimmen und im Triathlon spielt eine saubere Kraultechnik eine große Rolle, weil sie Kraft spart und mehr Ruhe ins Wasser bringt.",
+                "Über 50 Kundinnen und Kunden haben mit Squalo bereits Kraultechnik aufgebaut oder verbessert – ob in Berlin, Freiburg oder der Umgebung.",
+            ],
+        },
         "faqs": [
             {"q": "Kann ich Kraulen lernen, wenn ich noch nie gekrault habe?", "a": "Ja. Wir starten mit Atmung und Wasserlage und bauen dann Armzug, Beinschlag und Rotation Schritt für Schritt auf."},
             {"q": "Wie lange dauert es, Kraulen zu lernen?", "a": "Das ist individuell. Viele haben nach 3–5 Einheiten die Grundlagen sicher."},
@@ -375,6 +411,15 @@ LANDING_PAGES = {
             {"title": "Training genießen", "text": "Dein Coach kommt an den Ort – du musst dich um nichts kümmern."},
         ],
         "coach_note": "Moritz Zentner ist dein Coach in Berlin und kennt die Schwimmorte in der Stadt genau. Er hilft dir, den passenden Ort für dein Training zu finden.",
+        "extra_section": {
+            "title": "Schwimmen in Berlin: Becken, Freibad oder Freiwasser?",
+            "paragraphs": [
+                "Berlin hat eine besonders vielfältige Schwimmlandschaft: Hallenbäder, Sommerbäder, Strandbäder, Badeseen und Badestellen liegen oft nur wenige Kilometer voneinander entfernt.",
+                "Je nach Trainingsziel kann ein anderer Ort sinnvoll sein. Im Schwimmbad lässt sich Technik gezielt wiederholen – klare Bahnen und planbare Bedingungen machen es leichter, Bewegungsabläufe sauber aufzubauen.",
+                "Badeseen und Freiwasser eignen sich dagegen besonders gut, um Orientierung, Sicherheit, das Gefühl für kühleres Wasser und längere, durchgehende Strecken zu trainieren.",
+                "Wenn du an einer offiziellen Badestelle schwimmst, informiere dich am besten über die aktuelle Wasserqualität über die offiziellen Quellen der zuständigen Stellen – diese Informationen ändern sich je nach Saison.",
+            ],
+        },
         "faqs": [
             {"q": "Welche Schwimmorte in Berlin sind für Anfänger geeignet?", "a": "Ruhige Hallenbäder mit Trainingsbecken eignen sich besonders gut. Dein Coach berät dich gerne bei der Auswahl."},
             {"q": "Kann ich auch an einem Badesee trainieren?", "a": "Ja, viele Badeseen in Berlin eignen sich für das Training – besonders in den Sommermonaten."},
@@ -411,6 +456,15 @@ LANDING_PAGES = {
             {"title": "Training genießen", "text": "Clara kommt an den Ort – du musst dich um nichts kümmern."},
         ],
         "coach_note": "Clara Zentner ist deine Coach in Freiburg und kennt die Schwimmbäder der Region genau. Sie hilft dir, den passenden Ort für dein Training zu finden.",
+        "extra_section": {
+            "title": "Schwimmtraining in Freiburg und Umgebung",
+            "paragraphs": [
+                "Freiburg und die Region bieten gute Möglichkeiten für Schwimmtraining – ganzjährig im Becken und in den Sommermonaten zusätzlich draußen.",
+                "Das Westbad Freiburg zählt zu den möglichen Trainingsorten in der Stadt, ebenso Bäder in der näheren Umgebung wie das Freibad Emmendingen – je nachdem, was für dein Training am besten passt.",
+                "Im Training mit unseren erfahrenen Coaches arbeiten wir je nach Ziel an Techniktraining, Kraulen, Ausdauer, Kindertraining oder einem entspannten Wiedereinstieg ins Schwimmen.",
+                "So findest du einen Trainingsort und einen Rhythmus, der zu deinem Alltag in Freiburg und der Region passt.",
+            ],
+        },
         "faqs": [
             {"q": "Welche Schwimmbäder in Freiburg sind am besten für Training geeignet?", "a": "Das Westbad Freiburg und das Eugen-Keidel-Bad sind beliebte Trainingsorte. Dein Coach berät dich gerne."},
             {"q": "Gibt es auch Training in Badeseen in Freiburg?", "a": "Ja, in den Sommermonaten können Badeseen in der Region für das Training genutzt werden."},
@@ -1825,6 +1879,9 @@ def create_app() -> Flask:
     @app.route("/coaches")
     def coaches():
         coach_list = Coach.query.filter_by(is_active=True).order_by(Coach.name.asc()).all()
+        # Moritz (Gründer, meiste Bewertungen) wird immer als erster Coach angezeigt,
+        # alle anderen Coaches bleiben alphabetisch sortiert.
+        coach_list.sort(key=lambda c: (0 if c.slug == "moritz-zentner" else 1, c.name))
         return render_template("coaches.html", coaches=coach_list)
 
     @app.route("/coach-werden", methods=["GET", "POST"])

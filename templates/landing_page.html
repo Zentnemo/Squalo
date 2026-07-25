@@ -57,6 +57,16 @@
       </section>
     {% endif %}
 
+    {# ── Zusatzabschnitt (informativ / vertrauensbildend) ── #}
+    {% if page.extra_section %}
+      <section class="landing-section landing-extra">
+        <h2 class="landing-section-title">{{ page.extra_section.title }}</h2>
+        {% for para in page.extra_section.paragraphs %}
+          <p class="landing-extra-text">{{ para }}</p>
+        {% endfor %}
+      </section>
+    {% endif %}
+
     {# ── Trainingsansatz ── #}
     {% if page.approach %}
       <section class="landing-section">
@@ -297,6 +307,14 @@ function toggleFaq(btn) {
   line-height:1.6;
   margin-bottom:1rem;
 }
+.landing-extra-text {
+  font-size:0.98rem;
+  color:var(--text-muted,#666);
+  line-height:1.7;
+  max-width:760px;
+  margin:0 0 1rem;
+}
+.landing-extra-text:last-of-type { margin-bottom:0; }
 .landing-coach-card {
   display:flex;
   gap:1.25rem;

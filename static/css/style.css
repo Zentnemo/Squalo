@@ -6382,6 +6382,84 @@ body.page-has-hero main.page-main {
   margin-top: 20px;
 }
 
+.coach-werden-pitch {
+  padding: 0 0 20px;
+}
+
+.coach-werden-pitch .container {
+  max-width: 780px;
+}
+
+.coach-werden-pitch-title {
+  font-family: 'Righteous', cursive;
+  font-size: 28px;
+  color: var(--dark-blue);
+  margin: 0 0 6px;
+}
+
+.coach-werden-pitch-subtitle {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--squalo-neon-orange, #ff9f00);
+  margin: 0 0 20px;
+}
+
+.coach-werden-pitch p {
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: #444;
+  margin: 0 0 16px;
+}
+
+.coach-werden-commission {
+  background: linear-gradient(135deg, var(--dark-blue), #005577);
+  color: var(--white);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-top: 24px;
+}
+
+.coach-werden-commission h3 {
+  margin: 0 0 10px;
+  font-size: 19px;
+  color: var(--white);
+}
+
+.coach-werden-commission p {
+  color: rgba(255,255,255,0.9);
+}
+
+.coach-werden-commission-example {
+  background: rgba(255,255,255,0.1);
+  border-left: 4px solid var(--squalo-neon-orange, #ff9f00);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 12px 0;
+}
+
+.coach-werden-commission-example p {
+  margin: 0 0 6px;
+  font-size: 14.5px;
+}
+
+.coach-werden-commission-example p:last-child {
+  margin-bottom: 0;
+}
+
+.coach-werden-disclaimer {
+  font-size: 13.5px !important;
+  color: rgba(255,255,255,0.75) !important;
+  line-height: 1.6;
+  margin-top: 14px !important;
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 600px) {
+  .coach-werden-pitch-title { font-size: 23px; }
+  .coach-werden-commission { padding: 18px 20px; }
+}
+
+
 .coach-werden-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
