@@ -303,6 +303,27 @@
     </div>
   </section>
 
+  {# ── Warum Squalo? (Gründer-/Markenmotivation) ── #}
+  <section class="why-squalo-section">
+    <div class="why-squalo-card">
+      <h2>Warum Squalo?</h2>
+      <p>
+        Squalo ist aus der Erfahrung entstanden, dass gutes Schwimmtraining oft schwerer zu finden ist, als es sein sollte.
+        Viele Kurse sind voll, viele Angebote unpersönlich, und nicht jeder Mensch lernt in einer großen Gruppe gut.
+      </p>
+      <p>
+        Ich schwimme seit meiner Kindheit, habe viele Jahre im Verein trainiert und später gemerkt, wie groß der Unterschied ist,
+        wenn jemand im Wasser wirklich hinschaut: Wie liegt der Körper? Wie funktioniert die Atmung? Warum kostet eine Bewegung so viel Kraft?
+      </p>
+      <p>
+        Mit Squalo wollen wir persönliches Schwimmcoaching einfacher zugänglich machen – flexibel an verschiedenen Orten, mit klarer
+        Technikarbeit und Coaches, die nicht nur danebenstehen, sondern mit dir arbeiten. Unser Ziel ist eine Plattform, die Schwimmen
+        persönlicher, verständlicher und moderner macht.
+      </p>
+      <p class="why-squalo-signature">– Moritz, Gründer von Squalo</p>
+    </div>
+  </section>
+
   {# ── SEO: Warum Squalo? ── #}
   <section class="seo-section">
     <h2>Schwimmtraining in Berlin &amp; Freiburg – individuell, technikorientiert &amp; an deinem Lieblingsort</h2>
@@ -335,7 +356,12 @@
         {% for loc in locations %}
           <div class="location-card{% if loop.index > 6 %} location-hidden{% endif %}" data-region="{{ loc.city or 'Berlin' }}">
             <div class="location-header">
-              <h3>{{ loc.name }}</h3>
+              {% set loc_url = loc.official_url or loc.website_url or loc.external_url %}
+              {% if loc_url %}
+                <h3><a href="{{ loc_url }}" target="_blank" rel="noopener noreferrer" class="location-name-link">{{ loc.name }}</a></h3>
+              {% else %}
+                <h3>{{ loc.name }}</h3>
+              {% endif %}
               <span class="location-type">{{ loc.location_type }}</span>
             </div>
             <div class="location-body">
@@ -463,7 +489,7 @@
       const crowdCss      = loc._crowd_class ? 'crowd-badge crowd-' + loc._crowd_class : '';
       marker.bindPopup(`
         <div class="popup-card">
-          <h4 class="popup-title">${loc.name}</h4>
+          <h4 class="popup-title">${loc.official_url ? `<a href="${loc.official_url}" target="_blank" rel="noopener noreferrer">${loc.name}</a>` : loc.name}</h4>
           <div class="popup-meta">
             <span class="popup-type">${loc.location_type}</span>
             <span class="popup-district">${loc.district}, ${loc.city || 'Berlin'}</span>

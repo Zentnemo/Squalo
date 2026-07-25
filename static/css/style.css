@@ -2423,12 +2423,16 @@ body.home main.page-main {
 }
 
 .location-header {
+  width: 100%;
+  min-height: 72px;
   background: linear-gradient(135deg, var(--dark-blue), #005577);
   color: var(--white);
-  padding: 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  box-sizing: border-box;
   position: relative;
 }
 
@@ -2444,19 +2448,23 @@ body.home main.page-main {
 
 .location-header h3 {
   margin: 0;
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.2;
+  flex: 1 1 auto;
+  min-width: 0;
+  word-break: break-word;
 }
 
 .location-name-link {
   color: inherit;
   text-decoration: none;
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
 }
 
 .location-name-link:hover {
   color: var(--squalo-neon-orange, #ff9f00);
-  border-bottom-color: currentColor;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
 }
 
 .location-type {
@@ -2468,9 +2476,13 @@ body.home main.page-main {
   box-shadow: 0 2px 8px rgba(0, 168, 204, 0.3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .location-body {
+  width: 100%;
+  box-sizing: border-box;
   padding: 16px;
 }
 
@@ -2534,6 +2546,8 @@ body.home main.page-main {
 }
 
 .location-footer {
+  width: 100%;
+  box-sizing: border-box;
   padding: 0 16px 16px 16px;
   display: flex;
   gap: 8px;
@@ -2681,6 +2695,61 @@ body.home main.page-main {
   margin-bottom: 0;
   line-height: 1.6;
   flex: 1;
+}
+
+/* ── Warum Squalo? (Gründer-/Markenmotivation) ── */
+.why-squalo-section {
+  max-width: 900px;
+  margin: 2.5rem auto;
+  padding: 0 20px;
+}
+
+.why-squalo-card {
+  background: linear-gradient(135deg, var(--dark-blue), #005577);
+  color: var(--white);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 8px 24px rgba(0, 61, 77, 0.18);
+}
+
+.why-squalo-card h2 {
+  font-family: 'Righteous', cursive;
+  font-size: 26px;
+  margin: 0 0 1.2rem;
+  text-align: center;
+}
+
+.why-squalo-card p {
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.95);
+  max-width: 720px;
+  margin: 0 auto 1rem;
+}
+
+.why-squalo-card p:last-of-type {
+  margin-bottom: 0;
+}
+
+.why-squalo-signature {
+  text-align: right;
+  font-style: italic;
+  color: var(--squalo-neon-orange, #ff9f00);
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .why-squalo-card {
+    padding: 2rem 1.25rem;
+  }
+
+  .why-squalo-card h2 {
+    font-size: 22px;
+  }
+
+  .why-squalo-card p {
+    font-size: 14.5px;
+  }
 }
 
 /* ── SEO Section ── */
@@ -3012,6 +3081,33 @@ body.page-has-hero main.page-main {
   border-radius: 4px;
   color: #0c5460;
   margin-top: 8px;
+}
+
+/* ── Dashboard Intro ── */
+.dashboard-intro {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 20px 0 28px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  border-left: 4px solid var(--turquoise);
+}
+
+.dashboard-intro h3 {
+  margin: 0 0 10px;
+  color: var(--dark-blue);
+  font-size: 19px;
+}
+
+.dashboard-intro p {
+  margin: 0 0 8px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--text-dark);
+}
+
+.dashboard-intro p:last-child {
+  margin-bottom: 0;
 }
 
 /* ── Dashboard Tabs ── */
@@ -4028,8 +4124,12 @@ body.page-has-hero main.page-main {
     height: 450px;
   }
 
+  .location-header {
+    min-height: 64px;
+  }
+
   .location-header h3 {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .logo-img {
@@ -4477,11 +4577,12 @@ body.page-has-hero main.page-main {
   }
 
   .location-header {
+    min-height: 60px;
     padding: 14px 16px;
   }
 
   .location-header h3 {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .location-type {
@@ -4944,6 +5045,10 @@ body.page-has-hero main.page-main {
 
   .bubble {
     display: none;
+  }
+
+  .location-header {
+    min-height: 56px;
   }
 
   .location-header h3 {
@@ -5812,6 +5917,40 @@ body.page-has-hero main.page-main {
   font-size: 18px;
   margin: 0 auto;
   max-width: 600px;
+}
+
+.coaches-intro {
+  max-width: 780px;
+  margin: 2.5rem auto 3rem;
+  text-align: center;
+}
+
+.coaches-intro h2 {
+  font-family: 'Righteous', cursive;
+  font-size: 26px;
+  color: var(--dark-blue);
+  margin: 0 0 1.2rem;
+}
+
+.coaches-intro p {
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--text-dark);
+  margin: 0 0 1rem;
+}
+
+.coaches-intro p:last-of-type {
+  margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+  .coaches-intro h2 {
+    font-size: 22px;
+  }
+
+  .coaches-intro p {
+    font-size: 14.5px;
+  }
 }
 
 .coach-card {

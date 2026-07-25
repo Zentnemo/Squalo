@@ -1257,7 +1257,25 @@ def create_app() -> Flask:
                 role="user"
             )
             db.session.add(user)
-            
+
+        # ── Testaccount MoTest ──────────────────────────────────────
+        # Dedizierter Testaccount, unabhängig von echten Kundendaten.
+        # Idempotent: legt ihn nur neu an bzw. setzt nur SEIN Passwort,
+        # andere Accounts werden nie berührt.
+        motest_user = User.query.filter_by(email="motest@squalo.local").first()
+        if motest_user:
+            motest_user.password_hash = generate_password_hash("SqualoTest2026!")
+            print("[OK] Testaccount MoTest aktualisiert: motest@squalo.local")
+        else:
+            motest_user = User(
+                name="MoTest",
+                email="motest@squalo.local",
+                password_hash=generate_password_hash("SqualoTest2026!"),
+                role="user"
+            )
+            db.session.add(motest_user)
+            print("[OK] Testaccount MoTest neu angelegt: motest@squalo.local")
+
         # ── Standorte seeden (idempotent: vorhandene werden aktualisiert) ──
         try:
             from seed_data import SWIM_LOCATIONS as SEED_LOCATIONS
@@ -2984,7 +3002,22 @@ Motivation:
                 role="user"
             )
             db.session.add(user)
-            
+
+        # ── Testaccount MoTest ──────────────────────────────────────
+        motest_user = User.query.filter_by(email="motest@squalo.local").first()
+        if motest_user:
+            motest_user.password_hash = generate_password_hash("SqualoTest2026!")
+            print("[OK] Testaccount MoTest aktualisiert: motest@squalo.local")
+        else:
+            motest_user = User(
+                name="MoTest",
+                email="motest@squalo.local",
+                password_hash=generate_password_hash("SqualoTest2026!"),
+                role="user"
+            )
+            db.session.add(motest_user)
+            print("[OK] Testaccount MoTest neu angelegt: motest@squalo.local")
+
         # Seed all Squalo swim locations (idempotent - prevents duplicates)
         # Import seed data from seed_data.py
         try:
