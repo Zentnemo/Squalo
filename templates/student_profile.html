@@ -3,6 +3,7 @@
   <div class="dashboard-header">
     <h2>👤 Schülermappe: {{ student.name }}</h2>
     <div class="cta-buttons">
+      <a href="{{ url_for('admin_propose_appointment', user_id=student.id) }}" class="btn btn-success">🗓️ Termin vorschlagen</a>
       <a href="{{ url_for('admin_students') }}" class="btn btn-secondary">← Zurück zur Schülerliste</a>
     </div>
   </div>
@@ -73,6 +74,13 @@
                     <span class="badge badge-active">Bestätigt</span>
                   {% elif b.status == 'angefragt' %}
                     <span class="badge badge-pending">Angefragt</span>
+                  {% elif b.status == 'vorschlag' %}
+                    <span class="badge" style="background:#cce5ff;color:#004085;">🗓️ Vorschlag</span><br>
+                    {% if b.confirmation_email_sent_at %}
+                      <small style="color:var(--success,#28a745);">📧 Mail verschickt</small>
+                    {% else %}
+                      <small style="color:#dc3545;">⚠️ Mail nicht verschickt</small>
+                    {% endif %}
                   {% elif b.status in ['abgelehnt', 'rejected'] %}
                     <span class="badge" style="background:#dc3545;color:#fff;">Abgelehnt</span>
                   {% else %}

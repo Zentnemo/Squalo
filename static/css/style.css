@@ -3534,6 +3534,11 @@ body.page-has-hero main.page-main {
   color: #004085;
 }
 
+.history-status-proposed {
+  background: #d4edda;
+  color: #155724;
+}
+
 .history-status-unknown {
   background: #e2e3e5;
   color: #383d41;

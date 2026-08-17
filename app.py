@@ -480,11 +480,32 @@ LANDING_PAGES = {
 
 # ── Confirmed-status helpers ──────────────────────────────────────
 CONFIRMED_STATUSES = ('bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen')
+# Status for an appointment proposed by a coach from the student profile,
+# awaiting the student's confirmation in the dashboard.
+PROPOSED_STATUS = 'vorschlag'
 
 
 def is_confirmed_status(status):
     """Return True if *status* counts as a confirmed/accepted booking."""
     return (status or '').lower() in CONFIRMED_STATUSES
+
+
+def get_current_coach():
+    """Return the Coach profile linked to the current logged-in user.
+
+    Matches the logged-in user's email against Coach.email (case-insensitive).
+    Reuses the existing Coach/User models - no new parallel user architecture.
+    Returns None if not authenticated or no matching Coach profile exists.
+    """
+    if not current_user.is_authenticated:
+        return None
+    email = (getattr(current_user, "email", "") or "").strip().lower()
+    if not email:
+        return None
+    for c in Coach.query.filter_by(is_active=True).all():
+        if c.email and c.email.strip().lower() == email:
+            return c
+    return None
 
 
 def get_effective_date(booking):
@@ -793,6 +814,83 @@ def send_customer_confirmation_email(booking, force=False):
         print(f"[MAIL] Bestaetigungsmail gesendet an {user.email} fuer Booking #{booking.id}")
     else:
         print(f"[MAIL-FEHLER] Bestaetigungsmail fehlgeschlagen fuer Booking #{booking.id}")
+
+    return success
+
+
+def send_coach_proposed_appointment_email(booking, coach=None, force=False):
+    """Send the MANDATORY customer email when a coach proposes an appointment
+    for a student directly from the student profile.
+
+    Reuses confirmation_email_sent_at for duplicate protection / "was the mail
+    sent?" tracking, consistent with send_customer_confirmation_email().
+    Returns True if the email was sent (or already sent before), False on failure.
+    """
+    if booking.confirmation_email_sent_at and not force:
+        print(f"[MAIL] Terminvorschlag-Mail fuer Booking #{booking.id} bereits gesendet "
+              f"({booking.confirmation_email_sent_at.strftime('%d.%m.%Y %H:%M')}). Ueberspringe.")
+        return True
+
+    user = User.query.get(booking.user_id)
+    if not user or not user.email:
+        print(f"[MAIL-FEHLER] Booking #{booking.id}: Kein gueltiger User/E-Mail gefunden "
+              f"fuer Terminvorschlag-Mail.")
+        return False
+
+    coach_obj = coach or booking.preferred_coach
+    coach_name = coach_obj.display_name if coach_obj else 'dein Squalo-Coach'
+
+    eff_date = get_effective_date(booking)
+    eff_time = get_effective_time(booking)
+
+    location_name = 'TBD'
+    if booking.preferred_location_1_id:
+        loc = Location.query.get(booking.preferred_location_1_id)
+        if loc:
+            location_name = loc.name
+
+    duration_map = {30: "30 Minuten", 60: "1 Stunde", 90: "1,5 Stunden",
+                    120: "2 Stunden", 180: "3 Stunden", 240: "4 Stunden",
+                    300: "5 Stunden"}
+    duration_str = duration_map.get(booking.duration_minutes, f"{booking.duration_minutes} Minuten")
+
+    first_name = user.name.split()[0] if user.name else 'Hallo'
+    base_url = get_public_base_url()
+    dashboard_url = f"{base_url}/dashboard"
+
+    note_block = ""
+    if booking.admin_note:
+        note_block = f"\nNachricht deines Coaches:\n{booking.admin_note}\n"
+
+    subject = f"Neuer Terminvorschlag von {coach_name} – Squalo Schwimmcoaching"
+
+    body = (
+        f"Hallo {first_name},\n"
+        f"\n"
+        f"dein Squalo-Coach {coach_name} hat dir einen neuen Coaching-Termin vorgeschlagen:\n"
+        f"\n"
+        f"Datum: {eff_date.strftime('%d.%m.%Y') if eff_date else 'TBD'}\n"
+        f"Uhrzeit: {eff_time.strftime('%H:%M') if eff_time else 'TBD'}\n"
+        f"Dauer: {duration_str}\n"
+        f"Ort: {location_name}\n"
+        f"{note_block}"
+        f"\n"
+        f"Du kannst den Termin in deinem Dashboard ansehen und annehmen:\n"
+        f"\n"
+        f"{dashboard_url}\n"
+        f"\n"
+        f"Viele Grüße\n"
+        f"Squalo Schwimmcoaching"
+    )
+
+    success = send_email(subject, user.email, body)
+
+    if success:
+        booking.confirmation_email_sent_at = datetime.utcnow()
+        db.session.commit()
+        print(f"[MAIL] Terminvorschlag-Mail gesendet an {user.email} fuer Booking #{booking.id}")
+    else:
+        print(f"[MAIL-FEHLER] Terminvorschlag-Mail fehlgeschlagen fuer Booking #{booking.id}")
 
     return success
 
@@ -1330,6 +1428,26 @@ def create_app() -> Flask:
             db.session.add(motest_user)
             print("[OK] Testaccount MoTest neu angelegt: motest@squalo.local")
 
+        # ── Coach-Login: Clara Marlene Zentner (Freiburg) ───────────
+        # Idempotent: Login wird nur NEU angelegt, falls er noch nicht existiert.
+        # Ein bereits vorhandenes (ggf. von Clara selbst geändertes) Passwort
+        # wird bei jedem Neustart NICHT überschrieben.
+        clara_login_email = "clara-marlene@arcor.de"
+        clara_user = User.query.filter_by(email=clara_login_email).first()
+        if clara_user:
+            if clara_user.role != "admin":
+                clara_user.role = "admin"
+            print(f"[OK] Coach-Login Clara bereits vorhanden: {clara_login_email} (Passwort unveraendert)")
+        else:
+            clara_user = User(
+                name="Clara Marlene Zentner",
+                email=clara_login_email,
+                password_hash=generate_password_hash("SqualoClara2026!"),
+                role="admin",
+            )
+            db.session.add(clara_user)
+            print(f"[OK] Coach-Login Clara neu angelegt: {clara_login_email}")
+
         # ── Standorte seeden (idempotent: vorhandene werden aktualisiert) ──
         try:
             from seed_data import SWIM_LOCATIONS as SEED_LOCATIONS
@@ -1421,6 +1539,7 @@ def create_app() -> Flask:
             existing_coach.external_profile_url = "https://www.superprof.de/jahre-schwimmerfahrung-rettungschwimmer-und-viel-geduld-mit-mir-lernst-deinem-individuellen-tempo-deine-technik.html"
             existing_coach.cities_served = "Berlin"
             existing_coach.image_url = "/static/images/moritz-zentner.jpg"
+            existing_coach.email = admin_email
             existing_coach.is_active = True
             print(f"[OK] Coach aktualisiert: {existing_coach.name}")
         else:
@@ -1465,6 +1584,7 @@ def create_app() -> Flask:
                     "🏅 5,0 ⭐ Bewertungen (8 Bewertungen)"
                 ),
                 external_profile_url="https://www.superprof.de/jahre-schwimmerfahrung-rettungschwimmer-und-viel-geduld-mit-mir-lernst-deinem-individuellen-tempo-deine-technik.html",
+                email=admin_email,
                 is_active=True,
             )
             db.session.add(coach)
@@ -1539,6 +1659,7 @@ def create_app() -> Flask:
             )
             existing_coach_fb.cities_served = "Freiburg,Merzhausen,Gundelfingen,Denzlingen,Emmendingen,Teningen,Bad Krozingen"
             existing_coach_fb.image_url = "/static/images/squalo-logo.png"
+            existing_coach_fb.email = clara_login_email
             existing_coach_fb.is_active = True
             print(f"[OK] Coach aktualisiert: {existing_coach_fb.name}")
         else:
@@ -1601,6 +1722,7 @@ def create_app() -> Flask:
                 ),
                 cities_served="Freiburg,Merzhausen,Gundelfingen,Denzlingen,Emmendingen,Teningen,Bad Krozingen",
                 image_url="/static/images/squalo-logo.png",
+                email=clara_login_email,
                 is_active=True,
             )
             db.session.add(coach_fb)
@@ -2016,6 +2138,7 @@ Motivation:
     @login_required
     def dashboard():
         all_bookings = Booking.query.filter_by(user_id=current_user.id).order_by(Booking.created_at.desc()).all()
+        bookings_proposed = [b for b in all_bookings if b.status == PROPOSED_STATUS]
         bookings_pending = [b for b in all_bookings if b.status == 'angefragt']
         bookings_confirmed = [b for b in all_bookings if is_confirmed_status(b.status)]
         bookings_rejected = [b for b in all_bookings if b.status == 'abgelehnt']
@@ -2027,12 +2150,33 @@ Motivation:
 
         return render_template("dashboard.html",
                                bookings=all_bookings,
+                               bookings_proposed=bookings_proposed,
                                bookings_pending=bookings_pending,
                                bookings_confirmed=bookings_confirmed,
                                bookings_rejected=bookings_rejected,
                                notes=notes,
                                lesson_logs=lesson_logs,
                                training_plans=training_plans)
+
+    @app.route("/dashboard/bookings/<int:booking_id>/accept", methods=["POST"])
+    @login_required
+    def dashboard_accept_booking(booking_id):
+        """Student accepts a coach-proposed appointment (status 'vorschlag')."""
+        b = Booking.query.get_or_404(booking_id)
+        if b.user_id != current_user.id:
+            flash("Zugriff verweigert.", "danger")
+            return redirect(url_for("dashboard"))
+        if b.status != PROPOSED_STATUS:
+            flash("Dieser Termin wartet nicht (mehr) auf deine Bestätigung.", "warning")
+            return redirect(url_for("dashboard"))
+
+        b.confirmed_date = b.date_option_1
+        b.confirmed_time = b.time_option_1
+        b.confirmed_location_id = b.preferred_location_1_id
+        b.status = "bestaetigt"
+        db.session.commit()
+        flash("Termin angenommen und bestätigt!", "success")
+        return redirect(url_for("dashboard"))
 
     @app.route("/calendar/<int:booking_id>.ics")
     @login_required
@@ -2782,6 +2926,115 @@ Motivation:
                                confirmed_bookings=confirmed_bookings,
                                lesson_logs=StudentFile.query.filter_by(user_id=student.id, file_type="lesson_log").all(),
                                training_plans=StudentFile.query.filter_by(user_id=student.id, file_type="training_plan").order_by(StudentFile.uploaded_at.desc()).all())
+
+    # ── Coach: Termin für Schüler vorschlagen ────────────────────
+    @app.route("/admin/students/<int:user_id>/propose-appointment", methods=["GET", "POST"])
+    @login_required
+    def admin_propose_appointment(user_id):
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+
+        student = User.query.get_or_404(user_id)
+        if student.role == 'admin' and student.id != current_user.id:
+            flash("Zugriff verweigert", "danger")
+            return redirect(url_for("admin_students"))
+
+        coach = get_current_coach()
+        locations = Location.query.order_by(Location.name.asc()).all()
+        selected_region = request.args.get('region', '') or request.form.get('region', '')
+        if selected_region not in ('berlin', 'freiburg', 'alle'):
+            selected_region = ''
+
+        if request.method == "POST":
+            if not coach:
+                flash("Deinem Login ist kein Coach-Profil zugeordnet. Terminvorschlag konnte nicht erstellt werden.", "danger")
+                return redirect(url_for("admin_student_profile", user_id=student.id))
+
+            date_raw = request.form.get("date")
+            time_raw = request.form.get("time")
+            duration_raw = request.form.get("duration_minutes", "60")
+            location_raw = request.form.get("location_id")
+            training_goal = request.form.get("training_goal") or None
+            coach_note = request.form.get("coach_note") or None
+
+            try:
+                duration_minutes = int(duration_raw)
+            except (ValueError, TypeError):
+                duration_minutes = 60
+            valid_durations = [30, 60, 90, 120, 180, 240, 300]
+            if duration_minutes not in valid_durations:
+                duration_minutes = 60
+
+            if not date_raw or not time_raw or not location_raw:
+                flash("Bitte Datum, Uhrzeit und Schwimmort angeben.", "danger")
+                return render_template("admin_propose_appointment.html",
+                                       student=student, coach=coach, locations=locations,
+                                       selected_region=selected_region)
+
+            try:
+                d_val = date.fromisoformat(date_raw)
+            except ValueError:
+                flash("Ungültiges Datum.", "danger")
+                return render_template("admin_propose_appointment.html",
+                                       student=student, coach=coach, locations=locations,
+                                       selected_region=selected_region)
+
+            try:
+                t_parsed = time_mod.strptime(time_raw, "%H:%M")
+                from datetime import time as time_type
+                t_val = time_type(t_parsed.tm_hour, t_parsed.tm_min)
+            except Exception:
+                flash("Ungültige Uhrzeit.", "danger")
+                return render_template("admin_propose_appointment.html",
+                                       student=student, coach=coach, locations=locations,
+                                       selected_region=selected_region)
+
+            try:
+                loc_id = int(location_raw)
+            except (ValueError, TypeError):
+                flash("Ungültiger Schwimmort.", "danger")
+                return render_template("admin_propose_appointment.html",
+                                       student=student, coach=coach, locations=locations,
+                                       selected_region=selected_region)
+
+            requested_start = datetime.combine(d_val, t_val)
+
+            # Preis-Schätzung (gleiche Logik wie bei der Kundenbuchung)
+            if duration_minutes == 300:
+                estimated_price = 200.0
+            else:
+                estimated_price = (duration_minutes // 30) * 25.0
+
+            b = Booking(
+                user_id=student.id,
+                priority_type='balanced',
+                duration_minutes=duration_minutes,
+                duration_slots=duration_minutes // 30,
+                estimated_price=estimated_price,
+                date_option_1=d_val, time_option_1=t_val,
+                requested_start=requested_start,
+                preferred_location_1_id=loc_id,
+                preferred_coach_id=coach.id,
+                training_goal=training_goal,
+                admin_note=coach_note,
+                status=PROPOSED_STATUS,
+            )
+            db.session.add(b)
+            db.session.commit()
+
+            mail_sent = send_coach_proposed_appointment_email(b, coach)
+            if mail_sent:
+                flash(f"Terminvorschlag für {student.name} gespeichert. Kundenmail wurde verschickt.", "success")
+            else:
+                flash(f"Terminvorschlag für {student.name} wurde gespeichert, aber die Kundenmail konnte NICHT verschickt werden. "
+                      f"Bitte informiere {student.name} ggf. manuell.", "warning")
+
+            return redirect(url_for("admin_student_profile", user_id=student.id))
+
+        return render_template("admin_propose_appointment.html",
+                               student=student, coach=coach, locations=locations,
+                               selected_region=selected_region)
 
     # ── Invoice PDF generation ───────────────────────────────────
     @app.route("/admin/students/<int:user_id>/bookings/<int:booking_id>/invoice.pdf")

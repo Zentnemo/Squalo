@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="dashboard-header">
+    <h2>🗓️ Termin vorschlagen: {{ student.name }}</h2>
+    <div class="cta-buttons">
+      <a href="{{ url_for('admin_student_profile', user_id=student.id) }}" class="btn btn-secondary">← Zurück zur Schülermappe</a>
+    </div>
+  </div>
+
+  <div class="booking-form-container">
+    <p>
+      Schlage {{ student.name }} einen Coaching-Termin vor. Der Schüler bekommt automatisch eine E-Mail mit den
+      Termindetails und einem Link zum Dashboard, wo der Termin angenommen werden kann.
+    </p>
+
+    {% if not coach %}
+      <div class="flash flash-danger" style="margin-bottom:16px;">
+        ⚠️ Deinem Login ist aktuell kein Coach-Profil zugeordnet. Ein Terminvorschlag kann daher nicht erstellt werden.
+        Bitte wende dich an den Administrator.
+      </div>
+    {% endif %}
+
+    <form method="post" class="booking-form">
+      <div class="form-group">
+        <label>👤 Schüler</label>
+        <input type="text" value="{{ student.name }}" disabled>
+      </div>
+
+      <div class="form-group">
+        <label>🏊 Coach</label>
+        <input type="text" value="{{ coach.display_name if coach else 'Kein Coach-Profil zugeordnet' }}" disabled>
+      </div>
+
+      <fieldset class="form-fieldset">
+        <legend>⏱️ Datum, Uhrzeit &amp; Dauer</legend>
+
+        <div class="form-group">
+          <label for="date">Datum *</label>
+          <div class="time-row">
+            <input type="date" id="date" name="date" required>
+            <input type="time" id="time" name="time" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="duration_minutes">Dauer *</label>
+          <select id="duration_minutes" name="duration_minutes" required>
+            <option value="30">30 Minuten</option>
+            <option value="60" selected>1 Stunde</option>
+            <option value="90">1,5 Stunden</option>
+            <option value="120">2 Stunden</option>
+            <option value="180">3 Stunden</option>
+            <option value="240">4 Stunden</option>
+            <option value="300">5 Stunden</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-fieldset">
+        <legend>📍 Schwimmort</legend>
+
+        <div class="form-group">
+          <label>Stadtfilter</label>
+          <div class="radio-group" id="region-selector">
+            <label class="radio-label">
+              <input type="radio" name="region" value="alle" onchange="filterLocationsByRegion('alle')"
+                     {% if not selected_region or selected_region == 'alle' %}checked{% endif %}> Alle Orte
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="region" value="berlin" onchange="filterLocationsByRegion('berlin')"
+                     {% if selected_region == 'berlin' %}checked{% endif %}> 🏊 Berlin
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="region" value="freiburg" onchange="filterLocationsByRegion('freiburg')"
+                     {% if selected_region == 'freiburg' %}checked{% endif %}> 🏊 Freiburg
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="location_id">Schwimmort *</label>
+          <select id="location_id" name="location_id" required>
+            <option value="">-- Bitte wählen --</option>
+            {% for loc in locations %}
+              <option value="{{ loc.id }}" data-city="{{ loc.city or 'Berlin' }}">{{ loc.name }} ({{ loc.district }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      </fieldset>
+
+      <div class="form-group">
+        <label for="training_goal">🎯 Trainingsziel / Schwerpunkt (optional)</label>
+        <select id="training_goal" name="training_goal">
+          <option value="">-- Kein Ziel angegeben --</option>
+          <option value="Technik verbessern">Technik verbessern</option>
+          <option value="Kraul lernen">Kraul lernen</option>
+          <option value="Ausdauer">Ausdauer</option>
+          <option value="Anfängertraining">Anfängertraining</option>
+          <option value="Triathlon/Fitness">Triathlon/Fitness</option>
+          <option value="Kind/Jugendlicher">Kind/Jugendlicher</option>
+          <option value="Sonstiges">Sonstiges</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="coach_note">📝 Notiz an den Schüler (optional)</label>
+        <textarea id="coach_note" name="coach_note" rows="4" placeholder="Wird dem Schüler in der E-Mail und im Dashboard angezeigt..."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success" style="min-height:50px;font-size:17px;" {% if not coach %}disabled{% endif %}>✅ Terminvorschlag erstellen</button>
+        <a href="{{ url_for('admin_student_profile', user_id=student.id) }}" class="btn btn-secondary">Abbrechen</a>
+      </div>
+    </form>
+  </div>
+
+<script>
+function filterLocationsByRegion(region) {
+  const sel = document.getElementById('location_id');
+  if (!sel) return;
+  for (let i = 0; i < sel.options.length; i++) {
+    const opt = sel.options[i];
+    if (!opt.value) continue; // keep placeholder
+    const city = (opt.getAttribute('data-city') || '').toLowerCase();
+    let match = true;
+    if (region === 'berlin') match = city === 'berlin';
+    else if (region === 'freiburg') match = city === 'freiburg';
+    opt.style.display = match ? '' : 'none';
+  }
+  const currOpt = sel.options[sel.selectedIndex];
+  if (currOpt && currOpt.style.display === 'none') {
+    sel.value = '';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const regionRadios = document.querySelectorAll('input[name="region"]');
+  let activeRegion = 'alle';
+  for (const r of regionRadios) {
+    if (r.checked) {
+      activeRegion = r.value;
+      break;
+    }
+  }
+  filterLocationsByRegion(activeRegion);
+});
+</script>
+{% endblock %}

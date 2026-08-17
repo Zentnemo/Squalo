@@ -75,8 +75,9 @@
             {% set is_confirmed = b.status|lower in ['bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen'] %}
             {% set is_declined = b.status|lower in ['abgelehnt', 'declined', 'cancelled', 'storniert'] %}
             {% set is_alternative = b.status|lower in ['alternative', 'alternativvorschlag'] %}
+            {% set is_proposed = b.status == 'vorschlag' %}
             <tr class="booking-row history-row"
-                data-filter-type="{% if is_pending %}pending{% elif is_confirmed %}confirmed{% endif %}"
+                data-filter-type="{% if is_pending %}pending{% elif is_confirmed %}confirmed{% elif is_proposed %}proposed{% endif %}"
                 data-is-past="{{ 'true' if bd.is_past else 'false' }}"
                 data-is-future="{{ 'true' if bd.is_future else 'false' }}">
 
@@ -93,12 +94,14 @@
                   {% elif is_pending %}history-status-pending
                   {% elif is_declined %}history-status-declined
                   {% elif is_alternative %}history-status-alternative
+                  {% elif is_proposed %}history-status-proposed
                   {% else %}history-status-unknown{% endif %}">
                   {% if is_confirmed %}Bestätigt
                   {% elif is_pending %}Offen
                   {% elif b.status|lower == 'abgelehnt' or b.status|lower == 'declined' %}Abgelehnt
                   {% elif b.status|lower == 'cancelled' or b.status|lower == 'storniert' %}Storniert
                   {% elif is_alternative %}Alternativ
+                  {% elif is_proposed %}🗓️ Vorschlag
                   {% else %}{{ b.status or 'Unbekannt' }}{% endif %}
                 </span>
               </td>

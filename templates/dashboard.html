@@ -38,6 +38,51 @@
   {# ════════════════════════════════════════════════ #}
   <div class="dash-panel active" id="panel-termine">
 
+    {# ── Vorgeschlagene Termine (vom Coach) ── #}
+    {% if bookings_proposed %}
+      <div class="dash-subsection">
+        <h3>🗓️ Vorgeschlagene Termine</h3>
+        <div class="bookings-list">
+          {% for b in bookings_proposed %}
+            <div class="booking-card card-pending">
+              <div class="booking-status status-angefragt">🗓️ Vorgeschlagen</div>
+              <div class="booking-content">
+                <p><strong>📅 Datum:</strong> {{ b.date_option_1.strftime('%d.%m.%Y') if b.date_option_1 else '–' }}{% if b.time_option_1 %} {{ b.time_option_1.strftime('%H:%M') }} Uhr{% endif %}</p>
+                {% if b.preferred_location_1 %}
+                  <p><strong>📍 Ort:</strong> {{ b.preferred_location_1.name }}</p>
+                {% endif %}
+                {% if b.preferred_coach %}
+                  <p><strong>🏊 Coach:</strong> {{ b.preferred_coach.name }}</p>
+                {% endif %}
+                {% if b.duration_minutes %}
+                  <p><strong>⏱️ Dauer:</strong>
+                    {% if b.duration_minutes == 30 %}30 Minuten
+                    {% elif b.duration_minutes == 60 %}1 Stunde
+                    {% elif b.duration_minutes == 90 %}1,5 Stunden
+                    {% elif b.duration_minutes == 120 %}2 Stunden
+                    {% elif b.duration_minutes == 180 %}3 Stunden
+                    {% elif b.duration_minutes == 240 %}4 Stunden
+                    {% elif b.duration_minutes == 300 %}5 Stunden ✨
+                    {% else %}{{ b.duration_minutes }} Minuten
+                    {% endif %}
+                  </p>
+                {% endif %}
+                {% if b.training_goal %}
+                  <p><strong>🎯 Trainingsziel:</strong> {{ b.training_goal }}</p>
+                {% endif %}
+                {% if b.admin_note %}
+                  <p class="admin-note"><strong>💬 Nachricht deines Coaches:</strong> {{ b.admin_note }}</p>
+                {% endif %}
+                <form method="post" action="{{ url_for('dashboard_accept_booking', booking_id=b.id) }}" style="margin-top:10px;">
+                  <button type="submit" class="btn btn-success">✅ Termin annehmen</button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
     {# ── Offene Terminanfragen ── #}
     <div class="dash-subsection">
       <h3>Offene Terminanfragen</h3>
