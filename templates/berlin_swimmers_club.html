@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}Berlin Swimmers Club | Squalo Schwimmcoaching{% endblock %}
+{% block meta_description %}Berlin Swimmers Club: eine lockere Schwimm-Community für Berlin – kein Verein, kein Leistungsdruck. Trag dich ein und stimme mit ab, wann und wo das erste Swim Meet stattfindet.{% endblock %}
+{% block og_title %}Berlin Swimmers Club | Squalo Schwimmcoaching{% endblock %}
+{% block og_description %}Eine lockere Schwimm-Community für Berlin – trag dich ein und stimm mit ab.{% endblock %}
+
+{% block content %}
+<div class="swc-page">
+
+  {# ── Hero ── #}
+  <section class="landing-hero swc-hero">
+    <div class="landing-hero-overlay"></div>
+    <div class="container">
+      <p class="landing-kicker">Community-Projekt</p>
+      <h1 class="landing-hero-title">Berlin Swimmers Club</h1>
+      <p class="landing-hero-text">Eine lockere Schwimm-Community für Berlin – gemeinsam schwimmen, neue Orte entdecken, ohne Vereinspflicht und ohne Leistungsdruck.</p>
+      <div class="swc-badges">
+        <span class="swc-badge">Kein Verein</span>
+        <span class="swc-badge">Kein Leistungsdruck</span>
+        <span class="swc-badge">Alle Level willkommen</span>
+        <span class="swc-badge">Pool &amp; Open Water</span>
+      </div>
+      <div class="landing-hero-actions">
+        <a href="#swc-signup" class="btn btn-hero-primary">Für erstes Swim Meet vormerken</a>
+        <a href="/schwimmorte-berlin" class="btn btn-hero-secondary">Schwimmorte-Karte ansehen</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="container swc-content">
+
+    {# ── Warum ── #}
+    <section class="swc-section">
+      <h2 class="swc-section-title">Warum Berlin Swimmers Club?</h2>
+      <p class="swc-section-text">
+        Berlin hat unzählige tolle Schwimmorte – Seen, Freibäder, Hallenbäder – aber oft schwimmt man allein
+        oder findet schwer Anschluss. Der Berlin Swimmers Club soll das ändern: ein loser Zusammenschluss von
+        Menschen, die gern schwimmen, gemeinsam neue Orte entdecken und sich ab und zu zu einem entspannten
+        Swim Meet treffen möchten. Kein Verein, keine Mitgliedschaft, kein Leistungsdruck – einfach schwimmen,
+        wann und wo es passt.
+      </p>
+    </section>
+
+    {# ── Was geplant ist ── #}
+    <section class="swc-section">
+      <h2 class="swc-section-title">Was geplant ist</h2>
+      <div class="swc-card-grid">
+        <div class="swc-card">
+          <div class="swc-card-icon">🤝</div>
+          <h3 class="swc-card-title">Casual Swim Meets</h3>
+          <p class="swc-card-text">Lockere Treffen zum gemeinsamen Schwimmen – ohne Anmeldedruck, ohne Wettkampf.</p>
+        </div>
+        <div class="swc-card">
+          <div class="swc-card-icon">🌊</div>
+          <h3 class="swc-card-title">Pool &amp; Open Water</h3>
+          <p class="swc-card-text">Mal im Hallenbad, mal im See – je nach Jahreszeit und Vorlieben der Gruppe.</p>
+        </div>
+        <div class="swc-card">
+          <div class="swc-card-icon">🏊</div>
+          <h3 class="swc-card-title">Alle Level willkommen</h3>
+          <p class="swc-card-text">Vom Wiedereinsteiger bis zur Triathletin – jede:r ist willkommen.</p>
+        </div>
+        <div class="swc-card">
+          <div class="swc-card-icon">💬</div>
+          <h3 class="swc-card-title">Community Feedback</h3>
+          <p class="swc-card-text">Du entscheidest mit, wann, wo und wie oft wir uns treffen.</p>
+        </div>
+      </div>
+    </section>
+
+    {# ── Was wir gemeinsam aufbauen wollen ── #}
+    <section class="swc-section">
+      <h2 class="swc-section-title">Was wir gemeinsam aufbauen wollen</h2>
+      <ul class="swc-bullet-list">
+        <li>Eine offene, freundliche Schwimm-Community für Berlin</li>
+        <li>Regelmäßige, unverbindliche Swim Meets an wechselnden Orten</li>
+        <li>Austausch über die schönsten Schwimmorte der Stadt</li>
+        <li>Tipps zu Technik, Ausrüstung und Sicherheit im Freiwasser</li>
+        <li>Raum für alle Level – vom ersten Bahnenziehen bis zum Freiwasser-Profi</li>
+        <li>Gemeinsame Vorbereitung auf Freiwasser-Events oder Triathlons, wenn gewünscht</li>
+        <li>Eine Stimme für bessere Schwimm-Infrastruktur in Berlin</li>
+        <li>Verlässliche, aktuelle Infos zu Wassertemperatur und Schwimmorten</li>
+      </ul>
+    </section>
+
+    {# ── Map / Map-Vorschau ── #}
+    <section class="swc-section">
+      <h2 class="swc-section-title">Schwimmorte in Berlin</h2>
+      <p class="swc-section-text">Ein erster Überblick über Berliner Schwimmorte – die vollständige, interaktive Karte mit Live-Status findest du auf unserer Schwimmorte-Seite.</p>
+      <div id="swc-map" class="swc-map-preview" aria-label="Vorschau Berliner Schwimmorte"></div>
+      <div class="swc-map-cta">
+        <a href="/schwimmorte-berlin" class="btn btn-small btn-primary">Zur Schwimmorte-Karte</a>
+      </div>
+    </section>
+
+    {# ── Signup / Voting Formular ── #}
+    <section class="swc-section" id="swc-signup">
+      <h2 class="swc-section-title">Interesse eintragen &amp; mitbestimmen</h2>
+      <p class="swc-section-text">Trag dich unverbindlich ein – wir informieren dich, sobald Ort und Zeit für das erste Swim Meet feststehen. Deine Angaben helfen uns, den Termin und Ort passend zu wählen.</p>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="swc-flash-wrap">
+            {% for category, message in messages %}
+              <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="{{ url_for('berlin_swimmers_club') }}#swc-signup" class="swc-form">
+        <div class="form-group">
+          <label for="swc-name">Name *</label>
+          <input type="text" id="swc-name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="swc-email">E-Mail *</label>
+          <input type="email" id="swc-email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="swc-level">Schwimmlevel *</label>
+          <select id="swc-level" name="swim_level" required>
+            <option value="" disabled selected>Bitte wählen</option>
+            {% for lvl in swc_levels %}
+              <option value="{{ lvl }}">{{ lvl }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="swc-format">Bevorzugtes Format *</label>
+          <select id="swc-format" name="preferred_format" required>
+            <option value="" disabled selected>Bitte wählen</option>
+            {% for f in swc_formats %}
+              <option value="{{ f }}">{{ f }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="swc-region">Bevorzugte Region *</label>
+          <select id="swc-region" name="preferred_region" required>
+            <option value="" disabled selected>Bitte wählen</option>
+            {% for r in swc_regions %}
+              <option value="{{ r }}">{{ r }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="swc-time">Bevorzugte Zeit *</label>
+          <select id="swc-time" name="preferred_time" required>
+            <option value="" disabled selected>Bitte wählen</option>
+            {% for t in swc_times %}
+              <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="swc-interest">Woran bist du am meisten interessiert?</label>
+          <select id="swc-interest" name="interest_type">
+            <option value="" selected>Bitte wählen (optional)</option>
+            {% for i in swc_interests %}
+              <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="swc-comment">Kommentar / Wünsche</label>
+          <textarea id="swc-comment" name="comment" rows="3"></textarea>
+        </div>
+        <label class="swc-consent">
+          <input type="checkbox" name="consent_updates" value="on">
+          Ich möchte per E-Mail über den Berlin Swimmers Club informiert werden (jederzeit widerrufbar).
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Jetzt eintragen</button>
+        </div>
+      </form>
+    </section>
+
+    {# ── Öffentliche, aggregierte Voting-Anzeige ── #}
+    <section class="swc-section">
+      <h2 class="swc-section-title">So stimmt die Community bisher ab</h2>
+      {% if total_interest == 0 %}
+        <p class="swc-section-text">Noch keine Stimmen – sei eine/r der Ersten.</p>
+      {% else %}
+        <p class="swc-section-text">{{ total_interest }} Personen haben sich bereits eingetragen. Keine persönlichen Daten werden hier gezeigt – nur die Gesamtzahlen.</p>
+
+        <div class="swc-vote-groups">
+          <div class="swc-vote-group">
+            <h4>Bevorzugte Zeit</h4>
+            {% for label, count in votes_time.items() %}
+              <div class="swc-vote-bar-row">
+                <span class="swc-vote-label">{{ label }}</span>
+                <div class="swc-vote-bar-track">
+                  <div class="swc-vote-bar-fill" style="width: {{ (count / total_interest * 100) if total_interest else 0 }}%;"></div>
+                </div>
+                <span class="swc-vote-count">{{ count }}</span>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="swc-vote-group">
+            <h4>Bevorzugtes Format</h4>
+            {% for label, count in votes_format.items() %}
+              <div class="swc-vote-bar-row">
+                <span class="swc-vote-label">{{ label }}</span>
+                <div class="swc-vote-bar-track">
+                  <div class="swc-vote-bar-fill" style="width: {{ (count / total_interest * 100) if total_interest else 0 }}%;"></div>
+                </div>
+                <span class="swc-vote-count">{{ count }}</span>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="swc-vote-group">
+            <h4>Bevorzugte Region</h4>
+            {% for label, count in votes_region.items() %}
+              <div class="swc-vote-bar-row">
+                <span class="swc-vote-label">{{ label }}</span>
+                <div class="swc-vote-bar-track">
+                  <div class="swc-vote-bar-fill" style="width: {{ (count / total_interest * 100) if total_interest else 0 }}%;"></div>
+                </div>
+                <span class="swc-vote-count">{{ count }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </section>
+
+    {# ── FAQ ── #}
+    <section class="swc-section">
+      <h2 class="swc-section-title">Häufige Fragen</h2>
+      <div class="landing-faqs">
+        <div class="landing-faq">
+          <button type="button" class="landing-faq-question" onclick="toggleFaq(this)">Muss ich Mitglied werden? <span>+</span></button>
+          <div class="landing-faq-answer">Nein, es gibt keine Mitgliedschaft und keine Verpflichtung. Du kommst, wenn du Lust und Zeit hast.</div>
+        </div>
+        <div class="landing-faq">
+          <button type="button" class="landing-faq-question" onclick="toggleFaq(this)">Kostet die Teilnahme etwas? <span>+</span></button>
+          <div class="landing-faq-answer">Der Berlin Swimmers Club selbst kostet nichts. Eintritt für Bäder oder Seen zahlt jede:r für sich.</div>
+        </div>
+        <div class="landing-faq">
+          <button type="button" class="landing-faq-question" onclick="toggleFaq(this)">Für wen ist das geeignet? <span>+</span></button>
+          <div class="landing-faq-answer">Für alle Schwimmlevel – vom Wiedereinsteiger bis zur erfahrenen Freiwasserschwimmerin.</div>
+        </div>
+        <div class="landing-faq">
+          <button type="button" class="landing-faq-question" onclick="toggleFaq(this)">Wann findet das erste Treffen statt? <span>+</span></button>
+          <div class="landing-faq-answer">Wir planen ein erstes Swim Meet für das Wochenende um den 22. August. Ort und genaue Zeit hängen auch von eurem Feedback ab.</div>
+        </div>
+        <div class="landing-faq">
+          <button type="button" class="landing-faq-question" onclick="toggleFaq(this)">Wie erfahre ich, wann und wo es losgeht? <span>+</span></button>
+          <div class="landing-faq-answer">Wenn du dich einträgst, bekommst du eine Bestätigungsmail und wir informieren dich, sobald Ort und Zeit feststehen.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  function toggleFaq(btn) {
+    var faq = btn.closest('.landing-faq');
+    faq.classList.toggle('open');
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var mapEl = document.getElementById('swc-map');
+    if (!mapEl || typeof L === 'undefined') return;
+    var locations = {{ locations_for_preview | tojson }};
+    var map = L.map('swc-map', { scrollWheelZoom: false }).setView([52.52, 13.405], 10);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      maxZoom: 19
+    }).addTo(map);
+    locations.forEach(function (loc) {
+      if (loc.latitude && loc.longitude) {
+        L.marker([loc.latitude, loc.longitude]).addTo(map).bindPopup(loc.name);
+      }
+    });
+  });
+</script>
+{% endblock %}

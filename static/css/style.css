@@ -7213,3 +7213,251 @@ body.page-has-hero main.page-main {
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   Berlin Swimmers Club
+   ═══════════════════════════════════════════════════════════════ */
+
+.flash-warning {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffe8a1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+/* ── Homepage teaser ── */
+.swc-teaser {
+  background: linear-gradient(135deg, rgba(0, 168, 204, 0.08), rgba(0, 61, 77, 0.05));
+  border-radius: 16px;
+  padding: 20px 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 168, 204, 0.15);
+  text-align: left;
+}
+
+.swc-teaser-icon {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+.swc-teaser-title {
+  margin: 0 0 8px 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--squalo-deep-blue);
+}
+
+.swc-teaser-sub {
+  margin: 0 0 8px 0;
+  font-size: 13.5px;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+.swc-teaser-note {
+  margin: 0 0 14px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dark-blue);
+}
+
+.swc-teaser-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.swc-teaser-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--turquoise);
+  text-decoration: none;
+}
+
+.swc-teaser-link:hover {
+  text-decoration: underline;
+  color: var(--orange);
+}
+
+/* ── Landing page ── */
+.swc-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.swc-badge {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.swc-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 20px 60px;
+}
+
+.swc-section {
+  margin-bottom: 48px;
+}
+
+.swc-section-title {
+  font-family: 'Righteous', cursive;
+  font-size: 24px;
+  color: var(--dark-blue);
+  margin-bottom: 14px;
+}
+
+.swc-section-text {
+  font-size: 15px;
+  color: var(--text-light);
+  line-height: 1.7;
+}
+
+.swc-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.swc-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 109, 143, 0.08);
+  text-align: center;
+}
+
+.swc-card-icon {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.swc-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--squalo-deep-blue);
+  margin: 0 0 6px 0;
+}
+
+.swc-card-text {
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.swc-bullet-list {
+  font-size: 15px;
+  color: var(--text-light);
+  line-height: 2;
+  padding-left: 22px;
+}
+
+.swc-map-preview {
+  width: 100%;
+  height: 320px;
+  border-radius: 14px;
+  margin-top: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  z-index: 0;
+}
+
+.swc-map-cta {
+  margin-top: 14px;
+}
+
+.swc-flash-wrap {
+  margin-bottom: 16px;
+}
+
+.swc-form {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 520px;
+}
+
+.swc-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+.swc-consent input {
+  margin-top: 3px;
+}
+
+.swc-vote-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.swc-vote-group h4 {
+  font-size: 14px;
+  color: var(--squalo-deep-blue);
+  margin: 0 0 10px 0;
+}
+
+.swc-vote-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.swc-vote-label {
+  flex: 0 0 100px;
+  color: var(--text-light);
+}
+
+.swc-vote-bar-track {
+  flex: 1;
+  background: #eef2f4;
+  border-radius: 6px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.swc-vote-bar-fill {
+  background: var(--turquoise);
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+
+.swc-vote-count {
+  flex: 0 0 24px;
+  text-align: right;
+  color: var(--dark-blue);
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .swc-content {
+    padding: 16px 14px 40px;
+  }
+
+  .swc-map-preview {
+    height: 240px;
+  }
+}
+

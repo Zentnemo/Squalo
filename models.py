@@ -280,5 +280,22 @@ class StudentFile(db.Model):
 
     user = db.relationship('User', foreign_keys=[user_id], backref='student_files')
     uploaded_by = db.relationship('User', foreign_keys=[uploaded_by_id])
-    booking = db.relationship('Booking', foreign_keys=[booking_id], backref='lesson_logs')
+
+
+class SwimClubInterest(db.Model):
+    """Unverbindliche Anmeldung/Voting-Eintrag für den Berlin Swimmers Club."""
+    __tablename__ = 'swim_club_interest'
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    name = db.Column(db.String(128), nullable=False)
+    email = db.Column(db.String(128), nullable=False)
+    swim_level = db.Column(db.String(64))
+    preferred_format = db.Column(db.String(64))
+    preferred_region = db.Column(db.String(64))
+    preferred_time = db.Column(db.String(64))
+    interest_type = db.Column(db.String(64))
+    comment = db.Column(db.Text)
+    consent_updates = db.Column(db.Boolean, default=False)
+    source = db.Column(db.String(64), default='website')
+    confirmation_email_sent_at = db.Column(db.DateTime, nullable=True)
 

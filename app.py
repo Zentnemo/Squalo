@@ -20,7 +20,7 @@ from pathlib import Path
 
 from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
-from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview, SiteSession, Invoice, ShopOrder, ShopOrderItem, StudentFile
+from models import db, User, Location, Booking, FeedPost, TrainingNote, AppSetting, Coach, CoachReview, SiteSession, Invoice, ShopOrder, ShopOrderItem, StudentFile, SwimClubInterest
 from location_status import compute_location_status
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
@@ -891,6 +891,59 @@ def send_coach_proposed_appointment_email(booking, coach=None, force=False):
         print(f"[MAIL] Terminvorschlag-Mail gesendet an {user.email} fuer Booking #{booking.id}")
     else:
         print(f"[MAIL-FEHLER] Terminvorschlag-Mail fehlgeschlagen fuer Booking #{booking.id}")
+
+    return success
+
+
+def send_swim_club_confirmation_email(entry, force=False):
+    """Send the confirmation email to a Berlin Swimmers Club signup.
+
+    Uses the existing send_email() infrastructure (SMTP with console fallback).
+    Tracks confirmation_email_sent_at on SwimClubInterest for duplicate protection
+    and as the "was the mail sent?" indicator shown in the admin overview.
+    Returns True if the email was sent (or already sent before), False on failure.
+    """
+    if entry.confirmation_email_sent_at and not force:
+        print(f"[MAIL] Swim-Club-Bestaetigungsmail fuer Eintrag #{entry.id} bereits gesendet. Ueberspringe.")
+        return True
+
+    if not entry.email:
+        print(f"[MAIL-FEHLER] Swim-Club-Eintrag #{entry.id}: Keine E-Mail-Adresse vorhanden.")
+        return False
+
+    first_name = entry.name.split()[0] if entry.name else "Hallo"
+    base_url = get_public_base_url()
+    locations_url = f"{base_url}/schwimmorte-berlin"
+
+    subject = "Danke für dein Interesse am Berlin Swimmers Club"
+
+    body = (
+        f"Hallo {first_name},\n"
+        f"\n"
+        f"danke für dein Interesse am Berlin Swimmers Club.\n"
+        f"\n"
+        f"Wir planen ein erstes lockeres Swim Meet für das Wochenende um den 22. August. "
+        f"Es geht nicht um Wettkampf oder Vereinstraining, sondern um gemeinsames Schwimmen, "
+        f"neue Orte und eine entspannte Community rund ums Wasser.\n"
+        f"\n"
+        f"Wir melden uns, sobald Ort und Zeit feststehen.\n"
+        f"\n"
+        f"Bis dahin kannst du dir hier die Schwimmorte-Karte ansehen:\n"
+        f"{locations_url}\n"
+        f"\n"
+        f"Viele Grüße\n"
+        f"Squalo Schwimmcoaching\n"
+        f"hello@squalo-schwimmcoaching.com"
+    )
+
+    success = send_email(subject, entry.email, body)
+
+    if success:
+        entry.confirmation_email_sent_at = datetime.utcnow()
+        db.session.commit()
+        print(f"[MAIL] Swim-Club-Bestaetigungsmail gesendet an {entry.email} (Eintrag #{entry.id})")
+    else:
+        print(f"[MAIL-FEHLER] Swim-Club-Bestaetigungsmail fehlgeschlagen fuer Eintrag #{entry.id}")
 
     return success
 
@@ -3414,6 +3467,148 @@ Motivation:
     def flyer():
         return render_template("flyer.html")
 
+    # ── Berlin Swimmers Club: Landingpage + Signup/Voting ────────
+    SWC_LEVELS = ["Anfänger", "Wiedereinsteiger", "Fortgeschritten", "Triathlon", "Freiwasser"]
+    SWC_FORMATS = ["Pool", "See", "Open Water", "Egal"]
+    SWC_REGIONS = ["Nord", "Südwest", "Mitte", "Ost", "Egal"]
+    SWC_TIMES = ["Werktag Abend", "Samstag", "Sonntag", "Egal"]
+    SWC_INTERESTS = ["Swim Meet", "Map-Updates", "1:1 Coaching", "Alles interessant"]
+
+    @app.route("/berlin-swimmers-club", methods=["GET", "POST"])
+    def berlin_swimmers_club():
+        if request.method == "POST":
+            name = request.form.get("name", "").strip()
+            email = request.form.get("email", "").strip()
+            swim_level = request.form.get("swim_level", "").strip()
+            preferred_format = request.form.get("preferred_format", "").strip()
+            preferred_region = request.form.get("preferred_region", "").strip()
+            preferred_time = request.form.get("preferred_time", "").strip()
+            interest_type = request.form.get("interest_type", "").strip()
+            comment = request.form.get("comment", "").strip()
+            consent_updates = bool(request.form.get("consent_updates"))
+
+            missing = not all([name, email, swim_level, preferred_format, preferred_region, preferred_time])
+            if missing:
+                flash("Bitte fülle alle Pflichtfelder aus (Name, E-Mail, Schwimmlevel, Format, Region, Zeit).", "danger")
+                return redirect(url_for("berlin_swimmers_club") + "#swc-signup")
+
+            entry = SwimClubInterest(
+                name=name,
+                email=email,
+                swim_level=swim_level,
+                preferred_format=preferred_format,
+                preferred_region=preferred_region,
+                preferred_time=preferred_time,
+                interest_type=interest_type or None,
+                comment=comment or None,
+                consent_updates=consent_updates,
+                source="website",
+            )
+            db.session.add(entry)
+            db.session.commit()
+
+            mail_ok = send_swim_club_confirmation_email(entry)
+            if mail_ok:
+                flash("Danke! Wir melden uns, sobald Ort und Zeit für das erste Swim Meet feststehen.", "success")
+            else:
+                flash("Danke! Dein Eintrag wurde gespeichert. Die Bestätigungsmail konnte allerdings gerade nicht verschickt werden – wir melden uns trotzdem.", "warning")
+
+            return redirect(url_for("berlin_swimmers_club") + "#swc-signup")
+
+        # ── GET: aggregierte, anonyme Voting-Zahlen + Map-Vorschau ──
+        all_entries = SwimClubInterest.query.all()
+        total_interest = len(all_entries)
+
+        def _tally(field, options):
+            counts = {opt: 0 for opt in options}
+            for e in all_entries:
+                val = getattr(e, field)
+                if val in counts:
+                    counts[val] += 1
+            return counts
+
+        votes_time = _tally("preferred_time", SWC_TIMES)
+        votes_format = _tally("preferred_format", SWC_FORMATS)
+        votes_region = _tally("preferred_region", SWC_REGIONS)
+
+        berlin_locations = Location.query.filter(
+            (Location.city == "Berlin") | (Location.city.is_(None))
+        ).filter(Location.latitude.isnot(None), Location.longitude.isnot(None)).all()
+        locations_for_preview = [
+            {"name": loc.name, "district": loc.district, "latitude": float(loc.latitude), "longitude": float(loc.longitude)}
+            for loc in berlin_locations
+        ]
+
+        return render_template(
+            "berlin_swimmers_club.html",
+            swc_levels=SWC_LEVELS,
+            swc_formats=SWC_FORMATS,
+            swc_regions=SWC_REGIONS,
+            swc_times=SWC_TIMES,
+            swc_interests=SWC_INTERESTS,
+            total_interest=total_interest,
+            votes_time=votes_time,
+            votes_format=votes_format,
+            votes_region=votes_region,
+            locations_for_preview=locations_for_preview,
+        )
+
+    @app.route("/admin/swim-club")
+    @login_required
+    def admin_swim_club():
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+
+        entries = SwimClubInterest.query.order_by(SwimClubInterest.created_at.desc()).all()
+        total = len(entries)
+
+        def _tally(field, options):
+            counts = {opt: 0 for opt in options}
+            for e in entries:
+                val = getattr(e, field)
+                counts[val] = counts.get(val, 0) + 1
+            return counts
+
+        by_level = _tally("swim_level", SWC_LEVELS)
+        by_format = _tally("preferred_format", SWC_FORMATS)
+        by_region = _tally("preferred_region", SWC_REGIONS)
+        by_time = _tally("preferred_time", SWC_TIMES)
+
+        return render_template(
+            "admin_swim_club.html",
+            entries=entries,
+            total=total,
+            by_level=by_level,
+            by_format=by_format,
+            by_region=by_region,
+            by_time=by_time,
+        )
+
+    @app.route("/admin/swim-club/export.csv")
+    @login_required
+    def admin_swim_club_export():
+        if getattr(current_user, "role", "") != "admin":
+            flash("Access denied", "danger")
+            return redirect(url_for("index"))
+
+        import csv
+        entries = SwimClubInterest.query.order_by(SwimClubInterest.created_at.desc()).all()
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(["Datum", "Name", "E-Mail", "Schwimmlevel", "Format", "Region", "Zeit", "Interesse", "Kommentar", "Updates OK", "Quelle"])
+        for e in entries:
+            writer.writerow([
+                e.created_at.strftime('%d.%m.%Y %H:%M') if e.created_at else '',
+                e.name, e.email, e.swim_level or '', e.preferred_format or '',
+                e.preferred_region or '', e.preferred_time or '', e.interest_type or '',
+                (e.comment or '').replace('\n', ' '), 'Ja' if e.consent_updates else 'Nein',
+                e.source or '',
+            ])
+        csv_data = output.getvalue()
+        return Response(csv_data, mimetype='text/csv',
+                        headers={'Content-Disposition': 'attachment; filename=berlin_swimmers_club_interessenten.csv'})
+
     # ── robots.txt ──────────────────────────────────────────────
     @app.route("/robots.txt")
     def robots_txt():
@@ -3455,6 +3650,7 @@ Motivation:
             ('/shop', '0.6', 'weekly'),
             ('/booking', '0.5', 'monthly'),
             ('/flyer', '0.7', 'weekly'),
+            ('/berlin-swimmers-club', '0.8', 'weekly'),
             ('/impressum', '0.3', 'monthly'),
         ]
         for slug in landing_slugs:

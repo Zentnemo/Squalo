@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Berlin Swimmers Club – Coach Panel{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:1000px;margin:2rem auto;padding:0 20px;">
+  <h2 style="font-family:'Righteous',cursive;color:var(--dark-blue);">🏊‍♀️ Berlin Swimmers Club – Interessenten</h2>
+  <p style="color:var(--text-light);margin-bottom:1.5rem;">
+    <a href="{{ url_for('admin') }}" style="color:var(--turquoise);text-decoration:none;">← Zurück zum Coach Panel</a>
+    &nbsp;·&nbsp;
+    <a href="{{ url_for('admin_swim_club_export') }}" style="color:var(--turquoise);text-decoration:none;">CSV-Export</a>
+  </p>
+
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+    <div style="background:var(--white);border-radius:12px;padding:1rem 1.4rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <div style="font-size:26px;font-weight:700;color:var(--dark-blue);">{{ total }}</div>
+      <div style="font-size:13px;color:var(--text-light);">Eintragungen gesamt</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:1rem;margin-bottom:2rem;">
+    <div style="background:var(--white);border-radius:12px;padding:1rem 1.2rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <strong style="color:var(--dark-blue);font-size:14px;">Schwimmlevel</strong>
+      <ul style="margin:0.5rem 0 0;padding:0;list-style:none;font-size:13px;color:var(--text-dark);">
+        {% for label, count in by_level.items() %}
+          <li style="display:flex;justify-content:space-between;padding:2px 0;"><span>{{ label }}</span><span>{{ count }}</span></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div style="background:var(--white);border-radius:12px;padding:1rem 1.2rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <strong style="color:var(--dark-blue);font-size:14px;">Format</strong>
+      <ul style="margin:0.5rem 0 0;padding:0;list-style:none;font-size:13px;color:var(--text-dark);">
+        {% for label, count in by_format.items() %}
+          <li style="display:flex;justify-content:space-between;padding:2px 0;"><span>{{ label }}</span><span>{{ count }}</span></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div style="background:var(--white);border-radius:12px;padding:1rem 1.2rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <strong style="color:var(--dark-blue);font-size:14px;">Region</strong>
+      <ul style="margin:0.5rem 0 0;padding:0;list-style:none;font-size:13px;color:var(--text-dark);">
+        {% for label, count in by_region.items() %}
+          <li style="display:flex;justify-content:space-between;padding:2px 0;"><span>{{ label }}</span><span>{{ count }}</span></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div style="background:var(--white);border-radius:12px;padding:1rem 1.2rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <strong style="color:var(--dark-blue);font-size:14px;">Zeit</strong>
+      <ul style="margin:0.5rem 0 0;padding:0;list-style:none;font-size:13px;color:var(--text-dark);">
+        {% for label, count in by_time.items() %}
+          <li style="display:flex;justify-content:space-between;padding:2px 0;"><span>{{ label }}</span><span>{{ count }}</span></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  {% if entries %}
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;background:var(--white);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <thead>
+        <tr style="background:var(--dark-blue);color:white;text-align:left;font-size:13px;">
+          <th style="padding:10px 12px;">Datum</th>
+          <th style="padding:10px 12px;">Name</th>
+          <th style="padding:10px 12px;">E-Mail</th>
+          <th style="padding:10px 12px;">Level</th>
+          <th style="padding:10px 12px;">Format</th>
+          <th style="padding:10px 12px;">Region</th>
+          <th style="padding:10px 12px;">Zeit</th>
+          <th style="padding:10px 12px;">Interesse</th>
+          <th style="padding:10px 12px;">Updates</th>
+          <th style="padding:10px 12px;">Mail</th>
+          <th style="padding:10px 12px;">Kommentar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in entries %}
+        <tr style="font-size:13px;border-top:1px solid #eee;">
+          <td style="padding:8px 12px;white-space:nowrap;">{{ e.created_at.strftime('%d.%m.%Y %H:%M') if e.created_at else '–' }}</td>
+          <td style="padding:8px 12px;">{{ e.name }}</td>
+          <td style="padding:8px 12px;">{{ e.email }}</td>
+          <td style="padding:8px 12px;">{{ e.swim_level or '–' }}</td>
+          <td style="padding:8px 12px;">{{ e.preferred_format or '–' }}</td>
+          <td style="padding:8px 12px;">{{ e.preferred_region or '–' }}</td>
+          <td style="padding:8px 12px;">{{ e.preferred_time or '–' }}</td>
+          <td style="padding:8px 12px;">{{ e.interest_type or '–' }}</td>
+          <td style="padding:8px 12px;">{{ '✅' if e.consent_updates else '–' }}</td>
+          <td style="padding:8px 12px;">{{ '✅' if e.confirmation_email_sent_at else '⏳' }}</td>
+          <td style="padding:8px 12px;max-width:220px;">{{ e.comment or '–' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  {% else %}
+    <p style="color:var(--text-light);">Noch keine Eintragungen.</p>
+  {% endif %}
+</div>
+{% endblock %}
