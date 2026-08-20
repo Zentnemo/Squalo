@@ -153,15 +153,7 @@
         <button class="map-status-close" onclick="clearGeolocation()">×</button>
       </div>
 
-      <div class="map-legend">
-        <strong>Legende</strong>
-        <div class="legend-row"><span class="legend-dot" style="background:#063b7a;border-color:#28c76f;"></span> See / Badestelle</div>
-        <div class="legend-row"><span class="legend-dot" style="background:#063b7a;border-color:#ffd43b;"></span> Strandbad</div>
-        <div class="legend-row"><span class="legend-dot" style="background:#66e0ff;border-color:#ffd43b;"></span> Sommerbad / Freibad</div>
-        <div class="legend-row"><span class="legend-dot" style="background:#66e0ff;border-color:#ffffff;"></span> Schwimmbad / Hallenbad</div>
-        <div class="legend-row"><span class="legend-dot" style="background:#66e0ff;border-color:#ff4444;"></span> Therme / Thermalbad</div>
-        <div class="legend-row" id="legend-user" style="display:none;"><span class="legend-dot" style="background:#4CAF50;border-color:#ffffff;border-width:3px;"></span> Dein Standort</div>
-      </div>
+      {% include 'partials/swim_map_legend.html' %}
     </section>
 
     <aside class="promo-panel">

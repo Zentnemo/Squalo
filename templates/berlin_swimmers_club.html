@@ -10,16 +10,20 @@
 
   {# ── Hero ── #}
   <section class="landing-hero swc-hero">
+    <div class="hero-rotator" aria-hidden="true">
+      <div class="hero-slide is-active" style="background-image: url('{{ url_for('static', filename='images/heroes/schwimmorte-berlin-hero-2.jpg') }}'); background-position: center 60%;"></div>
+    </div>
     <div class="landing-hero-overlay"></div>
+    <img class="swc-hero-logo-watermark" src="{{ url_for('static', filename='images/squalo-logo.png') }}" alt="" aria-hidden="true">
     <div class="container">
       <p class="landing-kicker">Community-Projekt</p>
       <h1 class="landing-hero-title">Berlin Swimmers Club</h1>
-      <p class="landing-hero-text">Eine lockere Schwimm-Community für Berlin – gemeinsam schwimmen, neue Orte entdecken, ohne Vereinspflicht und ohne Leistungsdruck.</p>
+      <p class="landing-hero-text">Lockere Swim Meets in Berlin – ohne Vereinspflicht, ohne Leistungsdruck und offen für alle, die gerne schwimmen oder neue Schwimmorte entdecken wollen.</p>
       <div class="swc-badges">
         <span class="swc-badge">Kein Verein</span>
-        <span class="swc-badge">Kein Leistungsdruck</span>
         <span class="swc-badge">Alle Level willkommen</span>
         <span class="swc-badge">Pool &amp; Open Water</span>
+        <span class="swc-badge">Erstes Treffen: Wochenende um den 22. August</span>
       </div>
       <div class="landing-hero-actions">
         <a href="#swc-signup" class="btn btn-hero-primary">Für erstes Swim Meet vormerken</a>
@@ -84,13 +88,14 @@
       </ul>
     </section>
 
-    {# ── Map / Map-Vorschau ── #}
-    <section class="swc-section">
+    {# ── Map / Map-Vorschau (gleiches Styling wie Homepage "Squalo Baywatch") ── #}
+    <section class="swc-section map-section">
       <h2 class="swc-section-title">Schwimmorte in Berlin</h2>
-      <p class="swc-section-text">Ein erster Überblick über Berliner Schwimmorte – die vollständige, interaktive Karte mit Live-Status findest du auf unserer Schwimmorte-Seite.</p>
-      <div id="swc-map" class="swc-map-preview" aria-label="Vorschau Berliner Schwimmorte"></div>
+      <p class="swc-section-text">Die Squalo-Schwimmkarte sammelt Schwimmbäder, Sommerbäder, Seen und Badestellen in Berlin. Wir ergänzen die Orte Schritt für Schritt mit praktischen Infos wie Bahnlänge, Öffnungszeiten, Wasserqualität, Ausstattung, Fotos und Community-Feedback.</p>
+      <div id="map" aria-label="Vorschau Berliner Schwimmorte"></div>
+      {% include 'partials/swim_map_legend.html' %}
       <div class="swc-map-cta">
-        <a href="/schwimmorte-berlin" class="btn btn-small btn-primary">Zur Schwimmorte-Karte</a>
+        <a href="/schwimmorte-berlin" class="btn btn-small btn-primary">Zur vollständigen Schwimmorte-Karte</a>
       </div>
     </section>
 
@@ -265,18 +270,49 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    var mapEl = document.getElementById('swc-map');
+    var mapEl = document.getElementById('map');
     if (!mapEl || typeof L === 'undefined') return;
     var locations = {{ locations_for_preview | tojson }};
-    var map = L.map('swc-map', { scrollWheelZoom: false }).setView([52.52, 13.405], 10);
+
+    // ── Gleiche Marker-Optik wie auf der Homepage ("Squalo Baywatch") ──
+    function getMarkerClass(locationType) {
+      var t = (locationType || '').toLowerCase();
+      if (t === 'see' || t === 'badestelle') return 'squalo-marker-lake';
+      if (t === 'strandbad') return 'squalo-marker-beach';
+      if (t === 'sommerbad' || t === 'outdoor') return 'squalo-marker-summer';
+      if (t === 'therme' || t === 'thermalbad') return 'squalo-marker-therme';
+      return 'squalo-marker-indoor';
+    }
+    function getMarkerIcon(locationType) {
+      return L.divIcon({
+        className: 'squalo-marker ' + getMarkerClass(locationType),
+        iconSize: [22, 22],
+        iconAnchor: [11, 11],
+        popupAnchor: [0, -14]
+      });
+    }
+
+    var map = L.map('map', { scrollWheelZoom: false }).setView([52.52, 13.405], 10);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+      subdomains: 'abcd',
       maxZoom: 19
     }).addTo(map);
+
     locations.forEach(function (loc) {
-      if (loc.latitude && loc.longitude) {
-        L.marker([loc.latitude, loc.longitude]).addTo(map).bindPopup(loc.name);
-      }
+      if (!loc.latitude || !loc.longitude) return;
+      var marker = L.marker([loc.latitude, loc.longitude], { icon: getMarkerIcon(loc.location_type) });
+      marker.bindPopup(
+        '<div class="popup-card">' +
+          '<h4 class="popup-title">' + loc.name + '</h4>' +
+          '<div class="popup-meta">' +
+            '<span class="popup-type">' + (loc.location_type || '') + '</span>' +
+            '<span class="popup-district">' + (loc.district || '') + ', Berlin</span>' +
+          '</div>' +
+        '</div>',
+        { maxWidth: 260 }
+      );
+      marker.addTo(map);
     });
   });
 </script>

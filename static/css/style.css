@@ -7300,6 +7300,29 @@ body.page-has-hero main.page-main {
   font-weight: 600;
 }
 
+/* ── Hero logo watermark (dezent, halbtransparent) ── */
+.swc-hero-logo-watermark {
+  position: absolute;
+  top: 50%;
+  right: 3%;
+  transform: translateY(-50%);
+  width: 260px;
+  max-width: 38%;
+  height: auto;
+  opacity: 0.14;
+  z-index: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
+}
+
+@media (max-width: 768px) {
+  .swc-hero-logo-watermark {
+    width: 150px;
+    right: 2%;
+    opacity: 0.10;
+  }
+}
+
 .swc-content {
   max-width: 900px;
   margin: 0 auto;
@@ -7363,15 +7386,6 @@ body.page-has-hero main.page-main {
   color: var(--text-light);
   line-height: 2;
   padding-left: 22px;
-}
-
-.swc-map-preview {
-  width: 100%;
-  height: 320px;
-  border-radius: 14px;
-  margin-top: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  z-index: 0;
 }
 
 .swc-map-cta {
@@ -7454,10 +7468,6 @@ body.page-has-hero main.page-main {
 @media (max-width: 600px) {
   .swc-content {
     padding: 16px 14px 40px;
-  }
-
-  .swc-map-preview {
-    height: 240px;
   }
 }
 

@@ -96,3 +96,43 @@ Neue Tabelle `swim_club_interest` (SQLAlchemy-Model `SwimClubInterest` in `model
 - Keine Änderungen an Buchungs-, Shop-, Preis- oder Coach-Logik, keine Änderungen an Geodaten/Hero-Bildern.
 - PostgreSQL/`DATABASE_URL`, bestehende Kunden-/Buchungs-/Schüler-/Trainingsplan-/Rechnungsdaten unangetastet.
 - Keine Secrets, keine SQLite-Dateien, kein `git init` verwendet.
+
+## Nachträgliches visuelles Polishing (Hero-Bild, Logo-Branding, Map-Styling)
+Reiner Styling-Nachzieher auf `/berlin-swimmers-club` – **keine neuen Features, keine Logik-Änderungen**.
+
+- **Hero-Bild:** Wiederverwendung des bereits vorhandenen Fotos
+  `static/images/heroes/schwimmorte-berlin-hero-2.jpg` (Seeidylle mit Steg, bereits auf
+  `/schwimmorte-berlin` im Einsatz) über das bestehende, seitenweite `.hero-rotator`/`.hero-slide`-Muster.
+  Keine neuen Bilddateien angelegt.
+- **Logo-Branding:** Das bestehende `squalo-logo.png` wird zusätzlich als dezentes, halbtransparentes
+  Wasserzeichen (`<img class="swc-hero-logo-watermark">`) rechts im Hero eingeblendet
+  (Opacity ~0.14, `pointer-events: none`, `z-index` zwischen Overlay-Tint und Text-Container –
+  liegt also sichtbar "durch" den Farbverlauf, aber nie über dem Text). Mobile: kleiner/dezenter.
+- **Map-Styling (identisch zur Homepage "Squalo Baywatch"):**
+  - Karten-Container teilt sich jetzt die ID `id="map"` mit der Homepage-Karte → automatisch identische
+    Höhe (550px Desktop, responsive 450px/480px/280px je nach Breakpoint), Border-Radius, Box-Shadow,
+    Hover-Effekt – ganz ohne neues CSS.
+    Umschließender Abschnitt nutzt zusätzlich die Klasse `.map-section` (gleicher Card-Look:
+    Gradient-Hintergrund, Border-Radius, Schatten wie auf der Startseite).
+  - **Legende** wurde in ein gemeinsames Partial ausgelagert: `templates/partials/swim_map_legend.html`,
+    eingebunden sowohl auf der Startseite (`index.html`, reiner Refactor ohne Output-Änderung) als auch
+    auf `/berlin-swimmers-club` – dadurch garantiert identisches Aussehen an einer einzigen Quelle.
+  - **Marker-Styling** (`squalo-marker-lake/-beach/-summer/-indoor/-therme`) wird durch lokale
+    `getMarkerClass()`/`getMarkerIcon()`-Hilfsfunktionen im Vorschau-Karten-Skript exakt nachgebildet
+    (gleiche CSS-Klassen wie auf der Startseite), inkl. Popup im gleichen `.popup-card`/`.popup-title`/
+    `.popup-meta`-Look.
+  - **Bewusst NICHT übernommen** (um Buchungslogik/neue Map-Logik nicht anzufassen): Regionen-Filterleiste,
+    Geolocation-Button, sowie die reichhaltigen Status-/Wassertemperatur-/Auslastungs-/Buchungs-Popups der
+    Startseiten-Karte. Die Vorschau-Popups zeigen nur Name, Typ und Bezirk.
+  - Alte, jetzt ungenutzte Klasse `.swc-map-preview` wurde aus `static/css/style.css` entfernt (war durch
+    die ID-Wiederverwendung überflüssig geworden).
+- **Copy-Updates** in `templates/berlin_swimmers_club.html`: Subheadline, die 4 Hero-Badges
+  ("Kein Verein", "Alle Level willkommen", "Pool & Open Water", "Erstes Treffen: Wochenende um den
+  22. August"), Kartenabschnitt-Text und CTA-Button-Label ("Zur vollständigen Schwimmorte-Karte")
+  wurden auf den vorgegebenen Wortlaut angepasst.
+- **Getestet:** Desktop- und Mobile-Screenshots von Hero + Karte, Popup-Klick auf der Vorschaukarte,
+  HTTP-Statuscheck für `/`, `/berlin-swimmers-club`, `/schwimmorte-berlin`, `/sitemap.xml`,
+  `/robots.txt`, `/shop` (alle 200) sowie `/dashboard`, `/booking`, `/admin/swim-club` (alle korrekt
+  302 Redirect zum Login, keine 500er). Homepage-Karte inkl. Regionen-Filter unverändert funktionsfähig.
+- **Unverändert:** Geodaten, Marker-Anzahl/-Koordinaten, Buchungs-/Shop-/Preis-/Coach-Logik, DB-Inhalte,
+  PostgreSQL/`DATABASE_URL`.

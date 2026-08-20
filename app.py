@@ -3535,7 +3535,13 @@ Motivation:
             (Location.city == "Berlin") | (Location.city.is_(None))
         ).filter(Location.latitude.isnot(None), Location.longitude.isnot(None)).all()
         locations_for_preview = [
-            {"name": loc.name, "district": loc.district, "latitude": float(loc.latitude), "longitude": float(loc.longitude)}
+            {
+                "name": loc.name,
+                "district": loc.district,
+                "location_type": loc.location_type,
+                "latitude": float(loc.latitude),
+                "longitude": float(loc.longitude),
+            }
             for loc in berlin_locations
         ]
 
