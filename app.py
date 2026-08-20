@@ -922,11 +922,12 @@ def send_swim_club_confirmation_email(entry, force=False):
         f"\n"
         f"danke für dein Interesse am Berlin Swimmers Club.\n"
         f"\n"
-        f"Wir planen ein erstes lockeres Swim Meet für das Wochenende um den 22. August. "
+        f"Wir planen das erste lockere Swim Meet für Ende August / Anfang September. "
         f"Es geht nicht um Wettkampf oder Vereinstraining, sondern um gemeinsames Schwimmen, "
         f"neue Orte und eine entspannte Community rund ums Wasser.\n"
         f"\n"
-        f"Wir melden uns, sobald Ort und Zeit feststehen.\n"
+        f"Danke, dass du deine passenden Tage und Zeitfenster angegeben hast. "
+        f"Wir melden uns, sobald Ort und Termin feststehen.\n"
         f"\n"
         f"Bis dahin kannst du dir hier die Schwimmorte-Karte ansehen:\n"
         f"{locations_url}\n"
@@ -1420,6 +1421,29 @@ def create_app() -> Flask:
                     print("[MIGRATION] Location city existiert bereits")
         except Exception as e:
             print(f"[MIGRATION] Location city (ignoriert): {e}")
+
+        # ── Migration: Neue Voting-Spalten für SwimClubInterest ─────
+        try:
+            import sqlalchemy as sa
+            with db.engine.connect() as conn:
+                inspector = sa.inspect(db.engine)
+                columns = [c['name'] for c in inspector.get_columns('swim_club_interest')]
+                new_cols = {
+                    'preferred_dates': "ALTER TABLE swim_club_interest ADD COLUMN preferred_dates TEXT",
+                    'preferred_time_slots': "ALTER TABLE swim_club_interest ADD COLUMN preferred_time_slots TEXT",
+                }
+                added = 0
+                for col_name, ddl in new_cols.items():
+                    if col_name not in columns:
+                        conn.execute(sa.text(ddl))
+                        added += 1
+                if added:
+                    conn.commit()
+                    print(f"[MIGRATION] SwimClubInterest-Spalten hinzugefuegt: {added}")
+                else:
+                    print("[MIGRATION] SwimClubInterest preferred_dates/preferred_time_slots existieren bereits")
+        except Exception as e:
+            print(f"[MIGRATION] SwimClubInterest-Spalten (ignoriert): {e}")
 
         # ── Migration: Fix default notification email ─────────────
         try:
@@ -3471,8 +3495,38 @@ Motivation:
     SWC_LEVELS = ["Anfänger", "Wiedereinsteiger", "Fortgeschritten", "Triathlon", "Freiwasser"]
     SWC_FORMATS = ["Pool", "See", "Open Water", "Egal"]
     SWC_REGIONS = ["Nord", "Südwest", "Mitte", "Ost", "Egal"]
-    SWC_TIMES = ["Werktag Abend", "Samstag", "Sonntag", "Egal"]
     SWC_INTERESTS = ["Swim Meet", "Map-Updates", "1:1 Coaching", "Alles interessant"]
+
+    # Voting-Zeitraum für das erste Swim Meet: Fr 28.08.2026 – Fr 04.09.2026
+    SWC_DATES = [
+        ("2026-08-28", "Freitag, 28.08.2026"),
+        ("2026-08-29", "Samstag, 29.08.2026"),
+        ("2026-08-30", "Sonntag, 30.08.2026"),
+        ("2026-08-31", "Montag, 31.08.2026"),
+        ("2026-09-01", "Dienstag, 01.09.2026"),
+        ("2026-09-02", "Mittwoch, 02.09.2026"),
+        ("2026-09-03", "Donnerstag, 03.09.2026"),
+        ("2026-09-04", "Freitag, 04.09.2026"),
+    ]
+    SWC_TIME_SLOTS = [
+        ("weekday_17_19", "Wochentag 17:00–19:00"),
+        ("weekday_18_20", "Wochentag 18:00–20:00"),
+        ("weekday_19_21", "Wochentag 19:00–21:00"),
+        ("weekend_09_11", "Wochenende 09:00–11:00"),
+        ("weekend_11_13", "Wochenende 11:00–13:00"),
+        ("weekend_13_15", "Wochenende 13:00–15:00"),
+        ("weekend_15_17", "Wochenende 15:00–17:00"),
+        ("weekend_17_19", "Wochenende 17:00–19:00"),
+    ]
+    SWC_DATE_LABELS = dict(SWC_DATES)
+    SWC_TIME_SLOT_LABELS = dict(SWC_TIME_SLOTS)
+
+    def _swc_format_multi(raw, label_map):
+        """Turn a comma-separated raw value (e.g. preferred_dates) into a readable, comma-joined label string."""
+        if not raw:
+            return "–"
+        parts = [label_map.get(v.strip(), v.strip()) for v in raw.split(",") if v.strip()]
+        return ", ".join(parts) if parts else "–"
 
     @app.route("/berlin-swimmers-club", methods=["GET", "POST"])
     def berlin_swimmers_club():
@@ -3482,14 +3536,15 @@ Motivation:
             swim_level = request.form.get("swim_level", "").strip()
             preferred_format = request.form.get("preferred_format", "").strip()
             preferred_region = request.form.get("preferred_region", "").strip()
-            preferred_time = request.form.get("preferred_time", "").strip()
+            preferred_dates_list = [d for d in request.form.getlist("preferred_dates") if d in SWC_DATE_LABELS]
+            preferred_time_slots_list = [t for t in request.form.getlist("preferred_time_slots") if t in SWC_TIME_SLOT_LABELS]
             interest_type = request.form.get("interest_type", "").strip()
             comment = request.form.get("comment", "").strip()
             consent_updates = bool(request.form.get("consent_updates"))
 
-            missing = not all([name, email, swim_level, preferred_format, preferred_region, preferred_time])
+            missing = not all([name, email, swim_level, preferred_format, preferred_region]) or not preferred_dates_list or not preferred_time_slots_list
             if missing:
-                flash("Bitte fülle alle Pflichtfelder aus (Name, E-Mail, Schwimmlevel, Format, Region, Zeit).", "danger")
+                flash("Bitte fülle alle Pflichtfelder aus und wähle mindestens einen Tag sowie ein Zeitfenster aus.", "danger")
                 return redirect(url_for("berlin_swimmers_club") + "#swc-signup")
 
             entry = SwimClubInterest(
@@ -3498,7 +3553,8 @@ Motivation:
                 swim_level=swim_level,
                 preferred_format=preferred_format,
                 preferred_region=preferred_region,
-                preferred_time=preferred_time,
+                preferred_dates=",".join(preferred_dates_list),
+                preferred_time_slots=",".join(preferred_time_slots_list),
                 interest_type=interest_type or None,
                 comment=comment or None,
                 consent_updates=consent_updates,
@@ -3527,7 +3583,23 @@ Motivation:
                     counts[val] += 1
             return counts
 
-        votes_time = _tally("preferred_time", SWC_TIMES)
+        def _tally_multi_sorted(field, options):
+            """Tally a comma-separated multi-value field and return (label, count) tuples sorted by votes desc."""
+            label_map = dict(options)
+            counts = {value: 0 for value, _label in options}
+            for e in all_entries:
+                raw = getattr(e, field) or ""
+                for val in [v.strip() for v in raw.split(",") if v.strip()]:
+                    if val in counts:
+                        counts[val] += 1
+            return sorted(
+                ((label_map[value], count) for value, count in counts.items()),
+                key=lambda pair: pair[1],
+                reverse=True,
+            )
+
+        votes_dates = _tally_multi_sorted("preferred_dates", SWC_DATES)
+        votes_time_slots = _tally_multi_sorted("preferred_time_slots", SWC_TIME_SLOTS)
         votes_format = _tally("preferred_format", SWC_FORMATS)
         votes_region = _tally("preferred_region", SWC_REGIONS)
 
@@ -3550,10 +3622,12 @@ Motivation:
             swc_levels=SWC_LEVELS,
             swc_formats=SWC_FORMATS,
             swc_regions=SWC_REGIONS,
-            swc_times=SWC_TIMES,
+            swc_dates=SWC_DATES,
+            swc_time_slots=SWC_TIME_SLOTS,
             swc_interests=SWC_INTERESTS,
             total_interest=total_interest,
-            votes_time=votes_time,
+            votes_dates=votes_dates,
+            votes_time_slots=votes_time_slots,
             votes_format=votes_format,
             votes_region=votes_region,
             locations_for_preview=locations_for_preview,
@@ -3576,10 +3650,30 @@ Motivation:
                 counts[val] = counts.get(val, 0) + 1
             return counts
 
+        def _tally_multi_sorted(field, options):
+            label_map = dict(options)
+            counts = {value: 0 for value, _label in options}
+            for e in entries:
+                raw = getattr(e, field) or ""
+                for val in [v.strip() for v in raw.split(",") if v.strip()]:
+                    if val in counts:
+                        counts[val] += 1
+            return sorted(
+                ((label_map[value], count) for value, count in counts.items()),
+                key=lambda pair: pair[1],
+                reverse=True,
+            )
+
         by_level = _tally("swim_level", SWC_LEVELS)
         by_format = _tally("preferred_format", SWC_FORMATS)
         by_region = _tally("preferred_region", SWC_REGIONS)
-        by_time = _tally("preferred_time", SWC_TIMES)
+        by_dates = _tally_multi_sorted("preferred_dates", SWC_DATES)
+        by_time_slots = _tally_multi_sorted("preferred_time_slots", SWC_TIME_SLOTS)
+
+        # Lesbare Anzeige der Mehrfachauswahl je Eintrag (nur für die Tabelle, nicht persistiert)
+        for e in entries:
+            e.preferred_dates_display = _swc_format_multi(e.preferred_dates, SWC_DATE_LABELS)
+            e.preferred_time_slots_display = _swc_format_multi(e.preferred_time_slots, SWC_TIME_SLOT_LABELS)
 
         return render_template(
             "admin_swim_club.html",
@@ -3588,7 +3682,8 @@ Motivation:
             by_level=by_level,
             by_format=by_format,
             by_region=by_region,
-            by_time=by_time,
+            by_dates=by_dates,
+            by_time_slots=by_time_slots,
         )
 
     @app.route("/admin/swim-club/export.csv")
@@ -3602,12 +3697,15 @@ Motivation:
         entries = SwimClubInterest.query.order_by(SwimClubInterest.created_at.desc()).all()
         output = io.StringIO()
         writer = csv.writer(output)
-        writer.writerow(["Datum", "Name", "E-Mail", "Schwimmlevel", "Format", "Region", "Zeit", "Interesse", "Kommentar", "Updates OK", "Quelle"])
+        writer.writerow(["Datum", "Name", "E-Mail", "Schwimmlevel", "Format", "Region", "Tage", "Zeitfenster", "Interesse", "Kommentar", "Updates OK", "Quelle"])
         for e in entries:
             writer.writerow([
                 e.created_at.strftime('%d.%m.%Y %H:%M') if e.created_at else '',
                 e.name, e.email, e.swim_level or '', e.preferred_format or '',
-                e.preferred_region or '', e.preferred_time or '', e.interest_type or '',
+                e.preferred_region or '',
+                _swc_format_multi(e.preferred_dates, SWC_DATE_LABELS),
+                _swc_format_multi(e.preferred_time_slots, SWC_TIME_SLOT_LABELS),
+                e.interest_type or '',
                 (e.comment or '').replace('\n', ' '), 'Ja' if e.consent_updates else 'Nein',
                 e.source or '',
             ])

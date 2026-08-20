@@ -23,7 +23,7 @@
         <span class="swc-badge">Kein Verein</span>
         <span class="swc-badge">Alle Level willkommen</span>
         <span class="swc-badge">Pool &amp; Open Water</span>
-        <span class="swc-badge">Erstes Treffen: Wochenende um den 22. August</span>
+        <span class="swc-badge">Erstes Swim Meet geplant: Ende August / Anfang September</span>
       </div>
       <div class="landing-hero-actions">
         <a href="#swc-signup" class="btn btn-hero-primary">Für erstes Swim Meet vormerken</a>
@@ -102,7 +102,7 @@
     {# ── Signup / Voting Formular ── #}
     <section class="swc-section" id="swc-signup">
       <h2 class="swc-section-title">Interesse eintragen &amp; mitbestimmen</h2>
-      <p class="swc-section-text">Trag dich unverbindlich ein – wir informieren dich, sobald Ort und Zeit für das erste Swim Meet feststehen. Deine Angaben helfen uns, den Termin und Ort passend zu wählen.</p>
+      <p class="swc-section-text">Wir planen das erste lockere Swim Meet für Ende August / Anfang September. Über das Formular kannst du abstimmen, welche Tage und Zeiten für dich passen. Ort und Termin stehen noch nicht fest – deine Angaben helfen uns bei der Entscheidung.</p>
 
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -151,13 +151,26 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="swc-time">Bevorzugte Zeit *</label>
-          <select id="swc-time" name="preferred_time" required>
-            <option value="" disabled selected>Bitte wählen</option>
-            {% for t in swc_times %}
-              <option value="{{ t }}">{{ t }}</option>
+          <label>Welche Tage würden für dich passen? *</label>
+          <p class="swc-form-hint">Du kannst mehrere Tage auswählen.</p>
+          <div class="swc-checkbox-grid">
+            {% for value, label in swc_dates %}
+              <label class="swc-checkbox-option">
+                <input type="checkbox" name="preferred_dates" value="{{ value }}"> {{ label }}
+              </label>
             {% endfor %}
-          </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Welche Zeitfenster passen dir grundsätzlich? *</label>
+          <p class="swc-form-hint">Du kannst mehrere Zeitfenster auswählen.</p>
+          <div class="swc-checkbox-grid">
+            {% for value, label in swc_time_slots %}
+              <label class="swc-checkbox-option">
+                <input type="checkbox" name="preferred_time_slots" value="{{ value }}"> {{ label }}
+              </label>
+            {% endfor %}
+          </div>
         </div>
         <div class="form-group">
           <label for="swc-interest">Woran bist du am meisten interessiert?</label>
@@ -192,8 +205,21 @@
 
         <div class="swc-vote-groups">
           <div class="swc-vote-group">
-            <h4>Bevorzugte Zeit</h4>
-            {% for label, count in votes_time.items() %}
+            <h4>Beliebteste Tage</h4>
+            {% for label, count in votes_dates %}
+              <div class="swc-vote-bar-row">
+                <span class="swc-vote-label">{{ label }}</span>
+                <div class="swc-vote-bar-track">
+                  <div class="swc-vote-bar-fill" style="width: {{ (count / total_interest * 100) if total_interest else 0 }}%;"></div>
+                </div>
+                <span class="swc-vote-count">{{ count }}</span>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="swc-vote-group">
+            <h4>Beliebteste Zeitfenster</h4>
+            {% for label, count in votes_time_slots %}
               <div class="swc-vote-bar-row">
                 <span class="swc-vote-label">{{ label }}</span>
                 <div class="swc-vote-bar-track">
@@ -251,7 +277,7 @@
         </div>
         <div class="landing-faq">
           <button type="button" class="landing-faq-question" onclick="toggleFaq(this)">Wann findet das erste Treffen statt? <span>+</span></button>
-          <div class="landing-faq-answer">Wir planen ein erstes Swim Meet für das Wochenende um den 22. August. Ort und genaue Zeit hängen auch von eurem Feedback ab.</div>
+          <div class="landing-faq-answer">Wir planen das erste Swim Meet für Ende August / Anfang September. Der genaue Termin steht noch nicht fest und hängt auch von eurem Feedback im Formular ab.</div>
         </div>
         <div class="landing-faq">
           <button type="button" class="landing-faq-question" onclick="toggleFaq(this)">Wie erfahre ich, wann und wo es losgeht? <span>+</span></button>

@@ -292,7 +292,9 @@ class SwimClubInterest(db.Model):
     swim_level = db.Column(db.String(64))
     preferred_format = db.Column(db.String(64))
     preferred_region = db.Column(db.String(64))
-    preferred_time = db.Column(db.String(64))
+    preferred_time = db.Column(db.String(64))  # legacy, superseded by preferred_dates/preferred_time_slots
+    preferred_dates = db.Column(db.Text)  # comma-separated ISO dates, e.g. "2026-08-28,2026-08-29"
+    preferred_time_slots = db.Column(db.Text)  # comma-separated slot codes, e.g. "weekend_11_13,weekday_18_20"
     interest_type = db.Column(db.String(64))
     comment = db.Column(db.Text)
     consent_updates = db.Column(db.Boolean, default=False)

@@ -16,31 +16,50 @@ Coach/Admin-Übersicht. Kein Verein, keine Buchungslogik – rein informativ + I
 - `/robots.txt` blockiert die Seite nicht (nur `/admin`, `/dashboard`, `/feed`, `/login`, `/register` sind gesperrt).
 
 ## Formularfelder (Signup/Voting)
-Pflichtfelder: `name`, `email`, `swim_level`, `preferred_format`, `preferred_region`, `preferred_time`
+Pflichtfelder: `name`, `email`, `swim_level`, `preferred_format`, `preferred_region`, mindestens ein
+Tag aus `preferred_dates` (Checkbox-Mehrfachauswahl) und mindestens ein Zeitfenster aus
+`preferred_time_slots` (Checkbox-Mehrfachauswahl).
 Optional: `interest_type` (Swim Meet / Map-Updates / 1:1 Coaching / Alles interessant), `comment`, `consent_updates` (Checkbox)
 
 Auswahloptionen:
 - Schwimmlevel: Anfänger, Wiedereinsteiger, Fortgeschritten, Triathlon, Freiwasser
 - Format: Pool, See, Open Water, Egal
 - Region: Nord, Südwest, Mitte, Ost, Egal
-- Zeit: Werktag Abend, Samstag, Sonntag, Egal
+- Tage (Mehrfachauswahl, `SWC_DATES` in `app.py`): Freitag 28.08.2026 bis Freitag 04.09.2026 (8 Tage,
+  inkl. Montag 31.08.2026)
+- Zeitfenster (Mehrfachauswahl, `SWC_TIME_SLOTS` in `app.py`): 3 Wochentag-Abendslots
+  (17–19, 18–20, 19–21 Uhr) + 5 Wochenend-Slots (09–11, 11–13, 13–15, 15–17, 17–19 Uhr)
+
+Das alte einzelne `preferred_time`-Feld (Werktag Abend/Samstag/Sonntag/Egal) wurde durch die neue
+Mehrfachauswahl ersetzt und wird für neue Einträge nicht mehr befüllt (Spalte bleibt aus
+Kompatibilitätsgründen in der DB erhalten, siehe Datenmodell).
 
 Bei fehlenden Pflichtfeldern wird der Request abgelehnt (Flash-Fehlermeldung, kein DB-Eintrag).
 
 ## Datenmodell
 Neue Tabelle `swim_club_interest` (SQLAlchemy-Model `SwimClubInterest` in `models.py`):
 - `id`, `created_at`, `name`, `email`, `swim_level`, `preferred_format`, `preferred_region`,
-  `preferred_time`, `interest_type`, `comment`, `consent_updates` (bool), `source` (default `website`),
-  `confirmation_email_sent_at` (Duplikatschutz + Anzeige "Mail gesendet?" im Admin-Overview).
+  `preferred_time` (legacy, wird nicht mehr befüllt), `preferred_dates` (Text, kommasepariert,
+  z. B. `2026-08-28,2026-08-29`), `preferred_time_slots` (Text, kommasepariert, z. B.
+  `weekend_11_13,weekday_18_20`), `interest_type`, `comment`, `consent_updates` (bool),
+  `source` (default `website`), `confirmation_email_sent_at` (Duplikatschutz + Anzeige
+  "Mail gesendet?" im Admin-Overview).
 - Wird automatisch von `db.create_all()` beim App-Start angelegt (keine manuelle Migration nötig,
   da neue Tabelle – bestehende Tabellen/Daten bleiben unangetastet).
+- Die zwei neuen Spalten `preferred_dates`/`preferred_time_slots` wurden nachträglich additiv per
+  `ALTER TABLE` migriert (gleiches Muster wie alle anderen additiven Migrationen in `app.py`,
+  `try/except` mit Spalten-Existenzprüfung über `sqlalchemy.inspect`) – kein `drop_all()`, keine
+  bestehenden Daten wurden verändert oder gelöscht.
+- Speicherformat bewusst als kommaseparierter Text (nicht JSON), um SQLite/PostgreSQL-Kompatibilität
+  ohne datenbankspezifische JSON-Spaltentypen sicherzustellen.
 
 ## Bestätigungsmail
 - Funktion `send_swim_club_confirmation_email(entry, force=False)` in `app.py`, nach dem Muster
   von `send_coach_proposed_appointment_email` (gleiche `[MAIL]` / `[MAIL-FEHLER]`-Logging-Konvention).
 - Nutzt bestehende `send_email()`-Infrastruktur (SMTP, mit Konsolen-Fallback wenn keine Mail-Env-Variablen gesetzt sind).
 - Duplikatschutz über `confirmation_email_sent_at` (verhindert Mehrfachversand).
-- Mail-Inhalt: Dank für das Interesse, Hinweis auf geplantes erstes Swim Meet ("Wochenende um den 22. August"),
+- Mail-Inhalt: Dank für das Interesse, Hinweis auf geplantes erstes Swim Meet ("Ende August / Anfang
+  September"), Dank für die angegebenen Tage/Zeitfenster, ausdrücklich kein fixes Datum versprochen,
   Link zur Schwimmorte-Berlin-Seite (`get_public_base_url()` + `/schwimmorte-berlin`), Signatur mit
   `hello@squalo-schwimmcoaching.com`.
 - Schlägt der Versand fehl, wird der Eintrag trotzdem gespeichert; der Nutzer erhält eine Warnmeldung
@@ -49,14 +68,21 @@ Neue Tabelle `swim_club_interest` (SQLAlchemy-Model `SwimClubInterest` in `model
 ## Admin/Coach-Übersicht
 - `GET /admin/swim-club` (Endpoint: `admin_swim_club`), `@login_required` + Rollenprüfung (`role == 'admin'`),
   identisch zum bestehenden Muster in `admin_shop_orders`/`admin_booking_history`.
-- Zeigt Gesamtzahl, Aggregate nach Level/Format/Region/Zeit sowie die vollständige Liste aller Einträge
-  (Datum, Name, E-Mail, Präferenzen, Kommentar, Mail-Status).
-- Zusätzlich: CSV-Export unter `GET /admin/swim-club/export.csv`.
+- Zeigt Gesamtzahl, Aggregate nach Level/Format/Region sowie neu Tage/Zeitfenster (jeweils absteigend
+  nach Stimmenzahl sortiert) sowie die vollständige Liste aller Einträge (Datum, Name, E-Mail,
+  Präferenzen, ausgewählte Tage, ausgewählte Zeitfenster, Kommentar, Mail-Status) – die
+  Tage/Zeitfenster werden pro Eintrag lesbar aufbereitet (z. B. "Samstag, 29.08.2026, Montag,
+  31.08.2026").
+- Zusätzlich: CSV-Export unter `GET /admin/swim-club/export.csv`, inkl. der Spalten "Tage" und
+  "Zeitfenster" (ersetzt die alte einzelne "Zeit"-Spalte).
 - Verlinkt im Coach Panel (`templates/admin.html`) über einen neuen Tab-Link "🏊‍♀️ Swimmers Club".
 
 ## Öffentliche aggregierte Voting-Anzeige
 - Auf der Landingpage selbst (kein separater Endpoint), berechnet direkt in der `berlin_swimmers_club()`-View
-  beim GET-Request (Zählung nach `preferred_time`, `preferred_format`, `preferred_region`).
+  beim GET-Request (Zählung nach `preferred_dates`, `preferred_time_slots`, `preferred_format`, `preferred_region`).
+- "Beliebteste Tage" und "Beliebteste Zeitfenster" werden absteigend nach Stimmenzahl sortiert
+  angezeigt ("Welche Tage/Zeitfenster liegen vorne?"); Format/Region bleiben wie bisher in
+  fester Options-Reihenfolge.
 - Zeigt **keine** personenbezogenen Daten – nur aggregierte Balken/Zahlen pro Option.
 - Fallback-Text "Noch keine Stimmen – sei eine/r der Ersten." wenn noch keine Einträge existieren.
 
@@ -136,3 +162,40 @@ Reiner Styling-Nachzieher auf `/berlin-swimmers-club` – **keine neuen Features
   302 Redirect zum Login, keine 500er). Homepage-Karte inkl. Regionen-Filter unverändert funktionsfähig.
 - **Unverändert:** Geodaten, Marker-Anzahl/-Koordinaten, Buchungs-/Shop-/Preis-/Coach-Logik, DB-Inhalte,
   PostgreSQL/`DATABASE_URL`.
+
+## Update: Voting-Daten, Zeitfenster & Texte (Ende August / Anfang September)
+Reiner Daten-/Text-/Auswertungs-Nachzieher – **keine Änderungen an Hero-Bild, Logo, Karte,
+Buchungs-/Shop-/Preis-/Coach-Logik**.
+
+- **Kein festes Datum mehr:** Alle 4 Fundstellen von "22. August" wurden entfernt und durch
+  "Ende August / Anfang September" ersetzt: Hero-Badge, FAQ-Antwort ("Wann findet das erste Treffen
+  statt?"), Homepage-Teaser (`templates/index.html`) und Bestätigungsmail-Text.
+- **Voting-Zeitraum:** Neuer Abstimmungs-Zeitraum Freitag 28.08.2026 bis Freitag 04.09.2026
+  (8 konkrete Tage, inkl. Montag 31.08.2026), definiert als `SWC_DATES`-Konstante in `app.py`.
+- **Zeitfenster:** 8 konkrete Zeitfenster (`SWC_TIME_SLOTS`-Konstante in `app.py`) – 3 Wochentag-
+  Abendslots (17–19, 18–20, 19–21 Uhr) und 5 Wochenend-Slots (09–11, 11–13, 13–15, 15–17, 17–19 Uhr).
+- **Formular:** Das alte `preferred_time`-Auswahlfeld wurde durch zwei neue Checkbox-Gruppen ersetzt
+  ("Welche Tage würden für dich passen?" / "Welche Zeitfenster passen dir grundsätzlich?"),
+  jeweils mit Hinweistext ("Du kannst mehrere ... auswählen.") und neuer CSS (`.swc-checkbox-grid`,
+  `.swc-checkbox-option`, `.swc-form-hint` in `static/css/style.css`).
+- **Speicherung:** Mehrfachauswahl wird als kommaseparierter Text in den neuen Spalten
+  `preferred_dates`/`preferred_time_slots` gespeichert (additive, nicht-destruktive `ALTER TABLE`-
+  Migration, gleiches Muster wie alle bisherigen Migrationen in `app.py`). Das alte `preferred_time`-
+  Feld bleibt in der DB erhalten (Altdaten unangetastet), wird für neue Einträge aber nicht mehr
+  benötigt/befüllt.
+- **Auswertung:** Öffentliche Voting-Anzeige und Admin-Übersicht zeigen jetzt zusätzlich
+  "Beliebteste Tage" und "Beliebteste Zeitfenster" (absteigend nach Stimmenzahl sortiert), berechnet
+  über eine neue Multi-Value-Tally-Funktion, die die kommaseparierten Werte aufsplittet und zählt.
+  Weiterhin keine personenbezogenen Daten in der öffentlichen Anzeige.
+- **CSV-Export:** Spalten "Tage" und "Zeitfenster" ersetzen die alte einzelne "Zeit"-Spalte.
+- **Getestet:** Lokaler Testeintrag über die Playwright-Browsersteuerung (mehrere Tage + Zeitfenster
+  ausgewählt), erfolgreiche Speicherung, korrekte Bestätigungsmail (Konsolen-Fallback, neuer
+  Wortlaut, keine "22. August"-Erwähnung mehr), korrekte öffentliche Aggregation (sortiert, keine
+  personenbezogenen Daten), korrekte Admin-Übersicht (Stat-Karten + Tabellen-Spalten), CSV-Export
+  200 OK, Regressions-Sweep über `/`, `/schwimmorte-berlin`, `/dashboard`, `/sitemap.xml`,
+  `/robots.txt`, `/berlin-swimmers-club`, `/admin/swim-club`, `/shop`, `/coaches` (alle 200/302 wie
+  erwartet, keine 500er), Mobile-Viewport-Screenshot der neuen Checkbox-Gruppen (sauberes
+  Ein-Spalten-Layout). Test-Eintrag anschließend aus der lokalen SQLite-DB wieder entfernt.
+- **Unverändert:** Hero-Bild, Logo-Wasserzeichen, Map-Styling/-Logik/-Koordinaten, Buchungs-/Shop-/
+  Preis-/Coach-Logik, keine DB-Resets/`drop_all()`, keine SQLite-Dateien committet, PostgreSQL/
+  `DATABASE_URL` unangetastet.

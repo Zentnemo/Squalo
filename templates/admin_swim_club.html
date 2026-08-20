@@ -44,9 +44,17 @@
       </ul>
     </div>
     <div style="background:var(--white);border-radius:12px;padding:1rem 1.2rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-      <strong style="color:var(--dark-blue);font-size:14px;">Zeit</strong>
+      <strong style="color:var(--dark-blue);font-size:14px;">Tage (Stimmen)</strong>
       <ul style="margin:0.5rem 0 0;padding:0;list-style:none;font-size:13px;color:var(--text-dark);">
-        {% for label, count in by_time.items() %}
+        {% for label, count in by_dates %}
+          <li style="display:flex;justify-content:space-between;padding:2px 0;"><span>{{ label }}</span><span>{{ count }}</span></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div style="background:var(--white);border-radius:12px;padding:1rem 1.2rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <strong style="color:var(--dark-blue);font-size:14px;">Zeitfenster (Stimmen)</strong>
+      <ul style="margin:0.5rem 0 0;padding:0;list-style:none;font-size:13px;color:var(--text-dark);">
+        {% for label, count in by_time_slots %}
           <li style="display:flex;justify-content:space-between;padding:2px 0;"><span>{{ label }}</span><span>{{ count }}</span></li>
         {% endfor %}
       </ul>
@@ -64,7 +72,8 @@
           <th style="padding:10px 12px;">Level</th>
           <th style="padding:10px 12px;">Format</th>
           <th style="padding:10px 12px;">Region</th>
-          <th style="padding:10px 12px;">Zeit</th>
+          <th style="padding:10px 12px;">Tage</th>
+          <th style="padding:10px 12px;">Zeitfenster</th>
           <th style="padding:10px 12px;">Interesse</th>
           <th style="padding:10px 12px;">Updates</th>
           <th style="padding:10px 12px;">Mail</th>
@@ -80,7 +89,8 @@
           <td style="padding:8px 12px;">{{ e.swim_level or '–' }}</td>
           <td style="padding:8px 12px;">{{ e.preferred_format or '–' }}</td>
           <td style="padding:8px 12px;">{{ e.preferred_region or '–' }}</td>
-          <td style="padding:8px 12px;">{{ e.preferred_time or '–' }}</td>
+          <td style="padding:8px 12px;max-width:200px;">{{ e.preferred_dates_display }}</td>
+          <td style="padding:8px 12px;max-width:200px;">{{ e.preferred_time_slots_display }}</td>
           <td style="padding:8px 12px;">{{ e.interest_type or '–' }}</td>
           <td style="padding:8px 12px;">{{ '✅' if e.consent_updates else '–' }}</td>
           <td style="padding:8px 12px;">{{ '✅' if e.confirmation_email_sent_at else '⏳' }}</td>
