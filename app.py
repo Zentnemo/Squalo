@@ -1735,7 +1735,7 @@ def create_app() -> Flask:
                 "fundierte Bewegungsanalyse"
             )
             existing_coach_fb.cities_served = "Freiburg,Merzhausen,Gundelfingen,Denzlingen,Emmendingen,Teningen,Bad Krozingen"
-            existing_coach_fb.image_url = "/static/images/squalo-logo.png"
+            existing_coach_fb.image_url = "/static/images/clara-zentner.jpg"
             existing_coach_fb.email = clara_login_email
             existing_coach_fb.is_active = True
             print(f"[OK] Coach aktualisiert: {existing_coach_fb.name}")
@@ -1745,6 +1745,7 @@ def create_app() -> Flask:
                 slug=coach_slug_fb,
                 first_name="Clara",
                 last_name="Zentner",
+                image_url="/static/images/clara-zentner.jpg",
                 title="Schwimmtrainerin in Freiburg \u2013 Trainerlizenz B, Rettungsschwimmerin, Medizin & Biomechanik",
                 bio=(
                     "Clara Zentner ist Schwimmtrainerin in Freiburg und Umgebung. "
@@ -1798,7 +1799,6 @@ def create_app() -> Flask:
                     "fundierte Bewegungsanalyse"
                 ),
                 cities_served="Freiburg,Merzhausen,Gundelfingen,Denzlingen,Emmendingen,Teningen,Bad Krozingen",
-                image_url="/static/images/squalo-logo.png",
                 email=clara_login_email,
                 is_active=True,
             )
