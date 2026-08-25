@@ -173,7 +173,7 @@
               </form>
             </div>
           {% else %}
-            <p class="review-login-hint">🔒 <a href="{{ url_for('login') }}">Logge dich ein</a>, um Moritz zu bewerten.</p>
+            <p class="review-login-hint">🔒 <a href="{{ url_for('login') }}">Logge dich ein</a>, um {{ coach.first_name or coach.name.split(' ')[0] }} zu bewerten.</p>
           {% endif %}
         </div>
       </div>
