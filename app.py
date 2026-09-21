@@ -26,6 +26,12 @@ from location_status import compute_location_status
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
 
+def calculate_booking_price(duration_minutes):
+    if duration_minutes == 300:
+        return 225.0
+    return (duration_minutes // 30) * 25.0
+
+
 # ── Shop products (MVP – hardcoded for now) ───────────────────────
 SHOP_PRODUCTS = [
     # ── Schwimmbrillen ──
@@ -2370,13 +2376,7 @@ Motivation:
                 duration_minutes = 60
 
             duration_slots = duration_minutes // 30
-
-            # Price calculation
-            if duration_minutes == 300:
-                # 5h package: 200 € instead of 250 €
-                estimated_price = 200.0
-            else:
-                estimated_price = duration_slots * 25.0
+            estimated_price = calculate_booking_price(duration_minutes)
 
             # Parse up to 3 time options
             def parse_date_time(idx):
@@ -3077,11 +3077,7 @@ Motivation:
 
             requested_start = datetime.combine(d_val, t_val)
 
-            # Preis-Schätzung (gleiche Logik wie bei der Kundenbuchung)
-            if duration_minutes == 300:
-                estimated_price = 200.0
-            else:
-                estimated_price = (duration_minutes // 30) * 25.0
+            estimated_price = calculate_booking_price(duration_minutes)
 
             b = Booking(
                 user_id=student.id,

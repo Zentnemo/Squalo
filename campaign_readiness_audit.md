@@ -20,7 +20,7 @@ Die Website ist **grundsätzlich kampagnentauglich**, hat aber einige Verbesseru
 | Hero-Unterzeile gut lesbar | ✅ |
 | Alter schmaler/quadratischer Erklärblock entfernt | ✅ |
 | Neuer breiter Banner ist flach und breit | ✅ |
-| Preis-Funnel sichtbar und korrekt (ab 50€ / 200€) | ✅ |
+| Preis-Funnel sichtbar und korrekt (ab 50€ / 225€) | ✅ |
 | Map wird nicht zu weit nach unten gedrückt | ✅ |
 | Keine doppelten störenden CTAs | ✅ |
 | „Kostenlos registrieren" sinnvoll erklärt | ✅ |
@@ -42,7 +42,7 @@ Die Website ist **grundsätzlich kampagnentauglich**, hat aber einige Verbesseru
 | Prüfpunkt | Status |
 |---|---|
 | Lädt ohne Fehler (HTTP 200) | ✅ |
-| Preis sichtbar (ab 50€ / 200€) | ✅ |
+| Preis sichtbar (ab 50€ / 225€) | ✅ |
 | CTA zu `/booking` funktioniert (mit UTM-Parametern) | ✅ |
 | Text passt zu Flyer-Kampagne | ✅ |
 | QR-Hinweis „Du bist über einen Flyer hier?" vorhanden | ✅ |

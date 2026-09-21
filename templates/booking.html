@@ -18,7 +18,7 @@
       </div>
       <div class="pricing-sidebar-item">
         <span class="pricing-sidebar-label">5er-Paket</span>
-        <span class="pricing-sidebar-value"><span class="pricing-euro">200</span> €</span>
+        <span class="pricing-sidebar-value"><span class="pricing-euro">225</span> €</span>
       </div>
       <p class="pricing-sidebar-desc">Das 5er-Paket eignet sich für kontinuierlichen Technikaufbau und regelmäßiges Feedback.</p>
     </div>
@@ -60,7 +60,7 @@
           </select>
           <div id="price-preview" style="margin-top:10px;padding:12px 16px;background:#f0f7ff;border-radius:8px;font-size:15px;font-weight:600;color:var(--squalo-deep-blue);">
             💰 Geschätzter Preis: <span id="price-amount">50 €</span>
-            <span id="price-package-note" style="display:none;font-weight:400;font-size:13px;color:#e65c00;margin-left:6px;">🎉 5-Stunden-Paket – eine Stunde geschenkt!</span>
+            <span id="price-package-note" style="display:none;font-weight:400;font-size:13px;color:#e65c00;margin-left:6px;">5er-Paket: 45 € pro Stunde statt 50 € pro Stunde</span>
           </div>
         </div>
 
@@ -184,8 +184,8 @@ function updatePricePreview() {
   const slots = val / 30;
   let price, note = '';
   if (val === 300) {
-    price = 200;
-    note = '🎉 5-Stunden-Paket – eine Stunde geschenkt!';
+    price = 225;
+    note = '5er-Paket: 45 € pro Stunde statt 50 € pro Stunde';
   } else {
     price = slots * 25;
   }
