@@ -10,6 +10,7 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
+    phone = db.Column(db.String(40))
     role = db.Column(db.String(32), default='user')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     bookings = db.relationship('Booking', backref='user', lazy=True)
@@ -74,6 +75,7 @@ class Booking(db.Model):
     training_goal = db.Column(db.String(128))
     user_note = db.Column(db.Text)
     admin_note = db.Column(db.Text)
+    phone = db.Column(db.String(40))
     # Duration & pricing
     duration_minutes = db.Column(db.Integer, default=60)
     duration_slots = db.Column(db.Integer, default=2)

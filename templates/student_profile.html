@@ -23,6 +23,10 @@
             <td>{{ student.email }}</td>
           </tr>
           <tr>
+            <td><strong>Telefon / WhatsApp</strong></td>
+            <td>{{ student.phone or 'Nicht hinterlegt' }}</td>
+          </tr>
+          <tr>
             <td><strong>Rolle</strong></td>
             <td><span class="status-badge">{{ student.role or 'user' }}</span></td>
           </tr>

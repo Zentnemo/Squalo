@@ -177,7 +177,10 @@
             <tbody>
               {% for b in bookings_pending %}
                 <tr>
-                  <td><strong>{{ b.user.name }}</strong></td>
+                  <td>
+                    <strong>{{ b.user.name }}</strong>
+                    <br><span style="font-size:12px;color:#666;">Telefon / WhatsApp: {{ b.phone or b.user.phone or '—' }}</span>
+                  </td>
                   <td>{{ b.duration_minutes }} Min</td>
                   <td><strong>{{ b.estimated_price|int }} €</strong></td>
                   <td>{{ b.preferred_coach.name if b.preferred_coach else '–' }}</td>

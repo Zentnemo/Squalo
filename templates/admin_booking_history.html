@@ -112,8 +112,7 @@
               {# E-Mail #}
               <td style="font-size:12px;">{{ b.user.email if b.user else '–' }}</td>
 
-              {# Telefon (not in model, show dash) #}
-              <td style="font-size:12px;">–</td>
+              <td style="font-size:12px;">{{ b.phone or (b.user.phone if b.user else none) or '—' }}</td>
 
               {# Gewünschtes Datum/Uhrzeit #}
               <td style="white-space:nowrap;font-size:13px;">

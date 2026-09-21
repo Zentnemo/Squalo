@@ -26,6 +26,10 @@ from location_status import compute_location_status
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 
 
+def normalize_optional_phone(value):
+    return (value or '').strip()[:40] or None
+
+
 def calculate_booking_price(duration_minutes):
     if duration_minutes == 300:
         return 225.0
@@ -693,8 +697,7 @@ def send_booking_notification(booking):
     else:
         subject = f"Neue Buchungsanfrage: {user_name} – Termin offen"
 
-    # ── Phone (User model has no phone field, always 'Keine Angabe') ──
-    telefon_str = 'Keine Angabe'
+    telefon_str = booking.phone or (user.phone if user else None) or 'nicht angegeben'
 
     # ── Admin URL ──
     base_url = get_public_base_url()
@@ -1068,7 +1071,7 @@ eine neue Buchungsanfrage ist eingegangen.
 ─── KUNDENDATEN ───
 Name:       {{name}}
 E-Mail:     {{email}}
-Telefon:    {{telefon}}
+Telefon / WhatsApp: {{telefon}}
 
 ─── TRAINING ───
 Region:         {{stadt_region}}
@@ -1450,6 +1453,26 @@ def create_app() -> Flask:
                     print("[MIGRATION] Spalte confirmation_email_sent_at hinzugefuegt")
         except Exception as e:
             print(f"[MIGRATION] confirmation_email_sent_at (ignoriert): {e}")
+
+        # ── Migration: Telefonnummern für Kunden und Buchungen ────
+        try:
+            import sqlalchemy as sa
+            with db.engine.connect() as conn:
+                inspector = sa.inspect(db.engine)
+                user_columns = [c['name'] for c in inspector.get_columns('user')]
+                booking_columns = [c['name'] for c in inspector.get_columns('booking')]
+                added = 0
+                if 'phone' not in user_columns:
+                    conn.execute(sa.text('ALTER TABLE "user" ADD COLUMN phone VARCHAR(40)'))
+                    added += 1
+                if 'phone' not in booking_columns:
+                    conn.execute(sa.text('ALTER TABLE booking ADD COLUMN phone VARCHAR(40)'))
+                    added += 1
+                if added:
+                    conn.commit()
+                    print(f"[MIGRATION] Telefonnummer-Spalten hinzugefuegt: {added}")
+        except Exception as e:
+            print(f"[MIGRATION] Telefonnummer-Spalten (ignoriert): {e}")
 
         # ── Migration: Location city column ─────────────────────────
         try:
@@ -2225,13 +2248,14 @@ Motivation:
             name = request.form.get("name")
             email = request.form.get("email")
             password = request.form.get("password")
+            phone = normalize_optional_phone(request.form.get("phone"))
             if not name or not email or not password:
                 flash("Please fill all fields", "danger")
                 return redirect(url_for("register"))
             if User.query.filter_by(email=email).first():
                 flash("Email already registered", "danger")
                 return redirect(url_for("register"))
-            u = User(name=name, email=email, password_hash=generate_password_hash(password))
+            u = User(name=name, email=email, password_hash=generate_password_hash(password), phone=phone)
             db.session.add(u)
             db.session.commit()
             flash("Account created. Please log in.", "success")
@@ -2447,6 +2471,10 @@ Motivation:
             preferred_coach_id = int(preferred_coach_raw) if preferred_coach_raw else None
             training_goal = request.form.get("training_goal")
             user_note = request.form.get("user_note")
+            submitted_phone = normalize_optional_phone(request.form.get("phone"))
+            if submitted_phone:
+                current_user.phone = submitted_phone
+            booking_phone = submitted_phone or current_user.phone
 
             # Validate
             if not d1 or not t1:
@@ -2476,6 +2504,7 @@ Motivation:
                 preferred_coach_id=preferred_coach_id,
                 training_goal=training_goal,
                 user_note=user_note,
+                phone=booking_phone,
                 status="angefragt",
             )
             db.session.add(b)
