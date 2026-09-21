@@ -116,30 +116,34 @@
         {# ── Reviews ── #}
         <div class="coach-reviews-section">
           <h3>Bewertungen</h3>
+          {% set coach_reviews = reviews_by_coach.get(coach.id, []) %}
+          {% set review_stats = review_stats_by_coach.get(coach.id, {}) %}
+          {% if review_stats.count %}
+            <p class="review-summary" aria-label="{{ '%.1f'|format(review_stats.average) }} von 5 Sternen bei {{ review_stats.count }} Bewertungen">
+              ★★★★★ {{ '%.1f'|format(review_stats.average) }} · {{ review_stats.count }} Bewertung{{ 'en' if review_stats.count != 1 else '' }}
+            </p>
+          {% else %}
+            <p class="review-summary">Noch keine Bewertungen</p>
+          {% endif %}
 
-          {% set coach_reviews = coach.reviews %}
           {% if coach_reviews %}
             <div class="reviews-list">
               {% for review in coach_reviews %}
-                {% if review.is_approved %}
-                  <div class="review-card">
-                    <div class="review-header">
-                      <span class="review-stars">
-                        {% for i in range(review.rating) %}⭐{% endfor %}
-                      </span>
-                      <span class="review-author">
-                        {% if review.author_name %}{{ review.author_name }}{% else %}Anonym{% endif %}
-                      </span>
-                      {% if review.source != 'squalo' %}
-                        <span class="review-source">{{ review.source }}</span>
-                      {% endif %}
-                    </div>
-                    {% if review.text %}
-                      <p class="review-text">{{ review.text }}</p>
+                <div class="review-card">
+                  <div class="review-header">
+                    <span class="review-stars">
+                      {% for i in range(review.rating) %}⭐{% endfor %}
+                    </span>
+                    <span class="review-author">{{ review.public_author_name }}</span>
+                    {% if review.source != 'squalo' %}
+                      <span class="review-source">{{ review.source }}</span>
                     {% endif %}
-                    <span class="review-date">{{ review.created_at.strftime('%d.%m.%Y') }}</span>
                   </div>
-                {% endif %}
+                  {% if review.text %}
+                    <p class="review-text">{{ review.text }}</p>
+                  {% endif %}
+                  <span class="review-date">{{ review.created_at.strftime('%d.%m.%Y') }}</span>
+                </div>
               {% endfor %}
             </div>
           {% else %}
@@ -154,22 +158,23 @@
           {# ── Review Form (logged in users) ── #}
           {% if current_user.is_authenticated %}
             <div class="review-form-wrap">
-              <h4>{{ coach.name.split(' ')[0] }} bewerten</h4>
+              {% set own_review = user_reviews_by_coach.get(coach.id) %}
+              <h4>{{ coach.name.split(' ')[0] }} {{ 'Bewertung aktualisieren' if own_review else 'bewerten' }}</h4>
               <form method="POST" action="{{ url_for('coaches_review', coach_id=coach.id) }}" class="review-form">
                 <div class="form-group">
                   <label>Deine Bewertung</label>
                   <div class="star-rating">
                     {% for i in range(5, 0, -1) %}
-                      <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" {% if i == 5 %}required{% endif %}>
-                      <label for="star{{ i }}" title="{{ i }} Stern{{ 'e' if i > 1 else '' }}">★</label>
+                      <input type="radio" id="coach-{{ coach.id }}-star{{ i }}" name="rating" value="{{ i }}" {% if own_review and own_review.rating == i %}checked{% endif %} {% if i == 5 and not own_review %}required{% endif %}>
+                      <label for="coach-{{ coach.id }}-star{{ i }}" title="{{ i }} Stern{{ 'e' if i > 1 else '' }}">★</label>
                     {% endfor %}
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="review_text">Dein Kommentar (optional)</label>
-                  <textarea id="review_text" name="text" rows="3" class="feed-textarea" placeholder="Was hat dir besonders gefallen?"></textarea>
+                  <label for="coach-{{ coach.id }}-review-text">Dein Kommentar (optional)</label>
+                  <textarea id="coach-{{ coach.id }}-review-text" name="text" rows="3" class="feed-textarea" placeholder="Was hat dir besonders gefallen?">{{ own_review.text if own_review else '' }}</textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Bewertung absenden</button>
+                <button type="submit" class="btn btn-primary">{{ 'Bewertung aktualisieren' if own_review else 'Bewertung speichern' }}</button>
               </form>
             </div>
           {% else %}

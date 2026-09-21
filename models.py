@@ -139,8 +139,17 @@ class CoachReview(db.Model):
     author_name = db.Column(db.String(120))
     is_approved = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     coach = db.relationship('Coach', backref='reviews')
     user = db.relationship('User', backref='reviews')
+
+    @property
+    def public_author_name(self):
+        if self.source == 'squalo' and self.user and self.user.name:
+            return self.user.name.strip().split()[0] or 'Nutzer'
+        if self.author_name:
+            return self.author_name.strip().split()[0] or 'Nutzer'
+        return 'Nutzer'
 
 
 class FeedPost(db.Model):

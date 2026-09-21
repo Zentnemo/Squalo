@@ -1474,6 +1474,21 @@ def create_app() -> Flask:
         except Exception as e:
             print(f"[MIGRATION] Telefonnummer-Spalten (ignoriert): {e}")
 
+        # ── Migration: Änderungszeit für Coach-Bewertungen ────────
+        try:
+            import sqlalchemy as sa
+            with db.engine.connect() as conn:
+                inspector = sa.inspect(db.engine)
+                columns = [c['name'] for c in inspector.get_columns('coach_review')]
+                if 'updated_at' not in columns:
+                    conn.execute(sa.text(
+                        'ALTER TABLE coach_review ADD COLUMN updated_at TIMESTAMP'
+                    ))
+                    conn.commit()
+                    print('[MIGRATION] Spalte coach_review.updated_at hinzugefuegt')
+        except Exception as e:
+            print(f"[MIGRATION] coach_review.updated_at (ignoriert): {e}")
+
         # ── Migration: Location city column ─────────────────────────
         try:
             import sqlalchemy as sa
@@ -2152,7 +2167,31 @@ def create_app() -> Flask:
         # Moritz (Gründer, meiste Bewertungen) wird immer als erster Coach angezeigt,
         # alle anderen Coaches bleiben alphabetisch sortiert.
         coach_list.sort(key=lambda c: (0 if c.slug == "moritz-zentner" else 1, c.name))
-        return render_template("coaches.html", coaches=coach_list)
+        reviews_by_coach = {}
+        review_stats_by_coach = {}
+        user_reviews_by_coach = {}
+        for coach in coach_list:
+            reviews = CoachReview.query.filter_by(
+                coach_id=coach.id, is_approved=True
+            ).order_by(CoachReview.created_at.desc()).all()
+            reviews_by_coach[coach.id] = reviews
+            review_stats_by_coach[coach.id] = {
+                'count': len(reviews),
+                'average': sum(review.rating for review in reviews) / len(reviews) if reviews else None,
+            }
+            if current_user.is_authenticated:
+                user_reviews_by_coach[coach.id] = next(
+                    (review for review in reviews
+                     if review.source == 'squalo' and review.user_id == current_user.id),
+                    None,
+                )
+        return render_template(
+            "coaches.html",
+            coaches=coach_list,
+            reviews_by_coach=reviews_by_coach,
+            review_stats_by_coach=review_stats_by_coach,
+            user_reviews_by_coach=user_reviews_by_coach,
+        )
 
     @app.route("/coach-werden", methods=["GET", "POST"])
     def coach_werden():
@@ -2228,18 +2267,29 @@ Motivation:
         if not rating or rating < 1 or rating > 5:
             flash("Bitte wähle eine Bewertung von 1–5 Sternen.", "danger")
             return redirect(url_for("coaches"))
-        review = CoachReview(
+        review = CoachReview.query.filter_by(
             coach_id=coach.id,
             user_id=current_user.id,
-            rating=rating,
-            text=text,
             source="squalo",
-            author_name=current_user.name,
-            is_approved=True,
-        )
-        db.session.add(review)
+        ).first()
+        if review:
+            review.rating = rating
+            review.text = text
+            review.author_name = current_user.name
+            flash("Deine Bewertung wurde aktualisiert.", "success")
+        else:
+            review = CoachReview(
+                coach_id=coach.id,
+                user_id=current_user.id,
+                rating=rating,
+                text=text,
+                source="squalo",
+                author_name=current_user.name,
+                is_approved=True,
+            )
+            db.session.add(review)
+            flash("Danke für deine Bewertung!", "success")
         db.session.commit()
-        flash("Danke für deine Bewertung!", "success")
         return redirect(url_for("coaches"))
 
     @app.route("/register", methods=["GET", "POST"])
