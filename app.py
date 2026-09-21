@@ -765,7 +765,7 @@ def send_customer_confirmation_email(booking, force=False):
         if loc:
             eff_location = loc.name
 
-    coach_name = 'Moritz'
+    coach_name = 'Squalo Coach'
     if booking.preferred_coach_id:
         coach = Coach.query.get(booking.preferred_coach_id)
         if coach:
@@ -784,26 +784,34 @@ def send_customer_confirmation_email(booking, force=False):
     # ── Build dashboard URL ──
     base_url = get_public_base_url()
     dashboard_url = f"{base_url}/dashboard"
+    date_str = eff_date.strftime('%d.%m.%Y') if eff_date else 'Wird separat bestätigt'
+    time_str = eff_time.strftime('%H:%M') if eff_time else 'Wird separat bestätigt'
+    location_str = eff_location or 'Ort wird im Dashboard angezeigt bzw. separat bestätigt.'
 
     subject = AppSetting.get('tpl_confirm_subject',
-                             'Dein Squalo Schwimmtraining wurde bestaetigt')
+                             'Dein Squalo Schwimmtraining wurde bestätigt')
+    training_goal_section, customer_note_section = _confirmation_optional_sections(
+        booking.training_goal, booking.user_note
+    )
 
-    body = _render_template_from_settings('tpl_confirm_body',
+    body = _render_confirm_template_from_settings(
         name=user.name,
         first_name=first_name,
-        datum=eff_date.strftime('%d.%m.%Y') if eff_date else 'TBD',
-        uhrzeit=eff_time.strftime('%H:%M') if eff_time else 'TBD',
-        ort=eff_location or 'TBD',
+        datum=date_str,
+        uhrzeit=time_str,
+        ort=location_str,
         coach=coach_name,
         dauer=duration_str,
         training_goal=booking.training_goal or '',
         customer_note=booking.user_note or '',
+        training_goal_section=training_goal_section,
+        customer_note_section=customer_note_section,
         dashboard_url=dashboard_url,
     ) or _build_confirm_email(
         first_name=first_name,
-        date_str=eff_date.strftime('%d.%m.%Y') if eff_date else 'TBD',
-        time_str=eff_time.strftime('%H:%M') if eff_time else 'TBD',
-        location=eff_location or 'TBD',
+        date_str=date_str,
+        time_str=time_str,
+        location=location_str,
         duration=duration_str,
         coach=coach_name,
         training_goal=booking.training_goal,
@@ -1101,9 +1109,18 @@ Ort:       {{ort}}
 Dauer:     {{dauer}}
 Coach:     {{coach}}
 
-Bitte bring, falls vorhanden, eine gut sitzende Schwimmbrille mit.
-Wenn du hast, sind kurze Schwimmflossen und ein Pullbuoy ebenfalls hilfreich.
-Wenn du diese Sachen noch nicht hast, ist das aber kein Problem – wir können auch ohne Zusatzmaterial starten.
+Treffpunkt:
+Wir treffen uns am Eingangsbereich des Schwimmbads bzw. direkt vor dem Schwimmbad. Falls es vor Ort mehrere Eingänge gibt oder ein anderer Treffpunkt sinnvoller ist, melde ich mich rechtzeitig mit weiteren Details.
+
+{{training_goal_section}}
+
+{{customer_note_section}}
+
+Für die erste Stunde bring bitte, falls vorhanden, eine gut sitzende Schwimmbrille, kurze Schwimmflossen und einen Pullbuoy / eine Poolboje mit.
+
+Wenn du dieses Equipment noch nicht hast, ist das kein Problem. Ich bringe zur ersten Stunde immer Basisequipment mit, sodass wir direkt starten können.
+
+Wenn du möchtest, kannst du dir später auch empfohlenes Equipment im Squalo-Shop anschauen. Dort findest du Produkte, die ich für das Training sinnvoll finde. Auf Wunsch kann ich bestelltes oder abgesprochenes Equipment zur ersten Stunde mitbringen.
 
 Du findest den Termin auch in deinem Squalo-Dashboard. Dort kannst du ihn direkt in deinen Kalender exportieren.
 
@@ -1144,7 +1161,6 @@ Dein Squalo-Team"""
 
 def _render_template_from_settings(tpl_key, **kwargs):
     """Render a mail template from AppSetting, falling back to default."""
-    import re
     tpl_text = AppSetting.get(tpl_key, "")
     if not tpl_text:
         return None
@@ -1152,6 +1168,36 @@ def _render_template_from_settings(tpl_key, **kwargs):
     for key, val in kwargs.items():
         tpl_text = tpl_text.replace("{{" + key + "}}", str(val))
     return tpl_text
+
+
+def _render_confirm_template_from_settings(**kwargs):
+    """Render a custom confirmation template, ignoring the legacy default copy."""
+    tpl_text = AppSetting.get('tpl_confirm_body', '')
+    legacy_default_marker = 'Bitte bring, falls vorhanden, eine gut sitzende Schwimmbrille mit.'
+    if not tpl_text or legacy_default_marker in tpl_text:
+        return None
+    for key, val in kwargs.items():
+        tpl_text = tpl_text.replace("{{" + key + "}}", str(val))
+    return tpl_text
+
+
+def _confirmation_optional_sections(training_goal, customer_note):
+    training_goal = (training_goal or '').strip()
+    customer_note = (customer_note or '').strip()
+    if training_goal:
+        training_goal_section = (
+            "Ich habe gesehen, dass du besonders an folgendem Thema arbeiten möchtest:\n"
+            f"{training_goal}"
+        )
+    else:
+        training_goal_section = "Wir stimmen den Trainingsschwerpunkt zu Beginn der Stunde gemeinsam ab."
+    customer_note_section = ""
+    if customer_note:
+        customer_note_section = (
+            "Falls du zusätzlich eine Notiz angegeben hast, berücksichtigen wir das im Training:\n"
+            f"{customer_note}"
+        )
+    return training_goal_section, customer_note_section
 
 
 def _build_confirm_email(first_name, date_str, time_str, location, duration,
@@ -1164,6 +1210,9 @@ def _build_confirm_email(first_name, date_str, time_str, location, duration,
     """
     if not dashboard_url:
         dashboard_url = '/dashboard'
+    training_goal_section, customer_note_section = _confirmation_optional_sections(
+        training_goal, customer_note
+    )
 
     lines = [
         f"Hallo {first_name},",
@@ -1177,43 +1226,36 @@ def _build_confirm_email(first_name, date_str, time_str, location, duration,
         f"Ort:       {location}",
         f"Dauer:     {duration}",
         f"Coach:     {coach}",
+        "",
+        "Treffpunkt:",
+        "Wir treffen uns am Eingangsbereich des Schwimmbads bzw. direkt vor dem Schwimmbad.",
+        "Falls es vor Ort mehrere Eingänge gibt oder ein anderer Treffpunkt sinnvoller ist,",
+        "melde ich mich rechtzeitig mit weiteren Details.",
+        "",
+        training_goal_section,
     ]
 
-    # Optional: training goal
-    if training_goal and training_goal.strip():
+    if customer_note_section:
         lines.extend([
             "",
-            "Ich habe gesehen, dass du besonders an folgendem Thema arbeiten möchtest:",
-            training_goal.strip(),
-        ])
-
-    # Optional: customer note
-    if customer_note and customer_note.strip():
-        lines.extend([
-            "",
-            "Deine zusätzliche Notiz habe ich ebenfalls gesehen und berücksichtige sie im Training:",
-            customer_note.strip(),
+            customer_note_section,
         ])
 
     lines.extend([
         "",
-        "Für die erste Stunde brauchst du dich beim Equipment nicht zu stressen.",
-        "Ich bringe immer Basisequipment mit, damit wir direkt starten können.",
-        "",
-        "Wenn du eigenes Material hast, bring es gerne mit.",
-        "Am besten geeignet sind:",
+        "Für die erste Stunde bring bitte, falls vorhanden, Folgendes mit:",
         "- eine gut sitzende Schwimmbrille",
         "- kurze Schwimmflossen",
         "- ein Pullbuoy / eine Poolboje",
         "",
-        "Wenn du noch nichts davon hast, ist das überhaupt kein Problem.",
-        "Du kannst das Equipment auch direkt über unseren Squalo-Shop bestellen.",
-        "Ich habe die empfohlenen Produkte vorrätig und kann sie dir",
-        "dann direkt zur nächsten Stunde mitbringen.",
-        "Alternativ kannst du dir das Material natürlich auch",
-        "selbst bis zur nächsten Stunde organisieren.",
+        "Wenn du dieses Equipment noch nicht hast, ist das kein Problem.",
+        "Ich bringe zur ersten Stunde immer Basisequipment mit, sodass wir direkt starten können.",
         "",
-        "Du findest deinen Termin auch in deinem Squalo-Dashboard.",
+        "Wenn du möchtest, kannst du dir später auch empfohlenes Equipment im Squalo-Shop anschauen.",
+        "Dort findest du Produkte, die ich für das Training sinnvoll finde.",
+        "Auf Wunsch kann ich bestelltes oder abgesprochenes Equipment zur ersten Stunde mitbringen.",
+        "",
+        "Du findest den Termin auch in deinem Squalo-Dashboard.",
         "Dort kannst du ihn direkt in deinen Kalender exportieren.",
         f"Dashboard: {dashboard_url}",
         "",
