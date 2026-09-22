@@ -501,7 +501,7 @@ FREIBURG_KIDS_SWIMMING_PAGE = {
     "cta_primary_label": "Jetzt Schwimmstunde in Freiburg anfragen",
     "cta_primary_url": "/booking?region=freiburg",
     "cta_secondary_label": "Clara kennenlernen",
-    "cta_secondary_url": "/coaches",
+    "cta_secondary_url": "/coaches/clara-zentner",
     "whatsapp_message": "Hallo Squalo, ich interessiere mich für Kinderschwimmen in Freiburg.",
     "benefits_title": "Individueller Schwimmunterricht für Kinder",
     "benefits": [
@@ -592,6 +592,46 @@ FREIBURG_KIDS_SWIMMING_PAGE = {
     "final_cta_text": "Erzähl uns kurz, wie alt dein Kind ist und welche Wassererfahrung es mitbringt. Clara stimmt den Unterricht passend darauf ab.",
     "final_cta_label": "Jetzt Schwimmstunde in Freiburg anfragen",
     "hero_image": "images/heroes/schwimmtraining-freiburg-hero.jpg",
+}
+
+
+COACH_PROFILE_CONTENT = {
+    "moritz-zentner": {
+        "hero_description": "Moritz Zentner ist Schwimmcoach in Berlin und verbindet langjährige Schwimmerfahrung mit ruhigem, individuellem Techniktraining.",
+        "target_groups": ["Anfänger", "Wiedereinsteiger", "Fortgeschrittene"],
+        "focus_areas": [
+            "Individuelle Technikverbesserung",
+            "Wasserlage und Atmung",
+            "Bewegungsökonomie",
+            "Brusttechnik und Kraultechnik",
+            "Persönliches 1:1-Coaching",
+        ],
+        "prices": [
+            ("Einzelstunde", "50 € pro 60 Minuten"),
+            ("5er-Paket", "225 €"),
+        ],
+        "locations_intro": "Flexible Trainingsorte in Berlin: Moritz stimmt den passenden Ort mit dir ab.",
+    },
+    "clara-zentner": {
+        "hero_description": "Clara Zentner begleitet Kinder in Freiburg mit Geduld, Freude und einem Unterricht, der zu Alter, Vorerfahrung und Tempo passt.",
+        "target_groups": ["Kinder", "Einzelunterricht", "Kleingruppe"],
+        "focus_areas": [
+            "Kinderschwimmen Freiburg",
+            "Wassergewöhnung",
+            "Schwimmen lernen",
+            "Seepferdchen-Vorbereitung",
+        ],
+        "prices": [
+            ("1 Kind", "50 € pro 50 Minuten"),
+            ("2 Kinder", "60 € gesamt pro 50 Minuten"),
+            ("3 Kinder", "60 € gesamt pro 50 Minuten"),
+        ],
+        "locations_intro": "Clara trainiert in Freiburg und der näheren Umgebung. Der passende Ort wird mit dir abgestimmt.",
+        "related_page": {
+            "label": "Kinderschwimmen in Freiburg",
+            "url": "/freiburg/kinderschwimmen",
+        },
+    },
 }
 
 
@@ -1900,7 +1940,7 @@ def create_app() -> Flask:
             )
             existing_coach.external_profile_url = "https://www.superprof.de/jahre-schwimmerfahrung-rettungschwimmer-und-viel-geduld-mit-mir-lernst-deinem-individuellen-tempo-deine-technik.html"
             existing_coach.cities_served = "Berlin"
-            existing_coach.image_url = "/static/images/moritz-zentner.jpg"
+            existing_coach.image_url = "/static/images/Moritz-Zentner 2.PNG"
             existing_coach.email = admin_email
             existing_coach.is_active = True
             print(f"[OK] Coach aktualisiert: {existing_coach.name}")
@@ -1909,7 +1949,7 @@ def create_app() -> Flask:
                 name="Moritz Zentner",
                 slug=coach_slug,
                 title="Schwimmlehrer – 24 Jahre Erfahrung, Rettungsschwimmer",
-                image_url="/static/images/moritz-zentner.jpg",
+                image_url="/static/images/Moritz-Zentner 2.PNG",
                 bio=(
                     "Ich bin Moritz, 28 Jahre alt und studiere Humanoide Robotik. "
                     "Schwimmen ist meine große Leidenschaft – ich schwimme jeden Tag und "
@@ -2390,6 +2430,33 @@ def create_app() -> Flask:
             reviews_by_coach=reviews_by_coach,
             review_stats_by_coach=review_stats_by_coach,
             user_reviews_by_coach=user_reviews_by_coach,
+        )
+
+    @app.route("/coaches/<slug>")
+    def coach_profile(slug):
+        coach = Coach.query.filter_by(slug=slug, is_active=True).first_or_404()
+        reviews = CoachReview.query.filter_by(
+            coach_id=coach.id, is_approved=True
+        ).order_by(CoachReview.created_at.desc()).all()
+        review_stats = {
+            'count': len(reviews),
+            'average': sum(review.rating for review in reviews) / len(reviews) if reviews else None,
+        }
+        user_review = None
+        if current_user.is_authenticated:
+            user_review = next(
+                (review for review in reviews
+                 if review.source == 'squalo' and review.user_id == current_user.id),
+                None,
+            )
+        profile_content = COACH_PROFILE_CONTENT.get(slug, {})
+        return render_template(
+            "coach_profile.html",
+            coach=coach,
+            reviews=reviews,
+            review_stats=review_stats,
+            user_review=user_review,
+            profile_content=profile_content,
         )
 
     @app.route("/coach-werden", methods=["GET", "POST"])
@@ -4117,6 +4184,8 @@ Motivation:
         ]
         for slug in landing_slugs:
             pages.append((f"/{slug}", '0.7', 'monthly'))
+        for coach in Coach.query.filter_by(is_active=True).order_by(Coach.slug.asc()).all():
+            pages.append((f"/coaches/{coach.slug}", '0.8', 'monthly'))
         xml_parts = ['<?xml version="1.0" encoding="UTF-8"?>']
         xml_parts.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
         for path, priority, changefreq in pages:

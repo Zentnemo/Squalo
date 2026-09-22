@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% block title %}{% if coach.slug == 'moritz-zentner' %}Moritz Zentner – Schwimmcoach Berlin | Squalo{% elif coach.slug == 'clara-zentner' %}Clara Zentner – Kinderschwimmen Freiburg | Squalo{% else %}{{ coach.display_name }} – Schwimmcoach | Squalo{% endif %}{% endblock %}
+{% block meta_description %}{% if coach.slug == 'moritz-zentner' %}Individuelles Schwimmcoaching mit Moritz Zentner in Berlin. Techniktraining für Anfänger, Wiedereinsteiger und fortgeschrittene Schwimmer.{% elif coach.slug == 'clara-zentner' %}Kinderschwimmen mit Clara Zentner in Freiburg: Wassergewöhnung, Schwimmen lernen und Seepferdchen-Vorbereitung.{% else %}Lerne {{ coach.display_name }} kennen und frage individuelles Schwimmcoaching bei Squalo an.{% endif %}{% endblock %}
+{% block og_title %}{{ self.title() }}{% endblock %}
+{% block og_description %}{{ self.meta_description() }}{% endblock %}
+{% block twitter_title %}{{ self.title() }}{% endblock %}
+{% block twitter_description %}{{ self.meta_description() }}{% endblock %}
+{% block body_class %} class="page-has-hero coach-profile-page"{% endblock %}
+{% block content %}
+{% set first_name = coach.first_name or coach.name.split(' ')[0] %}
+<section class="coach-profile-hero">
+  <div class="container coach-profile-hero-grid">
+    <div class="coach-profile-photo-wrap">
+      {% if coach.image_url %}
+        <img src="{{ coach.image_url }}" alt="{{ coach.display_name }}, Schwimmcoach" class="coach-profile-photo">
+      {% else %}
+        <div class="coach-profile-photo-placeholder" aria-hidden="true">🏊</div>
+      {% endif %}
+    </div>
+    <div class="coach-profile-hero-copy">
+      <p class="coach-profile-kicker">Schwimmcoaching{% if coach.cities_list %} · {{ coach.cities_list|join(' · ') }}{% endif %}</p>
+      <h1>{{ coach.display_name }}</h1>
+      {% if coach.title %}<p class="coach-profile-title">{{ coach.title }}</p>{% endif %}
+      <p class="coach-profile-intro">{{ profile_content.hero_description or coach.bio or '[PLATZHALTER: Persönlichen Über-mich-Text ergänzen]' }}</p>
+      <p class="coach-profile-rating" aria-label="{{ review_stats.count }} Bewertungen">
+        {% if review_stats.count %}★★★★★ {{ '%.1f'|format(review_stats.average) }} · {{ review_stats.count }} Bewertung{{ 'en' if review_stats.count != 1 else '' }}{% else %}Noch keine Bewertungen{% endif %}
+      </p>
+      <div class="coach-profile-actions">
+        <a href="{{ url_for('booking') }}?coach_id={{ coach.id }}" class="btn btn-hero-primary">Training mit {{ first_name }} anfragen</a>
+        {% set whatsapp_link = get_whatsapp_link('Hallo Squalo, ich interessiere mich für ein Training mit ' ~ first_name ~ '.') %}
+        {% if whatsapp_link %}<a href="{{ whatsapp_link }}" target="_blank" rel="noopener" class="btn btn-whatsapp">Frage per WhatsApp stellen</a>{% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container coach-profile-content">
+  <section class="coach-profile-section coach-profile-about">
+    <p class="coach-profile-section-label">Über mich</p>
+    <h2>Schwimmtraining, das zu dir passt</h2>
+    {% if coach.bio %}
+      {% for paragraph in coach.bio.split('\n\n') %}<p>{{ paragraph }}</p>{% endfor %}
+    {% else %}
+      <p>[PLATZHALTER: Persönlichen Über-mich-Text ergänzen]</p>
+    {% endif %}
+    {% if coach.swim_style %}
+      <p>{{ coach.swim_style }}</p>
+    {% endif %}
+  </section>
+
+  <section class="coach-profile-section">
+    <p class="coach-profile-section-label">Meine Schwerpunkte</p>
+    <h2>Woran wir arbeiten können</h2>
+    <div class="coach-profile-chip-grid">
+      {% if profile_content.focus_areas %}
+        {% for focus_area in profile_content.focus_areas %}<span class="coach-profile-chip">{{ focus_area }}</span>{% endfor %}
+      {% elif coach.specialization %}
+        {% for focus_area in coach.specialization.split(',') %}<span class="coach-profile-chip">{{ focus_area.strip() }}</span>{% endfor %}
+      {% else %}
+        <span class="coach-profile-placeholder">[PLATZHALTER: Spezialisierung ergänzen]</span>
+      {% endif %}
+    </div>
+    {% if coach.strengths %}
+      <ul class="coach-profile-strengths">
+        {% for strength in coach.strengths.split('\n') %}<li>{{ strength|replace('•', '')|trim }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+  </section>
+
+  <section class="coach-profile-section coach-profile-two-column">
+    <div>
+      <p class="coach-profile-section-label">Geeignet für</p>
+      <h2>Für wen ist das Training?</h2>
+      {% if profile_content.target_groups %}
+        <div class="coach-profile-chip-grid">
+          {% for target_group in profile_content.target_groups %}<span class="coach-profile-chip">{{ target_group }}</span>{% endfor %}
+        </div>
+      {% else %}
+        <p>[PLATZHALTER: Zielgruppe ergänzen]</p>
+      {% endif %}
+    </div>
+    <div>
+      <p class="coach-profile-section-label">Trainingsorte</p>
+      <h2>Wo wir trainieren</h2>
+      {% if coach.cities_list %}
+        <p>{{ profile_content.locations_intro or coach.cities_list|join(', ') }}</p>
+        <div class="coach-profile-chip-grid">
+          {% for city in coach.cities_list %}<span class="coach-profile-chip">{{ city }}</span>{% endfor %}
+        </div>
+      {% else %}
+        <p>[PLATZHALTER: Trainingsorte ergänzen]</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="coach-profile-section">
+    <p class="coach-profile-section-label">Preise</p>
+    <h2>Transparent vor der Anfrage</h2>
+    {% if profile_content.prices %}
+      <div class="coach-profile-price-grid">
+        {% for label, price in profile_content.prices %}
+          <div class="coach-profile-price"><strong>{{ label }}</strong><span>{{ price }}</span></div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>[PLATZHALTER: Preise ergänzen]</p>
+    {% endif %}
+  </section>
+
+  {% if profile_content.related_page %}
+    <section class="coach-profile-related">
+      <p>Mehr zu {{ first_name }}s Angebot</p>
+      <a href="{{ profile_content.related_page.url }}">{{ profile_content.related_page.label }}</a>
+    </section>
+  {% endif %}
+
+  <section class="coach-profile-section coach-profile-reviews" id="bewertungen">
+    <p class="coach-profile-section-label">Bewertungen</p>
+    <h2>Erfahrungen mit {{ first_name }}</h2>
+    {% if review_stats.count %}
+      <p class="review-summary">★★★★★ {{ '%.1f'|format(review_stats.average) }} · {{ review_stats.count }} Bewertung{{ 'en' if review_stats.count != 1 else '' }}</p>
+      <div class="reviews-list">
+        {% for review in reviews %}
+          <article class="review-card">
+            <div class="review-header">
+              <span class="review-stars">{% for _ in range(review.rating) %}⭐{% endfor %}</span>
+              <span class="review-author">{{ review.public_author_name }}</span>
+              {% if review.source != 'squalo' %}<span class="review-source">{{ review.source }}</span>{% endif %}
+            </div>
+            {% if review.text %}<p class="review-text">{{ review.text }}</p>{% endif %}
+            <span class="review-date">{{ review.created_at.strftime('%d.%m.%Y') }}</span>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>Noch keine Bewertungen.</p>
+    {% endif %}
+
+    {% if current_user.is_authenticated %}
+      <div class="review-form-wrap">
+        <h3>{{ first_name }} {{ 'Bewertung aktualisieren' if user_review else 'bewerten' }}</h3>
+        <form method="POST" action="{{ url_for('coaches_review', coach_id=coach.id) }}" class="review-form">
+          <input type="hidden" name="return_to" value="profile">
+          <div class="form-group">
+            <label>Deine Bewertung</label>
+            <div class="star-rating">
+              {% for rating in range(5, 0, -1) %}
+                <input type="radio" id="coach-{{ coach.id }}-star{{ rating }}" name="rating" value="{{ rating }}" {% if user_review and user_review.rating == rating %}checked{% endif %} {% if rating == 5 and not user_review %}required{% endif %}>
+                <label for="coach-{{ coach.id }}-star{{ rating }}" title="{{ rating }} Stern{{ 'e' if rating > 1 else '' }}">★</label>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="coach-review-text">Dein Kommentar (optional)</label>
+            <textarea id="coach-review-text" name="text" rows="3" class="feed-textarea" placeholder="Was hat dir besonders gefallen?">{{ user_review.text if user_review else '' }}</textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">{{ 'Bewertung aktualisieren' if user_review else 'Bewertung speichern' }}</button>
+        </form>
+      </div>
+    {% else %}
+      <p class="review-login-hint">🔒 <a href="{{ url_for('login') }}">Logge dich ein</a>, um {{ first_name }} zu bewerten.</p>
+    {% endif %}
+  </section>
+
+  <section class="coach-profile-booking-cta">
+    <div>
+      <p class="coach-profile-section-label">Nächster Schritt</p>
+      <h2>Dein Training mit {{ first_name }}</h2>
+      <p>Wähle deine Wunschzeiten und den passenden Trainingsort. {{ first_name }} ist bereits vorausgewählt.</p>
+    </div>
+    <a href="{{ url_for('booking') }}?coach_id={{ coach.id }}" class="btn btn-hero-primary">Training mit {{ first_name }} anfragen</a>
+  </section>
+</div>
+{% endblock %}

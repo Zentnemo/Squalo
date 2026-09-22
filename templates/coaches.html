@@ -38,7 +38,9 @@
         <div class="coach-card-inner">
           <div class="coach-image-wrap">
             {% if coach.image_url %}
-              <img src="{{ coach.image_url }}" alt="{{ coach.name }}" class="coach-image">
+              <a href="{{ url_for('coach_profile', slug=coach.slug) }}" aria-label="Profil von {{ coach.name }} ansehen">
+                <img src="{{ coach.image_url }}" alt="{{ coach.name }}" class="coach-image">
+              </a>
             {% else %}
               <div class="coach-image-placeholder">
                 <span class="coach-placeholder-icon">🏊</span>
@@ -47,7 +49,7 @@
           </div>
 
           <div class="coach-info">
-            <h2 class="coach-name">{{ coach.name }}</h2>
+            <h2 class="coach-name"><a href="{{ url_for('coach_profile', slug=coach.slug) }}">{{ coach.name }}</a></h2>
             {% if coach.cities_served %}
               <p class="coach-location">📍 {{ coach.cities_list|join(' · ') }}</p>
             {% endif %}
@@ -90,6 +92,7 @@
             {% endif %}
 
             <div class="coach-actions">
+              <a href="{{ url_for('coach_profile', slug=coach.slug) }}" class="btn btn-small btn-secondary">Profil ansehen</a>
               <a href="{{ url_for('booking') }}?coach_id={{ coach.id }}" class="btn btn-hero-primary">
                 ✅ Training mit {{ coach.name.split(' ')[0] }} anfragen
               </a>
@@ -97,7 +100,11 @@
               {% if whatsapp_link %}
                 <a href="{{ whatsapp_link }}" target="_blank" rel="noopener" class="btn btn-small btn-whatsapp">Frage an Squalo stellen</a>
               {% endif %}
-              <p class="coach-price-hint">💰 50 € / Std · 5-er Paket: 250 € · 10-er Paket: 500 €</p>
+              {% if coach.slug == 'moritz-zentner' %}
+                <p class="coach-price-hint">💰 50 € / Std · 5-er Paket: 225 €</p>
+              {% elif coach.slug == 'clara-zentner' %}
+                <p class="coach-price-hint">💰 Kinderschwimmen: ab 50 € pro 50 Minuten</p>
+              {% endif %}
             </div>
             {# ── SEO region links per coach ── #}
             {% if 'Berlin' in (coach.cities_list or []) %}
