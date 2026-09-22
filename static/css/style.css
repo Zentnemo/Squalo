@@ -1590,6 +1590,14 @@ body.home main.page-main {
   color: var(--text-dark);
 }
 
+.form-group-checkbox label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+  font-weight: 400;
+}
+
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="password"],
@@ -2822,7 +2830,7 @@ body.home main.page-main {
 
 .auth-link {
   text-align: center;
-  margin: 0;
+  margin: 10px 0 0;
   color: var(--text-light);
 }
 

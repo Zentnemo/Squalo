@@ -8,12 +8,15 @@ import io
 import os
 import smtplib
 import time as time_mod
+import hashlib
+import hmac
 from datetime import datetime, date, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from zoneinfo import ZoneInfo
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, send_file, Response, session
+from flask import Flask, current_app, render_template, request, redirect, url_for, flash, send_from_directory, send_file, Response, session
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
+from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from pathlib import Path
@@ -566,7 +569,7 @@ def get_admin_email():
     )
 
 
-def send_email(subject, recipient, body_text, body_html=None):
+def send_email(subject, recipient, body_text, body_html=None, log_body=True):
     """Send an email via SMTP. Falls back to console logging if SMTP is not configured.
 
     SMTP is configured via environment variables:
@@ -588,10 +591,13 @@ def send_email(subject, recipient, body_text, body_html=None):
         print(f"An:     {recipient}")
         print(f"Betreff: {subject}")
         print("-" * 60)
-        try:
-            print(body_text)
-        except UnicodeEncodeError:
-            print(body_text.encode('utf-8', errors='replace').decode('utf-8', errors='replace'))
+        if log_body:
+            try:
+                print(body_text)
+            except UnicodeEncodeError:
+                print(body_text.encode('utf-8', errors='replace').decode('utf-8', errors='replace'))
+        else:
+            print("[E-Mail-Text aus Sicherheitsgründen nicht protokolliert]")
         if body_html:
             print("-" * 60)
             print("[HTML-Version verfügbar, wird in Konsole nicht angezeigt]")
@@ -616,10 +622,13 @@ def send_email(subject, recipient, body_text, body_html=None):
         return True
     except Exception as e:
         print(f"[MAIL-FEHLER] Konnte E-Mail nicht senden: {e}")
-        # Fallback: log the email content so it's not lost
+        # Never print sensitive message bodies such as password reset links.
         print(f"  Betreff: {subject}")
         print(f"  An: {recipient}")
-        print(f"  Text: {body_text[:300]}")
+        if log_body:
+            print(f"  Text: {body_text[:300]}")
+        else:
+            print("  Text: [aus Sicherheitsgründen nicht protokolliert]")
         return False
 
 
@@ -1287,9 +1296,83 @@ def get_public_base_url():
         return 'http://127.0.0.1:5000'
 
 
+PASSWORD_RESET_SALT = 'squalo-password-reset-v1'
+PASSWORD_RESET_MAX_AGE_SECONDS = 60 * 60
+
+
+def _password_reset_fingerprint(password_hash):
+    """Bind a reset link to the password hash without exposing that hash."""
+    secret_key = current_app.config['SECRET_KEY'].encode('utf-8')
+    return hmac.new(secret_key, password_hash.encode('utf-8'), hashlib.sha256).hexdigest()
+
+
+def _generate_password_reset_token(user):
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    return serializer.dumps(
+        {'user_id': user.id, 'password_fingerprint': _password_reset_fingerprint(user.password_hash)},
+        salt=PASSWORD_RESET_SALT,
+    )
+
+
+def _get_user_for_password_reset_token(token):
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    try:
+        payload = serializer.loads(
+            token,
+            salt=PASSWORD_RESET_SALT,
+            max_age=PASSWORD_RESET_MAX_AGE_SECONDS,
+        )
+        user_id = payload.get('user_id')
+        fingerprint = payload.get('password_fingerprint')
+    except (BadSignature, SignatureExpired, AttributeError):
+        return None
+
+    user = db.session.get(User, user_id) if isinstance(user_id, int) else None
+    if not user or not isinstance(fingerprint, str):
+        return None
+    if not hmac.compare_digest(fingerprint, _password_reset_fingerprint(user.password_hash)):
+        return None
+    return user
+
+
+def send_password_reset_email(user):
+    """Send a reset message through the established mail infrastructure."""
+    reset_token = _generate_password_reset_token(user)
+    reset_link = f"{get_public_base_url()}{url_for('reset_password', token=reset_token)}"
+    first_name = (user.name or 'Squalo-Kunde').split()[0]
+    body = (
+        f"Hallo {first_name},\n"
+        "\n"
+        "du hast angefordert, dein Passwort für dein Squalo-Konto zurückzusetzen.\n"
+        "\n"
+        "Klicke auf den folgenden Link, um ein neues Passwort zu vergeben:\n"
+        "\n"
+        f"{reset_link}\n"
+        "\n"
+        "Der Link ist aus Sicherheitsgründen nur eine Stunde gültig.\n"
+        "\n"
+        "Falls du diese Anfrage nicht gestellt hast, kannst du diese E-Mail ignorieren.\n"
+        "\n"
+        "Viele Grüße\n"
+        "Squalo Schwimmcoaching"
+    )
+    return send_email(
+        'Passwort für dein Squalo-Konto zurücksetzen',
+        user.email,
+        body,
+        log_body=False,
+    )
+
+
 def create_app() -> Flask:
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(Config)
+    app.config.update(
+        REMEMBER_COOKIE_DURATION=timedelta(days=30),
+        REMEMBER_COOKIE_HTTPONLY=True,
+        REMEMBER_COOKIE_SAMESITE='Lax',
+        REMEMBER_COOKIE_SECURE=app.config.get('PUBLIC_BASE_URL', '').startswith('https://'),
+    )
 
     # ── ProxyFix: trust Render's reverse proxy for correct host_url ──
     # Only enable in production (behind Render proxy)
@@ -2319,12 +2402,49 @@ Motivation:
             password = request.form.get("password")
             user = User.query.filter_by(email=email).first()
             if user and check_password_hash(user.password_hash, password):
-                login_user(user)
+                login_user(user, remember=request.form.get('remember') == 'on')
                 flash("Logged in", "success")
                 return redirect(url_for("dashboard"))
             flash("Invalid credentials", "danger")
             return redirect(url_for("login"))
         return render_template("login.html")
+
+    @app.route('/reset-password', methods=['GET', 'POST'])
+    def password_reset_request():
+        if request.method == 'POST':
+            email = (request.form.get('email') or '').strip()
+            user = User.query.filter_by(email=email).first() if email else None
+            if user:
+                send_password_reset_email(user)
+            flash(
+                'Wenn ein Account mit dieser E-Mail existiert, senden wir dir einen Link zum Zurücksetzen des Passworts.',
+                'success',
+            )
+            return redirect(url_for('password_reset_request'))
+        return render_template('reset_password_request.html')
+
+    @app.route('/reset-password/<token>', methods=['GET', 'POST'])
+    def reset_password(token):
+        user = _get_user_for_password_reset_token(token)
+        if not user:
+            flash('Dieser Link ist ungültig oder abgelaufen. Bitte fordere einen neuen Link an.', 'danger')
+            return redirect(url_for('password_reset_request'))
+
+        if request.method == 'POST':
+            password = request.form.get('password') or ''
+            password_confirmation = request.form.get('password_confirmation') or ''
+            if len(password) < 8:
+                flash('Dein neues Passwort muss mindestens 8 Zeichen lang sein.', 'danger')
+            elif password != password_confirmation:
+                flash('Die Passwörter stimmen nicht überein.', 'danger')
+            else:
+                user.password_hash = generate_password_hash(password)
+                db.session.commit()
+                logout_user()
+                flash('Dein Passwort wurde geändert. Du kannst dich jetzt einloggen.', 'success')
+                return redirect(url_for('login'))
+
+        return render_template('reset_password.html', token=token)
 
     @app.route("/logout")
     @login_required
