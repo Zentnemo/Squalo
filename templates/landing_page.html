@@ -37,6 +37,12 @@
           </a>
         {% endif %}
       </div>
+      {% if page.whatsapp_message %}
+        {% set whatsapp_link = get_whatsapp_link(page.whatsapp_message) %}
+        {% if whatsapp_link %}
+          <p class="landing-whatsapp-link"><a href="{{ whatsapp_link }}" target="_blank" rel="noopener" class="btn btn-small btn-whatsapp">Frage zu Kinderschwimmen in Freiburg per WhatsApp stellen</a></p>
+        {% endif %}
+      {% endif %}
     </div>
   </section>
 

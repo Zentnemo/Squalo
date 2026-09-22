@@ -25,6 +25,10 @@
           <a class="btn btn-hero-secondary hero-btn-water" href="{{ url_for('dashboard') }}">Mein Dashboard</a>
         </div>
       {% endif %}
+      {% set whatsapp_link = get_whatsapp_link('Hallo Squalo, ich interessiere mich für Schwimmcoaching und habe eine Frage zur Buchung.') %}
+      {% if whatsapp_link %}
+        <p class="hero-whatsapp-link"><a class="btn btn-small btn-whatsapp" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Frage per WhatsApp stellen</a></p>
+      {% endif %}
     </div>
   </section>
 

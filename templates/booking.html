@@ -10,6 +10,14 @@
     <h2>Termin anfragen</h2>
     <p>Gib deine Wünsche an – Squalo bestätigt deinen Termin.</p>
 
+    {% set whatsapp_link = get_whatsapp_link('Hallo Squalo, ich habe eine Frage zu meiner Schwimmcoaching-Buchung.') %}
+    {% if whatsapp_link %}
+      <div class="whatsapp-contact-note">
+        <span>Für schnelle Rückfragen zur Buchung:</span>
+        <a class="btn btn-small btn-whatsapp" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Schreib uns auf WhatsApp</a>
+      </div>
+    {% endif %}
+
     {# ── Pricing Info Sidebar ── #}
     <div class="pricing-sidebar">
       <div class="pricing-sidebar-item">

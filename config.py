@@ -26,3 +26,6 @@ class Config:
     # Set on Render to e.g. https://squalo-schwimmcoaching.com
     # Locally: leave unset, falls back to request.host_url
     PUBLIC_BASE_URL = os.environ.get('PUBLIC_BASE_URL', '').rstrip('/')
+
+    # WhatsApp contact number in international format, without + or spaces.
+    WHATSAPP_BUSINESS_NUMBER = os.environ.get('WHATSAPP_BUSINESS_NUMBER', '491791706249')

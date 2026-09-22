@@ -93,6 +93,10 @@
               <a href="{{ url_for('booking') }}?coach_id={{ coach.id }}" class="btn btn-hero-primary">
                 ✅ Training mit {{ coach.name.split(' ')[0] }} anfragen
               </a>
+              {% set whatsapp_link = get_whatsapp_link('Hallo Squalo, ich interessiere mich für Schwimmcoaching und habe eine Frage zur Buchung.') %}
+              {% if whatsapp_link %}
+                <a href="{{ whatsapp_link }}" target="_blank" rel="noopener" class="btn btn-small btn-whatsapp">Frage an Squalo stellen</a>
+              {% endif %}
               <p class="coach-price-hint">💰 50 € / Std · 5-er Paket: 250 € · 10-er Paket: 500 €</p>
             </div>
             {# ── SEO region links per coach ── #}

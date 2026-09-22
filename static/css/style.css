@@ -1695,6 +1695,36 @@ body.home main.page-main {
   box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
 }
 
+.btn-whatsapp {
+  background: #238c4a;
+  color: var(--white);
+  box-shadow: 0 3px 10px rgba(35, 140, 74, 0.24);
+}
+
+.btn-whatsapp:hover {
+  background: #1d753e;
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+.hero-whatsapp-link,
+.landing-whatsapp-link {
+  margin: 14px 0 0;
+}
+
+.whatsapp-contact-note {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  border-left: 3px solid #238c4a;
+  background: #f2faf5;
+  color: var(--text-dark);
+  font-size: 14px;
+}
+
 .btn-danger {
   background: linear-gradient(135deg, var(--danger), #e74c3c);
   color: var(--white);

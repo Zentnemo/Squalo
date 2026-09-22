@@ -10,6 +10,7 @@ import smtplib
 import time as time_mod
 import hashlib
 import hmac
+from urllib.parse import quote
 from datetime import datetime, date, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -501,6 +502,7 @@ FREIBURG_KIDS_SWIMMING_PAGE = {
     "cta_primary_url": "/booking?region=freiburg",
     "cta_secondary_label": "Clara kennenlernen",
     "cta_secondary_url": "/coaches",
+    "whatsapp_message": "Hallo Squalo, ich interessiere mich für Kinderschwimmen in Freiburg.",
     "benefits_title": "Individueller Schwimmunterricht für Kinder",
     "benefits": [
         {
@@ -1398,6 +1400,15 @@ def get_public_base_url():
         return 'http://127.0.0.1:5000'
 
 
+def get_whatsapp_link(message):
+    """Build a safe WhatsApp click-to-chat link for a prefilled message."""
+    raw_number = current_app.config.get('WHATSAPP_BUSINESS_NUMBER', '')
+    number = ''.join(character for character in str(raw_number) if character.isdigit())
+    if not number:
+        return None
+    return f"https://wa.me/{number}?text={quote(message)}"
+
+
 PASSWORD_RESET_SALT = 'squalo-password-reset-v1'
 PASSWORD_RESET_MAX_AGE_SECONDS = 60 * 60
 
@@ -1489,10 +1500,13 @@ def create_app() -> Flask:
 
     db.init_app(app)
 
-    # ── Make get_public_base_url available in all templates ──
+    # ── Make shared public URL helpers available in all templates ──
     @app.context_processor
     def inject_public_base_url():
-        return dict(get_public_base_url=get_public_base_url)
+        return dict(
+            get_public_base_url=get_public_base_url,
+            get_whatsapp_link=get_whatsapp_link,
+        )
 
     login_manager = LoginManager()
     login_manager.login_view = "login"
