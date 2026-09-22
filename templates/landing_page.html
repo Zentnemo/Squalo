@@ -83,6 +83,25 @@
       </section>
     {% endif %}
 
+    {% if page.detail_sections %}
+      {% for section in page.detail_sections %}
+        <section class="landing-section">
+          <h2 class="landing-section-title">{{ section.title }}</h2>
+          {% if section.intro %}
+            <p class="landing-extra-text">{{ section.intro }}</p>
+          {% endif %}
+          <div class="landing-card-grid">
+            {% for item in section['items'] %}
+              <div class="landing-card">
+                <h3 class="landing-card-title">{{ item.title }}</h3>
+                <p class="landing-card-text">{{ item.text }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+      {% endfor %}
+    {% endif %}
+
     {# ── Regionale Einbindung ── #}
     {% if page.region_note %}
       <section class="landing-section landing-region">

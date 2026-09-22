@@ -491,6 +491,108 @@ LANDING_PAGES = {
 }
 
 
+FREIBURG_KIDS_SWIMMING_PAGE = {
+    "meta_title": "Kinderschwimmen Freiburg – Schwimmen lernen mit Clara | Squalo",
+    "meta_description": "Individueller Schwimmunterricht für Kinder in Freiburg: Wassergewöhnung, Schwimmen lernen und Seepferdchen-Vorbereitung im Einzelunterricht oder in kleiner Gruppe.",
+    "kicker": "Kinderschwimmen in Freiburg",
+    "h1": "Kinderschwimmen in Freiburg mit Clara",
+    "intro": "Wasser entdecken, Sicherheit gewinnen und Schritt für Schritt schwimmen lernen: Clara begleitet Kinder in Freiburg mit Geduld, Freude und einem Unterricht, der zu Alter, Vorerfahrung und Tempo des Kindes passt.",
+    "cta_primary_label": "Jetzt Schwimmstunde in Freiburg anfragen",
+    "cta_primary_url": "/booking?region=freiburg",
+    "cta_secondary_label": "Clara kennenlernen",
+    "cta_secondary_url": "/coaches",
+    "benefits_title": "Individueller Schwimmunterricht für Kinder",
+    "benefits": [
+        {
+            "icon": "💧",
+            "title": "Wassergewöhnung ohne Druck",
+            "text": "Für Kinder mit wenig Wassererfahrung oder Unsicherheit beginnen wir bei den Grundlagen: Wasser wahrnehmen, ausatmen, tauchen und Vertrauen aufbauen.",
+        },
+        {
+            "icon": "🏊",
+            "title": "Schritt für Schritt schwimmen lernen",
+            "text": "Vom Gleiten und der Wasserlage über Brust- und Rückenschwimmen bis zum selbstständigen Schwimmen entwickelt sich jede Einheit aus dem aktuellen Können deines Kindes.",
+        },
+        {
+            "icon": "🌟",
+            "title": "Individuell oder in kleiner Gruppe",
+            "text": "Einzelunterricht bietet volle Aufmerksamkeit. Kleine Gruppen mit zwei bis drei Kindern sind für Geschwister oder Freunde mit ähnlichem Alter und Schwimmniveau möglich.",
+        },
+    ],
+    "extra_section": {
+        "title": "Kind im Mittelpunkt",
+        "paragraphs": [
+            "Kinderschwimmen bedeutet mehr als eine bestimmte Strecke zu schaffen. Im Unterricht geht es darum, sich im Wasser sicherer zu fühlen, eigene Fortschritte zu erleben und Freude an Bewegung zu entwickeln.",
+            "Clara gestaltet die Übungen altersgerecht und passt sie an das an, was dein Kind gerade braucht. Ein ruhiger Einstieg, klare kleine Schritte und positive Erfolgserlebnisse schaffen die Basis für sicheres, selbstständiges Schwimmen.",
+        ],
+    },
+    "approach_title": "Das lernen Kinder im Schwimmunterricht",
+    "approach": [
+        {
+            "icon": "🫧",
+            "title": "Atmen, tauchen und springen",
+            "text": "Ausatmen ins Wasser, Tauchen, Springen und spielerische Übungen helfen Kindern, sich zunehmend sicher und selbstverständlich im Wasser zu bewegen.",
+        },
+        {
+            "icon": "〰️",
+            "title": "Wasserlage und erste Schwimmzüge",
+            "text": "Wir üben Gleiten, eine stabile Wasserlage sowie Elemente des Brust- und Rückenschwimmens beziehungsweise Rückenkraulens.",
+        },
+        {
+            "icon": "🎯",
+            "title": "Technik und Ausdauer aufbauen",
+            "text": "Wenn die Grundlagen sitzen, arbeiten wir an selbstständigem Schwimmen, Ausdauer und einer sauberen, kindgerechten Schwimmtechnik.",
+        },
+    ],
+    "detail_sections": [
+        {
+            "title": "Seepferdchen-Vorbereitung in Freiburg",
+            "intro": "Clara bereitet Kinder gezielt auf die dafür nötigen Fähigkeiten vor. Die eigentliche Abnahme des Schwimmabzeichens erfolgt durch eine berechtigte Stelle.",
+            "items": [
+                {"title": "Sicher ins Wasser springen", "text": "Wir üben den Sprung ins Wasser in einem Tempo, das sich für dein Kind sicher anfühlt."},
+                {"title": "Tauchen und Gegenstand heraufholen", "text": "Mit Tauchringen und passenden Übungen wird das Abtauchen spielerisch vorbereitet."},
+                {"title": "Eine Strecke selbstständig schwimmen", "text": "Aus Wasserlage, Atmung und ruhigen Bewegungsabläufen entwickeln wir die Ausdauer für die geforderte Schwimmstrecke."},
+            ],
+        },
+        {
+            "title": "Preise und Dauer",
+            "intro": "Eine Unterrichtseinheit dauert 50 Minuten. Eintrittskosten für das Schwimmbad sind nicht im Preis enthalten.",
+            "items": [
+                {"title": "1 Kind", "text": "50 € pro 50 Minuten"},
+                {"title": "2 Kinder", "text": "60 € gesamt pro 50 Minuten"},
+                {"title": "3 Kinder", "text": "60 € gesamt pro 50 Minuten"},
+            ],
+        },
+        {
+            "title": "Was Eltern mitbringen können",
+            "intro": "Badebekleidung und ein Handtuch reichen für den Start. Wenn dein Kind schnell friert, kann ein Neopren-Shirt oder Neoprenanzug hilfreich sein.",
+            "items": [
+                {"title": "Optional eigene Ausrüstung", "text": "Ein eigener Schwimmgurt oder eine Schwimmbrille können mitgebracht werden, wenn dein Kind sie gern nutzt."},
+                {"title": "Übungsmaterial vor Ort", "text": "Clara bringt Tauchringe und weiteres Übungsmaterial mit. Für die ersten Stunden ist bei Bedarf auch ein Schwimmgurt vorhanden."},
+                {"title": "Schwimmbrille", "text": "Sie ist nicht erforderlich. Kinder sollen lernen, sich auch ohne Schwimmbrille im Wasser zu orientieren. Fühlt sich dein Kind damit wohler, darf sie natürlich mit."},
+            ],
+        },
+    ],
+    "coach_note": "Clara Zentner ist Schwimmtrainerin in Freiburg und begleitet Kinder mit einer positiven, geduldigen Lernatmosphäre. Im Mittelpunkt stehen Sicherheit, Selbstvertrauen und Freude am Wasser.",
+    "faq_title": "Fragen von Eltern zum Kinderschwimmen in Freiburg",
+    "faqs": [
+        {"q": "Ab welchem Alter können Kinder teilnehmen?", "a": "Das hängt vor allem davon ab, wie wohl sich dein Kind im Wasser fühlt und ob es dem Unterricht aufmerksam folgen kann. Für eine passende Einschätzung kannst du bei der Anfrage Alter und bisherige Wassererfahrung angeben."},
+        {"q": "Mein Kind kann noch gar nicht schwimmen. Ist das ein Problem?", "a": "Nein. Wir beginnen dort, wo dein Kind steht: bei Wassergewöhnung, ersten Atem- und Gleitübungen oder schon bei den ersten Schwimmzügen."},
+        {"q": "Mein Kind hat Angst vor Wasser. Kann es trotzdem teilnehmen?", "a": "Ja. Gerade dann sind ein ruhiges Tempo und kleine, freiwillige Schritte wichtig. Clara arbeitet ohne Druck und richtet die Übungen am Sicherheitsgefühl deines Kindes aus."},
+        {"q": "Kann mein Kind das Seepferdchen bei euch machen?", "a": "Der Unterricht kann gezielt auf die dafür nötigen Fähigkeiten vorbereiten. Die offizielle Abnahme des Abzeichens erfolgt durch eine berechtigte Stelle."},
+        {"q": "Kann mein Kind gemeinsam mit einem Freund oder Geschwisterkind schwimmen?", "a": "Ja, kleine Gruppen mit zwei bis drei Kindern sind möglich, wenn Alter und Schwimmniveau gut zusammenpassen."},
+        {"q": "Wie lange dauert eine Schwimmstunde?", "a": "Eine Unterrichtseinheit dauert 50 Minuten."},
+        {"q": "Was soll mein Kind mitbringen?", "a": "Badebekleidung und ein Handtuch genügen. Optional sind Neopren-Shirt oder Neoprenanzug bei schnellem Frieren, ein eigener Schwimmgurt und eine Schwimmbrille."},
+        {"q": "Dürfen Eltern beim Unterricht zuschauen?", "a": "Das ist in der Regel möglich, sofern die Bedingungen im jeweiligen Schwimmbad es erlauben und dein Kind dadurch entspannt lernen kann."},
+        {"q": "Wie oft sollte mein Kind zum Schwimmen kommen?", "a": "Regelmäßigkeit hilft Kindern, Sicherheit und Bewegungsabläufe zu festigen. Ein passender Rhythmus richtet sich nach Ziel, Alltag und dem Tempo deines Kindes."},
+    ],
+    "final_cta_title": "Schwimmen lernen in Freiburg anfragen",
+    "final_cta_text": "Erzähl uns kurz, wie alt dein Kind ist und welche Wassererfahrung es mitbringt. Clara stimmt den Unterricht passend darauf ab.",
+    "final_cta_label": "Jetzt Schwimmstunde in Freiburg anfragen",
+    "hero_image": "images/heroes/schwimmtraining-freiburg-hero.jpg",
+}
+
+
 # ── Confirmed-status helpers ──────────────────────────────────────
 CONFIRMED_STATUSES = ('bestaetigt', 'bestätigt', 'confirmed', 'accepted', 'angenommen')
 # Status for an appointment proposed by a coach from the student profile,
@@ -3975,6 +4077,10 @@ Motivation:
             return _landing
         app.add_url_rule(f"/{_slug}", endpoint=f"landing_{_slug.replace('-', '_')}", view_func=_make_landing(_slug, _data))
 
+    @app.route('/freiburg/kinderschwimmen')
+    def freiburg_kids_swimming():
+        return render_template('landing_page.html', page=FREIBURG_KIDS_SWIMMING_PAGE)
+
     @app.context_processor
     def inject_landing_slugs():
         return dict(landing_slugs=sorted(LANDING_PAGES.keys()))
@@ -3987,6 +4093,7 @@ Motivation:
         pages = [
             ('/', '1.0', 'daily'),
             ('/coaches', '0.8', 'weekly'),
+            ('/freiburg/kinderschwimmen', '0.8', 'monthly'),
             ('/coach-werden', '0.7', 'monthly'),
             ('/shop', '0.6', 'weekly'),
             ('/booking', '0.5', 'monthly'),
